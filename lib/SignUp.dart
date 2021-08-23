@@ -21,7 +21,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController password = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
 
-  var dropdownValue = "Select Grade";
+  String? dropdownValue;
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +79,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         dropdownValue = newValue!;
                       });
                     },
+                    hint: Text('  Select Grade'),
                     items: <String>[
-                      'Select Grade',
                       'Freshman',
                       'Sophomore',
                       'Junior',

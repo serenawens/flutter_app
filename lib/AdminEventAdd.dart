@@ -14,32 +14,6 @@ class AdminEventPage extends StatefulWidget {
 }
 
 class _AdminEventPageState extends State<AdminEventPage> {
-  Map events = {
-    "Volunteer Opportunity #1": {
-      "name": 'event #1',
-      'date': '8/19/21',
-      'time': '12:00 pm',
-      'location': 'park',
-      'details': 'some details',
-      "volunteers": ['serena', 'bob', 'joe']
-    },
-    "Volunteer Opportunity #2": {
-      "name": 'event #2',
-      'date': '8/20/21',
-      'time': '12:00 pm',
-      'location': 'park',
-      'details': 'some details',
-      "volunteers": ['serena', 'bob', 'joe']
-    },
-    "Volunteer Opportunity #3": {
-      "name": 'event #3',
-      'date': '8/21/21',
-      'time': '12:00 pm',
-      'location': 'park',
-      'details': 'some details',
-      "volunteers": ['serena', 'bob', 'joe']
-    }
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -59,15 +33,10 @@ class _AdminEventPageState extends State<AdminEventPage> {
                   icon: Icon(Icons.add, size: 30),
                   onPressed: () {
                     Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    AddEventPage(title: 'Add Event')))
-                        .then((value) {
-                      if (value != null) {
-                        events.addAll(value);
-                      }
-                    });
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                AddEventPage(title: 'Add Event')));
                   }),
             ),
           ],

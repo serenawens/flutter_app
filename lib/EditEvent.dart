@@ -88,98 +88,98 @@ class _EditEventPageState extends State<EditEventPage> {
                     ),
                   ),
                 ),
-                Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      side: BorderSide(color: Colors.black45)),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.90,
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          flex: 5,
-                          child: TextField(
-                            obscureText: false,
-                            enabled: false,
-                            controller: eventDate,
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText: 'Date',
-                              labelStyle: new TextStyle(color: Colors.grey),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 5,
+                        child: TextField(
+                          obscureText: false,
+                          readOnly: true,
+                          controller: eventDate,
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black45, width: 2.0),
                             ),
+                            border: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black45, width: 2.0),
+                            ),
+                            labelText: 'Date',
+                            labelStyle: new TextStyle(color: Colors.grey),
                           ),
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: IconButton(
-                            icon: Icon(Icons.calendar_today),
-                            onPressed: () {
-                              showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime.now(),
-                                      lastDate: DateTime(2035))
-                                  .then((date) {
-                                setState(() {
-                                  if (date.toString().length >= 10) {
-                                    eventDate.text =
-                                        date.toString().substring(0, 10);
-                                  }
-                                });
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: IconButton(
+                          icon: Icon(Icons.calendar_today),
+                          onPressed: () {
+                            showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime(2035))
+                                .then((date) {
+                              setState(() {
+                                if (date.toString().length >= 10) {
+                                  eventDate.text =
+                                      date.toString().substring(0, 10);
+                                }
                               });
-                            },
-                          ),
-                        )
-                      ],
-                    ),
+                            });
+                          },
+                        ),
+                      )
+                    ],
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        side: BorderSide(color: Colors.black45)),
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 5,
-                            child: TextField(
-                              controller: eventTime,
-                              obscureText: false,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                disabledBorder: InputBorder.none,
-                                border: OutlineInputBorder(),
-                                labelText: 'Event Time',
-                                labelStyle: new TextStyle(color: Colors.grey),
-                              ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: TextField(
+                          controller: eventTime,
+                          obscureText: false,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.black45, width: 2.0),
                             ),
-                          ),
-                          Expanded(
-                            child: IconButton(
-                              icon: Icon(Icons.more_time),
-                              onPressed: () => TimeRangePicker.show(
-                                context: context,
-                                unSelectedEmpty: false,
-                                startTime: TimeOfDay(hour: 19, minute: 45),
-                                endTime: TimeOfDay(hour: 21, minute: 22),
-                                onSubmitted: (TimeRangeValue value) {
-                                  setState(() {
-                                    eventTime.text =
-                                        formatTimeOfDay(value.startTime) +
-                                            " - " +
-                                            formatTimeOfDay(value.endTime);
-                                  });
-                                },
-                              ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.black45, width: 2.0),
                             ),
+                            labelText: 'Event Time',
+                            labelStyle: new TextStyle(color: Colors.grey),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                      Expanded(
+                        child: IconButton(
+                          icon: Icon(Icons.more_time),
+                          onPressed: () => TimeRangePicker.show(
+                            context: context,
+                            unSelectedEmpty: false,
+                            startTime: TimeOfDay(hour: 19, minute: 45),
+                            endTime: TimeOfDay(hour: 21, minute: 22),
+                            onSubmitted: (TimeRangeValue value) {
+                              setState(() {
+                                eventTime.text =
+                                    formatTimeOfDay(value.startTime) +
+                                        " - " +
+                                        formatTimeOfDay(value.endTime);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
