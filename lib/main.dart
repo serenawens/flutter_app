@@ -13,7 +13,11 @@ void main() {
   //   'grade': 12,
   //   'email': 'serenw@gmail.com',
   //   'name': "serena wen",
-  //   'role': 'VP'
+  //   'role': 'admin',
+  //   'events owned': {001: "leaf raking", 002: 'food sorting'},
+  //   'events signed up': {
+  //     001: {"event name": 'leaf raking', 'status': 'pending'}
+  //   }
   // };
   // database.update("/Users/" + user1['username'].toString(), user1);
   //
@@ -23,9 +27,14 @@ void main() {
   //   'grade': 11,
   //   'email': 'jd@gmail.com',
   //   'name': "john doe",
-  //   'role': 'member'
+  //   'role': 'member',
+  //   'events signed up': {
+  //     002: {"event name": 'food sorting', 'status': 'confirmed'},
+  //     001: {"event name" : "leaf raking", 'status' : 'confirmed'}
+  //   }
   // };
   // database.update("/Users/" + user2['username'].toString(), user2);
+
   runApp(MyApp());
 }
 

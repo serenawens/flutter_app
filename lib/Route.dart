@@ -30,7 +30,7 @@ class _RouteScreenState extends State<RouteScreen> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
     HomePage(title: "Home"),
-    ProfilePage(title: "Profile")
+    ProfilePage(title: "My Profile")
   ];
 
   void _onItemTapped(int index) {
@@ -40,7 +40,7 @@ class _RouteScreenState extends State<RouteScreen> {
   }
 
   BottomNavigationBar getNavigationBar(String role) {
-    if (role == "Student") {
+    if (role == "member") {
       return BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -50,7 +50,7 @@ class _RouteScreenState extends State<RouteScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Profile',
+            label: 'My Profile',
             backgroundColor: Colors.pink,
           ),
         ],
@@ -68,8 +68,8 @@ class _RouteScreenState extends State<RouteScreen> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Account Info',
+            icon: Icon(Icons.person),
+            label: 'My Profile',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add),

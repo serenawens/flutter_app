@@ -34,40 +34,52 @@ class _DetailsPageState extends State<DetailsPage> {
 
     List<Widget> returnJoinActions() {
       return [
-        ElevatedButton(
-            child: Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        ElevatedButton(
-            child: Text('Confirm Sign Up'),
-            onPressed: () {
-              joinedEvent = true;
-              widget.event?['volunteers'].add("New Member Name");
-              setState(() {
-              });
-              Navigator.of(context).pop();
-            })
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+            ElevatedButton(
+                child: Text('Confirm Sign Up'),
+                onPressed: () {
+                  joinedEvent = true;
+                  widget.event?['volunteers'].add("New Member Name");
+                  setState(() {
+                  });
+                  Navigator.of(context).pop();
+                })
+          ],
+        ),
+
       ];
     }
 
     List<Widget> returnCancelActions() {
       return [
-        ElevatedButton(
-            child: Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        ElevatedButton(
-            child: Text('Confirm'),
-            onPressed: () {
-              joinedEvent = false;
-              widget.event?['volunteers']
-                  .remove("New Member Name");
-              setState(() {
-              });
-              Navigator.of(context).pop();
-            })
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+            ElevatedButton(
+                child: Text('Confirm'),
+                onPressed: () {
+                  joinedEvent = false;
+                  widget.event?['volunteers']
+                      .remove("New Member Name");
+                  setState(() {
+                  });
+                  Navigator.of(context).pop();
+                })
+          ],
+        ),
+
       ];
     }
 
