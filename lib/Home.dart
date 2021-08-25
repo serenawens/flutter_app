@@ -1,5 +1,8 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Details.dart';
+import 'package:intl/intl.dart';
 import 'EditEvent.dart';
 import "User.dart";
 import 'cmdb.dart';
@@ -18,7 +21,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   initState() {
-    getAllEvents();
+    getAllEvents().then((value) {
+      getUserEvents();
+      getPendingInvites();
+    });
   }
 
   User user = new User();
@@ -28,14 +34,70 @@ class _HomePageState extends State<HomePage> {
     database.get<Map<String, dynamic>>('Events').then((value) {
       setState(() {
         value!.forEach((key, value) {
-          allEvents[key] = value as Map<String, dynamic>;
+          DateTime now = DateTime.now();
+          String date = value['date'];
+          final DateFormat formatter = DateFormat('MM-dd-yyyy');
+          DateTime dt1 = formatter.parse(date);
+          if (!dt1.isBefore(now) ||
+              (dt1.day == now.day &&
+                  dt1.year == now.year &&
+                  dt1.month == now.month)) {
+            allEvents[key] = value as Map<String, dynamic>;
+            allEventsList.add(value);
+          }
+        });
+
+        // var sortedKeys = allEvents.keys.toList(growable: false)
+        //   ..sort(
+        //           (k1, k2) => allEvents[k1]!['date']!.compareTo(allEvents[k2]!['date']!));
+        // LinkedHashMap<String, Map<String, dynamic?>> sortedMap =
+        // new LinkedHashMap<String, Map<String, dynamic?>>.fromIterable(
+        //     sortedKeys,
+        //     key: (k) => k,
+        //     value: (k) => allEvents[k]);
+        // print(sortedMap);
+
+        allEventsList.sort((a, b) {
+          final DateFormat formatter = DateFormat('MM-dd-yyyy');
+          DateTime adt = formatter.parse(a['date']);
+          DateTime bdt = formatter.parse(b['date']);
+          // using time to compare: if adt and bdt are the same , compare their start times
+          return adt.compareTo(bdt);
         });
       });
     });
   }
 
+  Future<void> getUserEvents() async {
+    database.get<Map<String, dynamic>>('Users/' + user.info!['username'] + "/events/").then((value) {
+      setState(() {
+        value!.forEach((eventkey, userEventInfo) {
+
+            userEvents[eventkey] = allEvents[eventkey]!;
+          }
+        );
+      });
+    });
+  }
+
+  Future<void> getPendingInvites() async {
+    database.get<Map<String, dynamic>>('Users/' + user.info!['username'] + "/pending/").then((value) {
+      setState(() {
+        value!.forEach((eventkey, userEventInfo) {
+
+          pendingInvites[eventkey] = allEvents[eventkey]!;
+        }
+        );
+      });
+    });
+  }
+
   Map<String, Map<String, dynamic>> allEvents = {};
+  List<Map<String, dynamic>> allEventsList = [];
+
   Map<String, Map<String, dynamic>> userEvents = {};
+  List<Map<String, dynamic>> userEventsList = [];
+
   Map<String, Map<String, dynamic>> pendingInvites = {};
 
   bool allEventsCollapsed = false;
@@ -89,11 +151,11 @@ class _HomePageState extends State<HomePage> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
-                      Radius.circular(5),
+                      Radius.circular(10),
                     ),
                     border: Border.all(
                       width: 3,
-                      color: Colors.green,
+                      color: Colors.orange,
                       style: BorderStyle.solid,
                     ),
                   ),
@@ -121,12 +183,12 @@ class _HomePageState extends State<HomePage> {
                           ? SizedBox()
                           : Container(
                               //change size of the box around event list
-                              height: MediaQuery.of(context).size.height / 3.5,
+                              height: MediaQuery.of(context).size.height / 5,
                               child: ListView.separated(
                                 shrinkWrap: true,
                                 physics: ScrollPhysics(),
                                 padding: const EdgeInsets.all(20),
-                                itemCount: allEvents.length,
+                                itemCount: allEventsList.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   String key = allEvents.keys.elementAt(index);
                                   return Container(
@@ -140,15 +202,15 @@ class _HomePageState extends State<HomePage> {
                                               Align(
                                                   alignment: Alignment.topLeft,
                                                   child: Text(
-                                                      '${allEvents[key]?['name']}',
+                                                      '${allEventsList[index]['name']}',
                                                       style: TextStyle(
                                                           fontSize: 24))),
                                               Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
-                                                    '${allEvents[key]?['time']}' +
+                                                    '${allEventsList[index]['time']}' +
                                                         "  |  " +
-                                                        '${allEvents[key]?['date']}',
+                                                        '${allEventsList[index]['date']}',
                                                     style: TextStyle(
                                                         fontSize: 15)),
                                               ),

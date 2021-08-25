@@ -39,6 +39,13 @@ class _DetailsPageState extends State<DetailsPage> {
     getVolunteers();
   }
 
+  String titleCase(String s) {
+    return s
+        .split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
+  }
+
   void getVolunteers() {
     database
         .get<Map<String, dynamic>>("Events/" + widget.eventKey + "/volunteers/")
@@ -91,7 +98,11 @@ class _DetailsPageState extends State<DetailsPage> {
                       {"name": user.info!['name']});
 
                   database.update(
-                      "Users/" + user.info!['username'] + "/my events/" + widget.eventKey + '/',
+                      "Users/" +
+                          user.info!['username'] +
+                          "/events/" +
+                          widget.eventKey +
+                          '/',
                       {"eventID": widget.eventKey});
                   setState(() {});
                   Navigator.of(context).pop();
@@ -124,8 +135,8 @@ class _DetailsPageState extends State<DetailsPage> {
 
                   database.delete("/Users/" +
                       user.info!['username'] +
-                      "/my events/" +
-                       widget.eventKey +
+                      "/events/" +
+                      widget.eventKey +
                       "/");
                   setState(() {});
                   Navigator.of(context).pop();
@@ -174,7 +185,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     shrinkWrap: true,
                     physics: ScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
-                      return Text('${volunteerList[index]}',
+                      return Text(titleCase('${volunteerList[index]}'),
                           style: TextStyle(fontSize: 15));
                     }),
               ),
@@ -201,8 +212,10 @@ class _DetailsPageState extends State<DetailsPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => InvitationPage(
-                                        title: "Invite a Friend")),
+                                  builder: (context) => InvitationPage(
+                                      title: "Invite a Friend",
+                                      eventKey: widget.eventKey),
+                                ),
                               );
                             },
                           ),
