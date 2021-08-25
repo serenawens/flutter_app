@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/InvitationView.dart';
+import 'User.dart';
+import 'cmdb.dart';
 
 class DetailsPage extends StatefulWidget {
   //Class Constructor
-  DetailsPage({Key? key, required this.title, required this.event})
+  DetailsPage(
+      {Key? key,
+      required this.title,
+      required this.event,
+      required this.eventKey})
       : super(key: key);
 
   //Class instance variable
@@ -11,12 +17,42 @@ class DetailsPage extends StatefulWidget {
 
   final Map<String, dynamic>? event;
 
+  final String eventKey;
+
   @override
   _DetailsPageState createState() => _DetailsPageState();
 }
 
 class _DetailsPageState extends State<DetailsPage> {
   bool joinedEvent = false;
+
+  User user = User();
+
+  CMDB database = CMDB();
+
+  List volunteerList = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getVolunteers();
+  }
+
+  void getVolunteers() {
+    database
+        .get<Map<String, dynamic>>("Events/" + widget.eventKey + "/volunteers/")
+        .then((value) {
+      setState(() {
+        value!.forEach((key, name) {
+          if (user.info!['name'] == name['name']) {
+            joinedEvent = true;
+          }
+          volunteerList.add(name['name']);
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +82,22 @@ class _DetailsPageState extends State<DetailsPage> {
                 child: Text('Confirm Sign Up'),
                 onPressed: () {
                   joinedEvent = true;
-                  widget.event?['volunteers'].add("New Member Name");
-                  setState(() {
-                  });
+                  volunteerList.add(user.info!['name']);
+                  database.update(
+                      "/Events/" +
+                          widget.eventKey +
+                          "/volunteers/" +
+                          user.info!['username'],
+                      {"name": user.info!['name']});
+
+                  database.update(
+                      "Users/" + user.info!['username'] + "/my events/" + widget.eventKey + '/',
+                      {"eventID": widget.eventKey});
+                  setState(() {});
                   Navigator.of(context).pop();
                 })
           ],
         ),
-
       ];
     }
 
@@ -71,15 +115,23 @@ class _DetailsPageState extends State<DetailsPage> {
                 child: Text('Confirm'),
                 onPressed: () {
                   joinedEvent = false;
-                  widget.event?['volunteers']
-                      .remove("New Member Name");
-                  setState(() {
-                  });
+                  volunteerList.remove(user.info!['name']);
+                  database.delete("/Events/" +
+                      widget.eventKey +
+                      "/volunteers/" +
+                      user.info!['username'] +
+                      "/");
+
+                  database.delete("/Users/" +
+                      user.info!['username'] +
+                      "/my events/" +
+                       widget.eventKey +
+                      "/");
+                  setState(() {});
                   Navigator.of(context).pop();
                 })
           ],
         ),
-
       ];
     }
 
@@ -118,11 +170,11 @@ class _DetailsPageState extends State<DetailsPage> {
               Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: ListView.builder(
-                    itemCount: widget.event?['volunteers'].length,
+                    itemCount: volunteerList.length,
                     shrinkWrap: true,
                     physics: ScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
-                      return Text('${widget.event?['volunteers'][index]}',
+                      return Text('${volunteerList[index]}',
                           style: TextStyle(fontSize: 15));
                     }),
               ),
@@ -158,9 +210,10 @@ class _DetailsPageState extends State<DetailsPage> {
                             child: Text('Cancel Sign Up'),
                             onPressed: () {
                               setState(() {
-                                _showDialog("Are you sure you want to cancel your sign up?",
-                                    "Cancel Confirmation", returnCancelActions());
-
+                                _showDialog(
+                                    "Are you sure you want to cancel your sign up?",
+                                    "Cancel Confirmation",
+                                    returnCancelActions());
                               });
                             },
                           ),

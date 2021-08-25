@@ -81,6 +81,7 @@ class CMDB {
       if (jsonResponse == null) {
         return null;
       }
+      print(jsonResponse);
       switch (T.toString().split('<')[0]) {
         case "Map":
           return jsonResponse;

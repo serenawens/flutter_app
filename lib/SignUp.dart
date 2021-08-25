@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Login.dart';
 import 'Route.dart';
+import 'User.dart';
+import 'cmdb.dart';
 
 class SignUpPage extends StatefulWidget {
   //Class Constructor
@@ -14,12 +16,62 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  User user = User();
+  CMDB database = CMDB();
+  Map<String, dynamic>? response;
+  bool isDuplicate = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    database.initialize("serena-test");
+    getResponse();
+  }
+
+  Future<void> getResponse() async {
+    response = await database.get<Map<String, dynamic>>('Users');
+  }
+
+  void _showDialog(String message, String title, List<Widget> actions) {
+    showDialog(
+        context: context,
+        builder: (BuildContext) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: actions,
+          );
+        });
+  }
+
+  List<Widget> returnSignUpError() {
+    return [
+      ElevatedButton(
+          child: Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          }),
+    ];
+  }
+
+  List<Widget> returnUsernameError() {
+    return [
+      ElevatedButton(
+          child: Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          }),
+    ];
+  }
+
   TextEditingController firstName = TextEditingController();
   TextEditingController lastName = TextEditingController();
-  TextEditingController username = TextEditingController();
+  TextEditingController grade = TextEditingController();
   TextEditingController email = TextEditingController();
+  TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
-  TextEditingController phoneNumber = TextEditingController();
+  // TextEditingController phoneNumber = TextEditingController();
 
   String? dropdownValue;
 
@@ -80,12 +132,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       });
                     },
                     hint: Text('  Select Grade'),
-                    items: <String>[
-                      'Freshman',
-                      'Sophomore',
-                      'Junior',
-                      'Senior'
-                    ].map<DropdownMenuItem<String>>((String value) {
+                    items: <String>['Freshman', 'Sophomore', 'Junior', 'Senior']
+                        .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Padding(
@@ -111,9 +159,24 @@ class _SignUpPageState extends State<SignUpPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
+                  onChanged: (String? newValue) {
+                    if (response != null) {
+                      for (var key in response!.keys) {
+                        print(key == username.text);
+                        if (key == username.text) {
+                          isDuplicate = true;
+                          break;
+                        } else {
+                          isDuplicate = false;
+                        }
+                      }
+                    }
+                    setState(() {});
+                  },
                   controller: username,
                   obscureText: false,
                   decoration: InputDecoration(
+                    errorText: isDuplicate ? "This username is taken" : null,
                     border: OutlineInputBorder(),
                     labelText: 'Username',
                   ),
@@ -137,15 +200,41 @@ class _SignUpPageState extends State<SignUpPage> {
                   ElevatedButton(
                     child: Text('Sign Up', style: TextStyle(fontSize: 20)),
                     onPressed: () {
-                      print("Name: " + firstName.text + " " + lastName.text);
-                      print("Grade: " + username.text);
-                      print("Email: " + email.text);
-                      print("Password: " + password.text);
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RouteScreen()),
-                      );
+                      // print(firstName == null);
+                      if (firstName.text.isEmpty ||
+                          lastName.text.isEmpty ||
+                          dropdownValue == null ||
+                          email.text.isEmpty ||
+                          username.text.isEmpty ||
+                          password.text.isEmpty) {
+                        _showDialog("All fields must be filled out",
+                            "Missing Information", returnSignUpError());
+                      } else {
+                        // Sign Up a user (Create a new user)
+                        var newUser = {
+                          "username": username.text.toLowerCase(),
+                          'password': password.text.toLowerCase(),
+                          'grade': dropdownValue!.toLowerCase(),
+                          'email': email.text.toLowerCase(),
+                          'name': firstName.text.toLowerCase() +
+                              " " +
+                              lastName.text.toLowerCase(),
+                          'role': 'member',
+                        };
+
+                        database.update(
+                            "/Users/" + newUser['username'].toString(),
+                            newUser);
+
+                        user.info = newUser;
+
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RouteScreen()),
+                        );
+                      }
                     },
                   ),
                   ElevatedButton(

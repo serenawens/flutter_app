@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:simple_time_range_picker/simple_time_range_picker.dart';
 import 'package:intl/intl.dart';
 
+import 'cmdb.dart';
+
 class AddEventPage extends StatefulWidget {
   //Class Constructor
   AddEventPage({Key? key, required this.title}) : super(key: key);
@@ -14,21 +16,49 @@ class AddEventPage extends StatefulWidget {
 }
 
 class _AddEventPageState extends State<AddEventPage> {
+  CMDB database = CMDB();
+
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    database.initialize("serena-test");
+  }
+
+  void _showDialog(String message, String title, List<Widget> actions) {
+    showDialog(
+        context: context,
+        builder: (BuildContext) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: actions,
+          );
+        });
+  }
+
+  List<Widget> returnCreateError() {
+    return [
+      ElevatedButton(
+          child: Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          }),
+    ];
+  }
+
   TextEditingController eventName = TextEditingController();
   TextEditingController eventDate = TextEditingController();
   TextEditingController eventTime = TextEditingController();
   TextEditingController eventLocation = TextEditingController();
   TextEditingController eventDetails = TextEditingController();
 
-  Map<String, Map<String, String>> addEvent() {
-    Map<String, Map<String, String>> events = {
-      "Volunteer Opportunity #4": {
-        "name": eventName.text,
-        'date': eventDate.text,
-        'time': eventTime.text,
-        'location': eventLocation.text,
-        'details': eventDetails.text,
-      }
+  Map<String, dynamic> addEvent() {
+    Map<String, dynamic> events = {
+      "name": eventName.text,
+      'date': eventDate.text,
+      'time': eventTime.text,
+      'location': eventLocation.text,
+      'details': eventDetails.text,
     };
     return events;
   }
@@ -83,11 +113,11 @@ class _AddEventPageState extends State<AddEventPage> {
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderSide:
-                              BorderSide(color: Colors.black45, width: 2.0),
+                                  BorderSide(color: Colors.black45, width: 2.0),
                             ),
                             border: OutlineInputBorder(
                               borderSide:
-                              BorderSide(color: Colors.black45, width: 2.0),
+                                  BorderSide(color: Colors.black45, width: 2.0),
                             ),
                             labelText: 'Date',
                             labelStyle: new TextStyle(color: Colors.grey),
@@ -100,16 +130,15 @@ class _AddEventPageState extends State<AddEventPage> {
                           icon: Icon(Icons.calendar_today),
                           onPressed: () {
                             showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime(2035))
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime(2035))
                                 .then((date) {
                               setState(() {
-                                if (date.toString().length >= 10) {
-                                  eventDate.text =
-                                      date.toString().substring(0, 10);
-                                }
+                                final DateFormat formatter =
+                                    DateFormat('MM-dd-yyyy');
+                                eventDate.text = formatter.format(date!);
                               });
                             });
                           },
@@ -130,12 +159,12 @@ class _AddEventPageState extends State<AddEventPage> {
                           readOnly: true,
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.black45, width: 2.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black45, width: 2.0),
                             ),
                             border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.black45, width: 2.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black45, width: 2.0),
                             ),
                             labelText: 'Event Time',
                             labelStyle: new TextStyle(color: Colors.grey),
@@ -187,11 +216,22 @@ class _AddEventPageState extends State<AddEventPage> {
                   ),
                 ),
                 ElevatedButton(
-                  child: Text('Create Event', style: TextStyle(fontSize: 20)),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
+                    child: Text('Create Event', style: TextStyle(fontSize: 20)),
+                    onPressed: () {
+                      if (eventName.text.isEmpty ||
+                          eventDate.text.isEmpty ||
+                          eventTime.text.isEmpty ||
+                          eventLocation.text.isEmpty ||
+                          eventDetails.text.isEmpty) {
+                        _showDialog("All fields must be filled out",
+                            "Missing Information", returnCreateError());
+                      } else {
+                        database.create("Events", addEvent());
+
+                        Navigator.pop(context);
+                      }
+                      ;
+                    }),
               ],
             ),
           ),

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/Home.dart';
 import 'AdminEventAdd.dart';
 import 'ProfileInfo.dart';
+import 'User.dart';
 
 /// This is the stateful widget that the main application instantiates.
 class RouteScreen extends StatefulWidget {
@@ -25,6 +26,9 @@ class RouteScreen extends StatefulWidget {
 
 /// This is the private State class that goes with MyStatefulWidget.
 class _RouteScreenState extends State<RouteScreen> {
+
+  User user = User();
+
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -89,7 +93,7 @@ class _RouteScreenState extends State<RouteScreen> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: getNavigationBar("Admin")
+      bottomNavigationBar: getNavigationBar(user.info!['role'])
     );
   }
 }
