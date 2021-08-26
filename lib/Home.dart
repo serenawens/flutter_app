@@ -24,8 +24,15 @@ class _HomePageState extends State<HomePage> {
   Map<String, Map<String, dynamic>> allEvents = {};
   Map<String, Map<String, dynamic>> userEvents = {};
   Map<String, Map<String, dynamic>> pendingInvites = {};
+
+  bool userEventsCollapsed = false;
+  Icon collapseUsers = Icon(Icons.arrow_drop_down_outlined);
+
   bool allEventsCollapsed = false;
-  Icon collapse = Icon(Icons.arrow_drop_down_outlined);
+  Icon collapseAll = Icon(Icons.arrow_drop_down_outlined);
+
+  bool pendingInvitesCollapsed = false;
+  Icon collapsePending = Icon(Icons.arrow_drop_down_outlined);
 
   @override
   initState() {
@@ -50,6 +57,7 @@ class _HomePageState extends State<HomePage> {
     database.get<Map<String, dynamic>>('Events').then((value) {
       if (value != null) {
         setState(() {
+          allEvents = {};
           value.forEach((key, value) {
             DateTime now = DateTime.now();
             String date = value['date'];
@@ -77,6 +85,7 @@ class _HomePageState extends State<HomePage> {
         .then((value) {
       if (value != null) {
         setState(() {
+          userEvents = {};
           value.forEach((eventkey, userEventInfo) {
             userEvents[eventkey] = allEvents[eventkey]!;
           });
@@ -93,6 +102,7 @@ class _HomePageState extends State<HomePage> {
         .then((value) {
       if (value != null) {
         setState(() {
+          pendingInvites = {};
           value.forEach((eventkey, userEventInfo) {
             pendingInvites[eventkey] = allEvents[eventkey]!;
           });
@@ -154,17 +164,43 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(8),
-                child: Card(
+                padding: const EdgeInsets.all(20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                    border: Border.all(
+                      width: 3,
+                      color: Colors.orange,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("Your Events",
-                            style: TextStyle(fontSize: 25)),
-                      ),
+                      ListTile(
+                          title: Text("My Events",
+                              style: TextStyle(fontSize: 28)),
+                          trailing: IconButton(
+                            icon: collapseUsers,
+                            onPressed: () {
+                              setState(() {
+                                if (userEventsCollapsed == false) {
+                                  userEventsCollapsed = true;
+                                  collapseUsers =
+                                      Icon(Icons.arrow_left_outlined);
+                                } else {
+                                  userEventsCollapsed = false;
+                                  collapseUsers = Icon(
+                                      Icons.arrow_drop_down_outlined);
+                                }
+                              });
+                            },
+                          )),
+                      userEventsCollapsed?
+                          SizedBox():
                       Container(
-                        height: MediaQuery.of(context).size.height / 3,
+                        height: MediaQuery.of(context).size.height / 5,
                         child: ListView.separated(
                           shrinkWrap: true,
                           physics: ScrollPhysics(),
@@ -251,16 +287,16 @@ class _HomePageState extends State<HomePage> {
                           title: Text("All Events",
                               style: TextStyle(fontSize: 28)),
                           trailing: IconButton(
-                            icon: collapse,
+                            icon: collapseAll,
                             onPressed: () {
                               setState(() {
                                 if (allEventsCollapsed == false) {
                                   allEventsCollapsed = true;
-                                  collapse =
+                                  collapseAll =
                                       Icon(Icons.arrow_left_outlined);
                                 } else {
                                   allEventsCollapsed = false;
-                                  collapse = Icon(
+                                  collapseAll = Icon(
                                       Icons.arrow_drop_down_outlined);
                                 }
                               });
@@ -380,17 +416,43 @@ class _HomePageState extends State<HomePage> {
               ),
 
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
+                padding: const EdgeInsets.all(20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                    border: Border.all(
+                      width: 3,
+                      color: Colors.orange,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("Pending Invites",
-                            style: TextStyle(fontSize: 25)),
-                      ),
+                      ListTile(
+                          title: Text("Pending Invites",
+                              style: TextStyle(fontSize: 28)),
+                          trailing: IconButton(
+                            icon: collapsePending,
+                            onPressed: () {
+                              setState(() {
+                                if (pendingInvitesCollapsed == false) {
+                                  pendingInvitesCollapsed = true;
+                                  collapsePending =
+                                      Icon(Icons.arrow_left_outlined);
+                                } else {
+                                  pendingInvitesCollapsed = false;
+                                  collapsePending = Icon(
+                                      Icons.arrow_drop_down_outlined);
+                                }
+                              });
+                            },
+                          )),
+                      pendingInvitesCollapsed?
+                          SizedBox():
                       Container(
-                        height: MediaQuery.of(context).size.height / 3,
+                        height: MediaQuery.of(context).size.height / 5,
                         child: ListView.separated(
                           shrinkWrap: true,
                           physics: ScrollPhysics(),
