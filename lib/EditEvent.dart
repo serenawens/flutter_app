@@ -87,7 +87,21 @@ class _EditEventPageState extends State<EditEventPage> {
           ElevatedButton(
               child: Text('Delete'),
               onPressed: () {
-                database.delete("Events/" + widget.eventKey);
+                Map<String, dynamic> events;
+                database.delete("Events/" + widget.eventKey).then((value) {
+                  events = value;
+
+                  //Remove the event from all member "pending" lists
+                  events[widget.eventKey]['pending'].forEach((users, value){
+                    database.delete("Users/" + users + "/pending/" + widget.eventKey);
+                    });
+
+                  //Remove the event from all member event lists
+                  events[widget.eventKey]['volunteers'].forEach((users, value){
+                    database.delete("Users/" + users + "/events/" + widget.eventKey);
+                  });
+
+                });
                 widget.events.remove(widget.eventKey);
                 setState(() {});
                 Navigator.of(context).pop();
@@ -242,7 +256,6 @@ class _EditEventPageState extends State<EditEventPage> {
                               "Are you sure you want to delete this event?",
                               "Delete Event",
                               returnDeleteActions());
-
                         }),
                     ElevatedButton(
                       child:
