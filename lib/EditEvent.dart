@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:simple_time_range_picker/simple_time_range_picker.dart';
 import 'package:intl/intl.dart';
 
+import 'cmdb.dart';
+
 class EditEventPage extends StatefulWidget {
   //Class Constructor
   EditEventPage(
@@ -58,6 +60,44 @@ class _EditEventPageState extends State<EditEventPage> {
     return format.format(dt);
   }
 
+  CMDB database = CMDB();
+
+  void _showDialog(String message, String title, List<Widget> actions) {
+    showDialog(
+        context: context,
+        builder: (BuildContext) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: actions,
+          );
+        });
+  }
+
+  List<Widget> returnDeleteActions() {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+          ElevatedButton(
+              child: Text('Delete'),
+              onPressed: () {
+                database.delete("Events/" + widget.eventKey);
+                widget.events.remove(widget.eventKey);
+                setState(() {});
+                Navigator.of(context).pop();
+                Navigator.pop(context, widget.events);
+              })
+        ],
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +133,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                        flex:5,
+                        flex: 5,
                         child: TextField(
                           obscureText: false,
                           readOnly: true,
@@ -190,20 +230,40 @@ class _EditEventPageState extends State<EditEventPage> {
                     ),
                   ),
                 ),
-                ElevatedButton(
-                  child: Text('Save Changes', style: TextStyle(fontSize: 20)),
-                  onPressed: () {
-                    if (eventName.text == null ||
-                        eventDate.text == null ||
-                        eventTime.text == null ||
-                        eventLocation.text == null ||
-                        eventDetails.text == null) {
-                      Navigator.pop(context);
-                    } else {
-                      addEvent().then(
-                          (value) => Navigator.pop(context, widget.events));
-                    }
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                        child: Text("Delete Event",
+                            style: TextStyle(fontSize: 20)),
+                        onPressed: () {
+                          print("Going to show dialog");
+                          _showDialog(
+                              "Are you sure you want to delete this event?",
+                              "Delete Event",
+                              returnDeleteActions());
+
+                        }),
+                    ElevatedButton(
+                      child:
+                          Text('Save Changes', style: TextStyle(fontSize: 20)),
+                      onPressed: () {
+                        if (eventName.text == null ||
+                            eventDate.text == null ||
+                            eventTime.text == null ||
+                            eventLocation.text == null ||
+                            eventDetails.text == null) {
+                          Navigator.pop(context);
+                        } else {
+                          addEvent().then((value) {
+                            database.update("Events/" + widget.eventKey + "/",
+                                widget.events[widget.eventKey]!);
+                            Navigator.pop(context, widget.events);
+                          });
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -52,7 +52,6 @@ class _InvitationPageState extends State<InvitationPage> {
           ElevatedButton(
               child: Text('Yes, Invite'),
               onPressed: () {
-
                 setState(() {});
                 Navigator.of(context).pop();
               })
@@ -110,15 +109,17 @@ class _InvitationPageState extends State<InvitationPage> {
                 !users[key]['events'].containsKey(widget.eventKey))) {
           tempMap[key] = {
             "name": titleCase(userInfo['name']),
-            "invitedByYou": 'false'
+            "invitedByYou": 'false', "pendingTrue": 'false'
           };
 
-          if (users[key].containsKey('pending') &&
+          if (users[key].containsKey('pending'))
+            if (
               users[key]['pending'].containsKey(widget.eventKey) &&
-              users[key]['pending'][widget.eventKey]['inviter'] ==
-                  user.info!['username']) {
+              users[key]['pending'][widget.eventKey]['inviters']
+                  .containsKey(user.info!['username'])) {
             tempMap[key]!["invitedByYou"] = 'true';
           }
+          tempMap[key]!['pendingTrue'] = 'true';
         }
       });
       var sortedKeys = tempMap.keys.toList(growable: false)
@@ -181,16 +182,36 @@ class _InvitationPageState extends State<InvitationPage> {
                   style: ElevatedButton.styleFrom(primary: Colors.black12))
               : ElevatedButton(
                   onPressed: () {
-                    database.update(
-                        "Users/" +
-                            username +
-                            "/pending/" +
-                            widget.eventKey +
-                            "/",
-                        {
-                          "eventID": widget.eventKey,
-                          "inviter": user.info!["username"]
-                        });
+                    if ( filteredNames[username]!['pendingTrue'] == 'false'){
+                      database.update(
+                          "Users/" +
+                              username +
+                              "/pending/" +
+                              widget.eventKey +
+                              "/",
+                          {"eventID": widget.eventKey}).then((value) {
+                        database.update(
+                            "Users/" +
+                                username +
+                                "/pending/" +
+                                widget.eventKey +
+                                "/inviters/" +
+                                user.info!['username'] +
+                                "/",
+                            {"name": user.info!['name']});
+                      });
+                    }
+                    else{
+                      database.update(
+                          "Users/" +
+                              username +
+                              "/pending/" +
+                              widget.eventKey +
+                              "/inviters/" +
+                              user.info!['username'] +
+                              "/",
+                          {"name": user.info!['name']});
+                    }
                     database.update(
                         "Events/" +
                             widget.eventKey +

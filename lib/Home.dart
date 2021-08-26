@@ -213,7 +213,9 @@ class _HomePageState extends State<HomePage> {
                                                       userEvents[key],
                                                       eventKey: key,
                                                     )),
-                                          );
+                                          ).then((value) {
+                                            getAllEvents();
+                                          });
                                         }),
                                   ),
                                 ],
@@ -328,13 +330,14 @@ class _HomePageState extends State<HomePage> {
                                                       key,
                                                     )),
                                           ).then((value) {
-                                            if (value !=
-                                                null) {
-                                              setState(() {
-                                                allEvents =
-                                                    value;
-                                              });
-                                            }
+                                            // if (value !=
+                                            //     null) {
+                                            //   setState(() {
+                                            //     allEvents =
+                                            //         value;
+                                            //   });
+                                            // }
+                                            getAllEvents();
                                           });
                                         }),
                                   )
@@ -357,7 +360,9 @@ class _HomePageState extends State<HomePage> {
                                                       eventKey:
                                                       key,
                                                     )),
-                                          );
+                                          ).then((value) {
+                                            getAllEvents();
+                                          });
                                         }),
                                   ),
                                 ],
@@ -443,6 +448,7 @@ class _HomePageState extends State<HomePage> {
                                     child: IconButton(
                                         icon: Icon(Icons.more_vert),
                                         onPressed: () {
+
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -454,7 +460,9 @@ class _HomePageState extends State<HomePage> {
                                                       key],
                                                       eventKey: key,
                                                     )),
-                                          );
+                                          ).then((value) {
+                                            getAllEvents();
+                                          });
                                         }),
                                   ),
                                 ],
