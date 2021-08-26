@@ -58,11 +58,16 @@ class _LoginPageState extends State<LoginPage> {
 
   List<Widget> returnLoginError() {
     return [
-      ElevatedButton(
-          child: Text('OK'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          }),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+        ],
+      ),
     ];
   }
 

@@ -159,13 +159,13 @@ class _DetailsPageState extends State<DetailsPage> {
             children: <Widget>[
               ListTile(
                 title:
-                    Text(widget.event?["name"], style: TextStyle(fontSize: 50)),
+                    Text(titleCase(widget.event?["name"]), style: TextStyle(fontSize: 50)),
                 subtitle: Text(
                     widget.event?["date"] +
-                        " " +
+                        "\n" +
                         widget.event?['time'] +
                         "\n" +
-                        widget.event?['location'],
+                        titleCase(widget.event?['location']),
                     style: TextStyle(fontSize: 20)),
               ),
               ListTile(

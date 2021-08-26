@@ -69,27 +69,36 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getUserEvents() async {
-    database.get<Map<String, dynamic>>('Users/' + user.info!['username'] + "/events/").then((value) {
+    database
+        .get<Map<String, dynamic>>(
+            'Users/' + user.info!['username'] + "/events/")
+        .then((value) {
       setState(() {
         value!.forEach((eventkey, userEventInfo) {
-
-            userEvents[eventkey] = allEvents[eventkey]!;
-          }
-        );
+          userEvents[eventkey] = allEvents[eventkey]!;
+        });
       });
     });
   }
 
   Future<void> getPendingInvites() async {
-    database.get<Map<String, dynamic>>('Users/' + user.info!['username'] + "/pending/").then((value) {
+    database
+        .get<Map<String, dynamic>>(
+            'Users/' + user.info!['username'] + "/pending/")
+        .then((value) {
       setState(() {
         value!.forEach((eventkey, userEventInfo) {
-
           pendingInvites[eventkey] = allEvents[eventkey]!;
-        }
-        );
+        });
       });
     });
+  }
+
+  String titleCase(String s) {
+    return s
+        .split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
   }
 
   Map<String, Map<String, dynamic>> allEvents = {};
@@ -101,7 +110,14 @@ class _HomePageState extends State<HomePage> {
   Map<String, Map<String, dynamic>> pendingInvites = {};
 
   bool allEventsCollapsed = false;
-  Icon collapse = Icon(Icons.arrow_drop_down_outlined);
+  Icon collapseAll = Icon(Icons.arrow_drop_down_outlined);
+
+  bool yourEventsCollapsed = false;
+  Icon collapseUsers = Icon(Icons.arrow_drop_down_outlined);
+
+  bool pendingCollapsed = false;
+  Icon collapsePending = Icon(Icons.arrow_drop_down_outlined);
+
 
   @override
   Widget build(BuildContext context) {
@@ -162,18 +178,126 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       ListTile(
+                          title: Padding(
+                            padding: const EdgeInsets.only(left: 70, right: 0),
+                            child: Text("Your Events",
+                                style: TextStyle(fontSize: 28)),
+                          ),
+                          trailing: IconButton(
+                            icon: collapseUsers,
+                            onPressed: () {
+                              setState(() {
+                                if (yourEventsCollapsed == false) {
+                                  yourEventsCollapsed = true;
+                                  collapseUsers =
+                                      Icon(Icons.arrow_left_outlined);
+                                } else {
+                                  yourEventsCollapsed = false;
+                                  collapseUsers =
+                                      Icon(Icons.arrow_drop_down_outlined);
+                                }
+                              });
+                            },
+                          )),
+                      yourEventsCollapsed
+                          ? SizedBox(
+                              height: 0,
+                            )
+                          : Container(
+                              height: MediaQuery.of(context).size.height / 5,
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: ScrollPhysics(),
+                                padding: const EdgeInsets.all(20),
+                                itemCount: userEvents.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  String key = userEvents.keys.elementAt(index);
+                                  return Container(
+                                    height: 50,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 7,
+                                          child: Column(
+                                            children: [
+                                              Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: Text(
+                                                      titleCase(
+                                                          '${userEvents[key]?['name']}'),
+                                                      style: TextStyle(
+                                                          fontSize: 22))),
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                    '${userEvents[key]?['time']}' +
+                                                        "  |  " +
+                                                        '${userEvents[key]?['date']}',
+                                                    style: TextStyle(
+                                                        fontSize: 17)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: IconButton(
+                                              icon: Icon(Icons.more_vert),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DetailsPage(
+                                                            title: "Event Info",
+                                                            event:
+                                                                userEvents[key],
+                                                            eventKey: key,
+                                                          )),
+                                                );
+                                              }),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) =>
+                                        const Divider(color: Colors.black26),
+                              ),
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                    border: Border.all(
+                      width: 3,
+                      color: Colors.orange,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      ListTile(
                           title: Text("All Events",
                               style: TextStyle(fontSize: 28)),
                           trailing: IconButton(
-                            icon: collapse,
+                            icon: collapseAll,
                             onPressed: () {
                               setState(() {
                                 if (allEventsCollapsed == false) {
                                   allEventsCollapsed = true;
-                                  collapse = Icon(Icons.arrow_left_outlined);
+                                  collapseAll = Icon(Icons.arrow_left_outlined);
                                 } else {
                                   allEventsCollapsed = false;
-                                  collapse =
+                                  collapseAll =
                                       Icon(Icons.arrow_drop_down_outlined);
                                 }
                               });
@@ -202,7 +326,8 @@ class _HomePageState extends State<HomePage> {
                                               Align(
                                                   alignment: Alignment.topLeft,
                                                   child: Text(
-                                                      '${allEventsList[index]['name']}',
+                                                      titleCase(
+                                                          '${allEventsList[index]['name']}'),
                                                       style: TextStyle(
                                                           fontSize: 24))),
                                               Align(
@@ -278,166 +403,136 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8),
-                child: Card(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child:
-                            Text("Your Events", style: TextStyle(fontSize: 25)),
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height / 3,
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: ScrollPhysics(),
-                          padding: const EdgeInsets.all(20),
-                          itemCount: userEvents.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            String key = userEvents.keys.elementAt(index);
-                            return Container(
-                              height: 50,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 7,
-                                    child: Column(
-                                      children: [
-                                        Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                                '${userEvents[key]?['name']}',
-                                                style:
-                                                    TextStyle(fontSize: 22))),
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                              '${userEvents[key]?['time']}' +
-                                                  "  |  " +
-                                                  '${userEvents[key]?['date']}',
-                                              style: TextStyle(fontSize: 17)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: IconButton(
-                                        icon: Icon(Icons.more_vert),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DetailsPage(
-                                                      title: "Event Info",
-                                                      event: userEvents[key],
-                                                      eventKey: key,
-                                                    )),
-                                          );
-                                        }),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(color: Colors.black26),
-                        ),
-                      ),
-                    ],
+                padding: const EdgeInsets.all(20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                    border: Border.all(
+                      width: 3,
+                      color: Colors.orange,
+                      style: BorderStyle.solid,
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("Pending Invites",
-                            style: TextStyle(fontSize: 25)),
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height / 3,
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: ScrollPhysics(),
-                          padding: const EdgeInsets.all(20),
-                          itemCount: pendingInvites.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            String key = pendingInvites.keys.elementAt(index);
-                            return Container(
-                              height: 50,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 7,
-                                    child: Column(
-                                      children: [
-                                        Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                                '${pendingInvites[key]?['name']}',
-                                                style:
-                                                    TextStyle(fontSize: 22))),
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                              '${pendingInvites[key]?['time']}' +
-                                                  "  |  " +
-                                                  '${pendingInvites[key]?['date']}',
-                                              style: TextStyle(fontSize: 17)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Expanded(
-                                  //     flex: 3,
-                                  //     child: OutlinedButton(
-                                  //       style: OutlinedButton.styleFrom(
-                                  //           side: BorderSide(
-                                  //               color: Colors.orange)),
-                                  //       child: Text("ACCEPT"),
-                                  //       onPressed: () {
-                                  //         setState(() {
-                                  //           _showDialog(
-                                  //               "Do you want to accept event invite?",
-                                  //               "Sign Up Confirmation",
-                                  //               returnJoinActions());
-                                  //         }
-                                  //             //REMOVE EVENT FROM PENDING + ADD TO 'YOUR EVENTS'
-                                  //             );
-                                  //       },
-                                  //     )),
-                                  Expanded(
-                                    flex: 1,
-                                    child: IconButton(
-                                        icon: Icon(Icons.more_vert),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DetailsPage(
-                                                      title: "Event Info",
-                                                      event:
-                                                          pendingInvites[key],
-                                                      eventKey: key,
-                                                    )),
-                                          );
-                                        }),
-                                  ),
-                                ],
+                      ListTile(
+                          title: Text("Pending Invites",
+                              style: TextStyle(fontSize: 28)),
+                          trailing: IconButton(
+                            icon: collapsePending,
+                            onPressed: () {
+                              setState(() {
+                                if (pendingCollapsed == false) {
+                                  pendingCollapsed = true;
+                                  collapsePending =
+                                      Icon(Icons.arrow_left_outlined);
+                                } else {
+                                  pendingCollapsed = false;
+                                  collapsePending =
+                                      Icon(Icons.arrow_drop_down_outlined);
+                                }
+                              });
+                            },
+                          )),
+                      pendingCollapsed
+                          ? SizedBox()
+                          : Container(
+                              height: MediaQuery.of(context).size.height / 5,
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: ScrollPhysics(),
+                                padding: const EdgeInsets.all(20),
+                                itemCount: pendingInvites.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  String key =
+                                      pendingInvites.keys.elementAt(index);
+                                  print(pendingInvites.length);
+                                  if (pendingInvites.length < 1) {
+                                    return Container(
+                                      height: 50,
+                                      child: Text("No Pending Invites", style: TextStyle(color: Colors.black))
+                                    );
+                                  } else {
+                                    print("hello world");
+                                    return Container(
+                                      height: 50,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 7,
+                                            child: Column(
+                                              children: [
+                                                Align(
+                                                    alignment:
+                                                        Alignment.topLeft,
+                                                    child: Text(
+                                                        titleCase(
+                                                            '${pendingInvites[key]?['name']}'),
+                                                        style: TextStyle(
+                                                            fontSize: 22))),
+                                                Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                      '${pendingInvites[key]?['time']}' +
+                                                          "  |  " +
+                                                          '${pendingInvites[key]?['date']}',
+                                                      style: TextStyle(
+                                                          fontSize: 17)),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          // Expanded(
+                                          //     flex: 3,
+                                          //     child: OutlinedButton(
+                                          //       style: OutlinedButton.styleFrom(
+                                          //           side: BorderSide(
+                                          //               color: Colors.orange)),
+                                          //       child: Text("ACCEPT"),
+                                          //       onPressed: () {
+                                          //         setState(() {
+                                          //           _showDialog(
+                                          //               "Do you want to accept event invite?",
+                                          //               "Sign Up Confirmation",
+                                          //               returnJoinActions());
+                                          //         }
+                                          //             //REMOVE EVENT FROM PENDING + ADD TO 'YOUR EVENTS'
+                                          //             );
+                                          //       },
+                                          //     )),
+                                          Expanded(
+                                            flex: 1,
+                                            child: IconButton(
+                                                icon: Icon(Icons.more_vert),
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            DetailsPage(
+                                                              title:
+                                                                  "Event Info",
+                                                              event:
+                                                                  pendingInvites[
+                                                                      key],
+                                                              eventKey: key,
+                                                            )),
+                                                  );
+                                                }),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) =>
+                                        const Divider(color: Colors.black26),
                               ),
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(color: Colors.black26),
-                        ),
-                      ),
+                            ),
                     ],
                   ),
                 ),

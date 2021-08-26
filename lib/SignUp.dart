@@ -47,21 +47,31 @@ class _SignUpPageState extends State<SignUpPage> {
 
   List<Widget> returnSignUpError() {
     return [
-      ElevatedButton(
-          child: Text('OK'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          }),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+        ],
+      ),
     ];
   }
 
   List<Widget> returnUsernameError() {
     return [
-      ElevatedButton(
-          child: Text('OK'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          }),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+        ],
+      ),
     ];
   }
 

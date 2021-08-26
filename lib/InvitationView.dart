@@ -27,6 +27,40 @@ class _InvitationPageState extends State<InvitationPage> {
   CMDB database = CMDB();
   User user = User();
 
+  void _showDialog(String message, String title, List<Widget> actions) {
+    showDialog(
+        context: context,
+        builder: (BuildContext) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: actions,
+          );
+        });
+  }
+
+  List<Widget> returnInviteActions() {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+              child: Text('Nevermind'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+          ElevatedButton(
+              child: Text('Yes, Invite'),
+              onPressed: () {
+
+                setState(() {});
+                Navigator.of(context).pop();
+              })
+        ],
+      ),
+    ];
+  }
+
   final TextEditingController _filter = new TextEditingController();
 
   String _searchText = "";
