@@ -38,55 +38,6 @@
 //
 //   runApp(AnApp());
 // }
-//
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         // This is the theme of your application.
-//         //
-//         // Try running your application with "flutter run". You'll see the
-//         // application has a blue toolbar. Then, without quitting the app, try
-//         // changing the primarySwatch below to Colors.green and then invoke
-//         // "hot reload" (press "r" in the console where you ran "flutter run",
-//         // or simply save your changes to "hot reload" in a Flutter IDE).
-//         // Notice that the counter didn't reset back to zero; the application
-//         // is not restarted.
-//         primarySwatch: Colors.orange,
-//
-//         visualDensity: VisualDensity.adaptivePlatformDensity,
-//       ),
-//       home: AnApp(),
-//     );
-//   }
-// }
-//
-// class AnApp extends StatefulWidget {
-//   @override
-//   _AnAppState createState() => new _AnAppState();
-// }
-//
-// class _AnAppState extends State<AnApp> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return new SplashScreen(
-//         seconds: 10,
-//         navigateAfterSeconds: new LoginPage(title: "Login"),
-//         title: new Text(
-//           'Welcome In SplashScreen',
-//           style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-//         ),
-//         image: new Image.network('https://i.imgur.com/TyCSG9A.png'),
-//         backgroundColor: Colors.white,
-//         styleTextUnderTheLoader: new TextStyle(),
-//         photoSize: 100.0,
-//         onClick: () => print("Flutter Egypt"),
-//         loaderColor: Colors.red);
-//   }
-// }
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Login.dart';

@@ -93,20 +93,13 @@ class _EditEventPageState extends State<EditEventPage> {
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                        flex: 5,
+                        flex:5,
                         child: TextField(
                           obscureText: false,
                           readOnly: true,
                           controller: eventDate,
                           decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.black45, width: 2.0),
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.black45, width: 2.0),
-                            ),
+                            border: OutlineInputBorder(),
                             labelText: 'Date',
                             labelStyle: new TextStyle(color: Colors.grey),
                           ),
@@ -147,14 +140,7 @@ class _EditEventPageState extends State<EditEventPage> {
                           obscureText: false,
                           readOnly: true,
                           decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.black45, width: 2.0),
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.black45, width: 2.0),
-                            ),
+                            border: OutlineInputBorder(),
                             labelText: 'Event Time',
                             labelStyle: new TextStyle(color: Colors.grey),
                           ),
