@@ -121,6 +121,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     void _showDialog(String message, String title, List<Widget> actions) {
       showDialog(
           context: context,
@@ -440,150 +441,150 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                        border: Border.all(
-                          width: 3,
-                          color: Colors.orange,
-                          style: BorderStyle.solid,
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          ListTile(
-                              title: Text("Pending Invites",
-                                  style: TextStyle(fontSize: 28)),
-                              trailing: IconButton(
-                                icon: collapsePending,
-                                onPressed: () {
-                                  setState(() {
-                                    if (pendingInvitesCollapsed == false) {
-                                      pendingInvitesCollapsed = true;
-                                      collapsePending =
-                                          Icon(Icons.arrow_left_outlined);
-                                    } else {
-                                      pendingInvitesCollapsed = false;
-                                      collapsePending =
-                                          Icon(Icons.arrow_drop_down_outlined);
-                                    }
-                                  });
-                                },
-                              )),
-                          pendingInvitesCollapsed
-                              ? SizedBox()
-                              : Container(
-                                  height:
-                                      MediaQuery.of(context).size.height / 5,
-                                  child: pendingInvites.isNotEmpty
-                                      ? ListView.separated(
-                                          shrinkWrap: true,
-                                          physics: ScrollPhysics(),
-                                          padding: const EdgeInsets.all(20),
-                                          itemCount: pendingInvites.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            String key = pendingInvites.keys
-                                                .elementAt(index);
-                                            return Container(
-                                              height: 50,
-                                              child: Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 7,
-                                                    child: Column(
-                                                      children: [
-                                                        Align(
-                                                            alignment: Alignment
-                                                                .topLeft,
-                                                            child: Text(
-                                                                '${pendingInvites[key]?['name']}',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        22))),
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          child: Text(
-                                                              '${pendingInvites[key]?['time']}' +
-                                                                  "  |  " +
-                                                                  '${pendingInvites[key]?['date']}',
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      17)),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  // Expanded(
-                                                  //     flex: 3,
-                                                  //     child: OutlinedButton(
-                                                  //       style: OutlinedButton.styleFrom(
-                                                  //           side: BorderSide(
-                                                  //               color: Colors.orange)),
-                                                  //       child: Text("ACCEPT"),
-                                                  //       onPressed: () {
-                                                  //         setState(() {
-                                                  //           _showDialog(
-                                                  //               "Do you want to accept event invite?",
-                                                  //               "Sign Up Confirmation",
-                                                  //               returnJoinActions());
-                                                  //         }
-                                                  //             //REMOVE EVENT FROM PENDING + ADD TO 'YOUR EVENTS'
-                                                  //             );
-                                                  //       },
-                                                  //     )),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: IconButton(
-                                                        icon: Icon(
-                                                            Icons.more_vert),
-                                                        onPressed: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        DetailsPage(
-                                                                          title:
-                                                                              "Event Info",
-                                                                          event:
-                                                                              pendingInvites[key],
-                                                                          eventKey:
-                                                                              key,
-                                                                        )),
-                                                          ).then((value) {
-                                                            getAllEvents();
-                                                          });
-                                                        }),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                          separatorBuilder:
-                                              (BuildContext context,
-                                                      int index) =>
-                                                  const Divider(
-                                                      color: Colors.black26),
-                                        )
-                                      : Center(
-                                          child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 20),
-                                          child: Text("No Invites Yet",
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.grey)),
-                                        ))),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(20),
+                  //   child: Container(
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.all(
+                  //         Radius.circular(10),
+                  //       ),
+                  //       border: Border.all(
+                  //         width: 3,
+                  //         color: Colors.orange,
+                  //         style: BorderStyle.solid,
+                  //       ),
+                  //     ),
+                  //     child: Column(
+                  //       children: [
+                  //         ListTile(
+                  //             title: Text("Pending Invites",
+                  //                 style: TextStyle(fontSize: 28)),
+                  //             trailing: IconButton(
+                  //               icon: collapsePending,
+                  //               onPressed: () {
+                  //                 setState(() {
+                  //                   if (pendingInvitesCollapsed == false) {
+                  //                     pendingInvitesCollapsed = true;
+                  //                     collapsePending =
+                  //                         Icon(Icons.arrow_left_outlined);
+                  //                   } else {
+                  //                     pendingInvitesCollapsed = false;
+                  //                     collapsePending =
+                  //                         Icon(Icons.arrow_drop_down_outlined);
+                  //                   }
+                  //                 });
+                  //               },
+                  //             )),
+                  //         pendingInvitesCollapsed
+                  //             ? SizedBox()
+                  //             : Container(
+                  //                 height:
+                  //                     MediaQuery.of(context).size.height / 5,
+                  //                 child: pendingInvites.isNotEmpty
+                  //                     ? ListView.separated(
+                  //                         shrinkWrap: true,
+                  //                         physics: ScrollPhysics(),
+                  //                         padding: const EdgeInsets.all(20),
+                  //                         itemCount: pendingInvites.length,
+                  //                         itemBuilder: (BuildContext context,
+                  //                             int index) {
+                  //                           String key = pendingInvites.keys
+                  //                               .elementAt(index);
+                  //                           return Container(
+                  //                             height: 50,
+                  //                             child: Row(
+                  //                               children: [
+                  //                                 Expanded(
+                  //                                   flex: 7,
+                  //                                   child: Column(
+                  //                                     children: [
+                  //                                       Align(
+                  //                                           alignment: Alignment
+                  //                                               .topLeft,
+                  //                                           child: Text(
+                  //                                               '${pendingInvites[key]?['name']}',
+                  //                                               style: TextStyle(
+                  //                                                   fontSize:
+                  //                                                       22))),
+                  //                                       Align(
+                  //                                         alignment: Alignment
+                  //                                             .centerLeft,
+                  //                                         child: Text(
+                  //                                             '${pendingInvites[key]?['time']}' +
+                  //                                                 "  |  " +
+                  //                                                 '${pendingInvites[key]?['date']}',
+                  //                                             style: TextStyle(
+                  //                                                 fontSize:
+                  //                                                     17)),
+                  //                                       ),
+                  //                                     ],
+                  //                                   ),
+                  //                                 ),
+                  //                                 // Expanded(
+                  //                                 //     flex: 3,
+                  //                                 //     child: OutlinedButton(
+                  //                                 //       style: OutlinedButton.styleFrom(
+                  //                                 //           side: BorderSide(
+                  //                                 //               color: Colors.orange)),
+                  //                                 //       child: Text("ACCEPT"),
+                  //                                 //       onPressed: () {
+                  //                                 //         setState(() {
+                  //                                 //           _showDialog(
+                  //                                 //               "Do you want to accept event invite?",
+                  //                                 //               "Sign Up Confirmation",
+                  //                                 //               returnJoinActions());
+                  //                                 //         }
+                  //                                 //             //REMOVE EVENT FROM PENDING + ADD TO 'YOUR EVENTS'
+                  //                                 //             );
+                  //                                 //       },
+                  //                                 //     )),
+                  //                                 Expanded(
+                  //                                   flex: 1,
+                  //                                   child: IconButton(
+                  //                                       icon: Icon(
+                  //                                           Icons.more_vert),
+                  //                                       onPressed: () {
+                  //                                         Navigator.push(
+                  //                                           context,
+                  //                                           MaterialPageRoute(
+                  //                                               builder:
+                  //                                                   (context) =>
+                  //                                                       DetailsPage(
+                  //                                                         title:
+                  //                                                             "Event Info",
+                  //                                                         event:
+                  //                                                             pendingInvites[key],
+                  //                                                         eventKey:
+                  //                                                             key,
+                  //                                                       )),
+                  //                                         ).then((value) {
+                  //                                           getAllEvents();
+                  //                                         });
+                  //                                       }),
+                  //                                 ),
+                  //                               ],
+                  //                             ),
+                  //                           );
+                  //                         },
+                  //                         separatorBuilder:
+                  //                             (BuildContext context,
+                  //                                     int index) =>
+                  //                                 const Divider(
+                  //                                     color: Colors.black26),
+                  //                       )
+                  //                     : Center(
+                  //                         child: Padding(
+                  //                         padding:
+                  //                             const EdgeInsets.only(bottom: 20),
+                  //                         child: Text("No Invites Yet",
+                  //                             style: TextStyle(
+                  //                                 fontSize: 20,
+                  //                                 color: Colors.grey)),
+                  //                       ))),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             )

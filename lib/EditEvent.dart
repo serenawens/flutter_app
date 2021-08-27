@@ -29,13 +29,19 @@ class _EditEventPageState extends State<EditEventPage> {
   TextEditingController eventDate = TextEditingController();
   TextEditingController eventTime = TextEditingController();
   TextEditingController eventLocation = TextEditingController();
+  TextEditingController eventLimit = TextEditingController();
   TextEditingController eventDetails = TextEditingController();
 
   void setEventValues() {
+
+    int volunteerLimit = widget.events[widget.eventKey]?["volunteerLimit"];
+    String limit = volunteerLimit.toString();
+
     eventName.text = widget.events[widget.eventKey]?["name"];
     eventDate.text = widget.events[widget.eventKey]?["date"];
     eventTime.text = widget.events[widget.eventKey]?["time"];
     eventLocation.text = widget.events[widget.eventKey]?["location"];
+    eventLimit.text = limit;
     eventDetails.text = widget.events[widget.eventKey]?["details"];
   }
 
@@ -50,6 +56,7 @@ class _EditEventPageState extends State<EditEventPage> {
     widget.events[widget.eventKey]?["date"] = eventDate.text;
     widget.events[widget.eventKey]?["time"] = eventTime.text;
     widget.events[widget.eventKey]?["location"] = eventLocation.text;
+    widget.events[widget.eventKey]?["volunteerLimit"] = eventLimit.text;
     widget.events[widget.eventKey]?["details"] = eventDetails.text;
   }
 
@@ -236,6 +243,17 @@ class _EditEventPageState extends State<EditEventPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    controller: eventLimit,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Volunteer Limit',
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
                     controller: eventDetails,
                     obscureText: false,
                     decoration: InputDecoration(
@@ -265,6 +283,7 @@ class _EditEventPageState extends State<EditEventPage> {
                             eventDate.text == null ||
                             eventTime.text == null ||
                             eventLocation.text == null ||
+                            eventLimit.text == null ||
                             eventDetails.text == null) {
                           Navigator.pop(context);
                         } else {

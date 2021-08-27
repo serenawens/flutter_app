@@ -50,6 +50,7 @@ class _AddEventPageState extends State<AddEventPage> {
   TextEditingController eventDate = TextEditingController();
   TextEditingController eventTime = TextEditingController();
   TextEditingController eventLocation = TextEditingController();
+  TextEditingController eventLimit = TextEditingController();
   TextEditingController eventDetails = TextEditingController();
 
   Map<String, dynamic> addEvent() {
@@ -58,6 +59,7 @@ class _AddEventPageState extends State<AddEventPage> {
       'date': eventDate.text,
       'time': eventTime.text,
       'location': eventLocation.text,
+      'volunteerLimit': eventLimit.text,
       'details': eventDetails.text,
     };
     return events;
@@ -207,6 +209,17 @@ class _AddEventPageState extends State<AddEventPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    controller: eventLimit,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Volunteer Limit',
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
                     controller: eventDetails,
                     obscureText: false,
                     decoration: InputDecoration(
@@ -222,6 +235,7 @@ class _AddEventPageState extends State<AddEventPage> {
                           eventDate.text.isEmpty ||
                           eventTime.text.isEmpty ||
                           eventLocation.text.isEmpty ||
+                          eventLimit.text.isEmpty||
                           eventDetails.text.isEmpty) {
                         _showDialog("All fields must be filled out",
                             "Missing Information", returnCreateError());

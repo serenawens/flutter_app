@@ -12,6 +12,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Home.dart';
+import 'package:flutter_app/PendingInvites.dart';
 import 'AdminEventAdd.dart';
 import 'ProfileInfo.dart';
 import 'User.dart';
@@ -29,11 +30,13 @@ class _RouteScreenState extends State<RouteScreen> {
 
   User user = User();
 
+
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
     HomePage(title: "Home"),
+    InvitesPage(title: "Event Invites"),
     ProfilePage(title: "My Profile")
   ];
 
@@ -53,7 +56,12 @@ class _RouteScreenState extends State<RouteScreen> {
             backgroundColor: Colors.red,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.mail),
+            label: 'Invites',
+            backgroundColor: Colors.red,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
             label: 'My Profile',
             backgroundColor: Colors.pink,
           ),
@@ -69,7 +77,11 @@ class _RouteScreenState extends State<RouteScreen> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label:'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.mail),
+            label: 'Invites',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -83,6 +95,7 @@ class _RouteScreenState extends State<RouteScreen> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
       );
     }
   }

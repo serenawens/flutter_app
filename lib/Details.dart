@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/InvitationView.dart';
+import 'package:intl/intl.dart';
 import 'User.dart';
 import 'cmdb.dart';
 
@@ -25,11 +26,8 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   bool joinedEvent = false;
-
   User user = User();
-
   CMDB database = CMDB();
-
   List volunteerList = [];
 
   @override
@@ -38,6 +36,132 @@ class _DetailsPageState extends State<DetailsPage> {
     super.initState();
     getVolunteers();
   }
+
+  String getDateWordForm(String date){
+
+    final DateFormat formatter = DateFormat('MM-dd-yyyy');
+    DateTime dt = formatter.parse(date);
+    int weekday = dt.weekday;
+    int month = dt.month;
+    int day = dt.day;
+
+    String strWeekday;
+    String strMonth;
+
+    switch(weekday) {
+      case 1: {
+        strWeekday = "Monday";
+      }
+      break;
+
+      case 2: {
+        strWeekday =  "Tuesday";
+      }
+      break;
+
+      case 3: {
+        strWeekday =  "Wednesday";
+      }
+      break;
+
+      case 4: {
+        strWeekday =  "Thursday";
+      }
+      break;
+
+      case 5: {
+        strWeekday =  "Friday";
+      }
+      break;
+
+      case 6: {
+        strWeekday =  "Saturday";
+      }
+      break;
+
+      case 7: {
+        strWeekday =  "Sunday";
+      }
+      break;
+
+      default: {
+        strWeekday = " ";
+      }
+      break;
+    }
+
+    switch(month) {
+      case 1: {
+        strMonth = "January";
+      }
+      break;
+
+      case 2: {
+        strMonth =  "February";
+      }
+      break;
+
+      case 3: {
+        strMonth = "March";
+      }
+      break;
+
+      case 4: {
+        strMonth = "April";
+      }
+      break;
+
+      case 5: {
+        strMonth = "May";
+      }
+      break;
+
+      case 6: {
+        strMonth = "June";
+      }
+      break;
+
+      case 7: {
+        strMonth = "July";
+      }
+      break;
+
+      case 8: {
+        strMonth = "August";
+      }
+      break;
+
+      case 9: {
+        strMonth = "September";
+      }
+      break;
+
+      case 10: {
+        strMonth = "October";
+      }
+      break;
+
+      case 11: {
+        strMonth = "November";
+      }
+      break;
+
+      case 12: {
+        strMonth = "December";
+      }
+      break;
+
+      default: {
+        strMonth = " ";
+      }
+      break;
+    }
+
+    print(strWeekday + ", " + strMonth + " " + day.toString());
+    return (strWeekday + ", " + strMonth + " " + day.toString());
+
+  }
+
 
   String titleCase(String s) {
     return s
@@ -70,6 +194,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+
     void _showDialog(String message, String title, List<Widget> actions) {
       showDialog(
           context: context,
@@ -188,7 +313,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       title: Text(titleCase(widget.event?["name"]),
                           style: TextStyle(fontSize: 50)),
                       subtitle: Text(
-                          widget.event?["date"] +
+                          getDateWordForm(widget.event?["date"]) +
                               "\n" +
                               widget.event?['time'] +
                               "\n" +
