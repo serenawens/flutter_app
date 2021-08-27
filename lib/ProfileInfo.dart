@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   alignment: Alignment.centerLeft,
                   child: Text(titleCase(user.info!["name"]))),
               Text(user.info!["username"]),
-              Text(user.info!["email"]),
+              Text(user.info!["phoneNumber"].toString()),
               Text(user.info!["role"]),
               SizedBox(height: 30),
               TextButton(

@@ -78,7 +78,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController firstName = TextEditingController();
   TextEditingController lastName = TextEditingController();
   TextEditingController grade = TextEditingController();
-  TextEditingController email = TextEditingController();
+  TextEditingController phoneNumber = TextEditingController();
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   // TextEditingController phoneNumber = TextEditingController();
@@ -158,11 +158,11 @@ class _SignUpPageState extends State<SignUpPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
-                  controller: email,
+                  controller: phoneNumber,
                   obscureText: false,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Email',
+                    labelText: 'Phone Number',
                   ),
                 ),
               ),
@@ -214,7 +214,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       if (firstName.text.isEmpty ||
                           lastName.text.isEmpty ||
                           dropdownValue == null ||
-                          email.text.isEmpty ||
+                          phoneNumber.text.isEmpty ||
                           username.text.isEmpty ||
                           password.text.isEmpty) {
                         _showDialog("All fields must be filled out",
@@ -225,7 +225,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           "username": username.text.toLowerCase(),
                           'password': password.text.toLowerCase(),
                           'grade': dropdownValue!.toLowerCase(),
-                          'email': email.text.toLowerCase(),
+                          'phoneNumber': phoneNumber.text.toLowerCase(),
                           'name': firstName.text.toLowerCase() +
                               " " +
                               lastName.text.toLowerCase(),
