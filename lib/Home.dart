@@ -326,9 +326,10 @@ class _HomePageState extends State<HomePage> {
                               ? SizedBox()
                               : Container(
                                   //change size of the box around event list
-                                  height:
-                                      MediaQuery.of(context).size.height / 5,
-                                  child: ListView.separated(
+                                  height: MediaQuery.of(context).size.height / 5,
+                                  child:
+                                  allEvents.isNotEmpty?
+                                  ListView.separated(
                                     shrinkWrap: true,
                                     physics: ScrollPhysics(),
                                     padding: const EdgeInsets.all(20),
@@ -426,7 +427,14 @@ class _HomePageState extends State<HomePage> {
                                     separatorBuilder: (BuildContext context,
                                             int index) =>
                                         const Divider(color: Colors.black26),
-                                  ),
+                                  ): Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(bottom: 20),
+                                        child: Text("No Events Yet",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.grey)),
+                                      ))
                                 ),
                         ],
                       ),
