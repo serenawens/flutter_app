@@ -94,25 +94,35 @@ class _EditEventPageState extends State<EditEventPage> {
           ElevatedButton(
               child: Text('Delete'),
               onPressed: () {
-                Map<String, dynamic> events;
-                database.delete("Events/" + widget.eventKey).then((value) {
-                  events = value;
+                Map pendingInvitations =
+                    widget.events[widget.eventKey]?['pending'];
+                Map volunteers = widget.events[widget.eventKey]?['volunteers'];
 
+                if (pendingInvitations != null) {
                   //Remove the event from all member "pending" lists
-                  events[widget.eventKey]['pending'].forEach((users, value){
-                    database.delete("Users/" + users + "/pending/" + widget.eventKey);
-                    });
-
-                  //Remove the event from all member event lists
-                  events[widget.eventKey]['volunteers'].forEach((users, value){
-                    database.delete("Users/" + users + "/events/" + widget.eventKey);
+                  pendingInvitations.forEach((users, value) {
+                    database.delete(
+                        "Users/" + users + "/pending/" + widget.eventKey);
                   });
+                }
 
+                print(volunteers != null);
+                if (volunteers != null) {
+                  print(volunteers);
+                  //Remove the event from all member event lists
+                  volunteers.forEach((users, value) {
+                    database.delete(
+                        "Users/" + users + "/events/" + widget.eventKey);
+                  });
+                }
+
+                //Remove the event from the Event
+                database.delete("Events/" + widget.eventKey).then((value) {
+                  widget.events.remove(widget.eventKey);
+                  setState(() {});
+                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 });
-                widget.events.remove(widget.eventKey);
-                setState(() {});
-                Navigator.of(context).pop();
-                Navigator.pop(context, widget.events);
               })
         ],
       ),
@@ -290,7 +300,7 @@ class _EditEventPageState extends State<EditEventPage> {
                           addEvent().then((value) {
                             database.update("Events/" + widget.eventKey + "/",
                                 widget.events[widget.eventKey]!);
-                            Navigator.pop(context, widget.events);
+                            Navigator.pop(context);
                           });
                         }
                       },
