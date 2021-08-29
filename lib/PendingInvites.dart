@@ -26,6 +26,10 @@ class _InvitesPageState extends State<InvitesPage> {
   bool pendingInvitesCollapsed = false;
   Icon collapsePending = Icon(Icons.arrow_drop_down_outlined);
 
+  bool isDone = false;
+
+  Map<String, dynamic> eventInviters = {};
+
   Map<String, Map<String, dynamic>> allEvents = {};
   Map<String, Map<String, dynamic>> pendingInvites = {};
 
@@ -47,7 +51,7 @@ class _InvitesPageState extends State<InvitesPage> {
         });
   }
 
-  List<Widget> returnJoinActions() {
+  List<Widget> returnIgnoreActions(String eventKey) {
     return [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -58,18 +62,27 @@ class _InvitesPageState extends State<InvitesPage> {
                 Navigator.of(context).pop();
               }),
           ElevatedButton(
-              child: Text('Confirm Sign Up'),
+              child: Text('Ignore'),
               onPressed: () {
+                //Remove from database's event pending list
+                database.delete("Events/" +
+                    eventKey +
+                    "/pending/" +
+                    user.info!['username'] +
+                    "/");
+
+                //Remove from YOUR event pending list
+                database.delete(
+                    "Users/" + user.info!['username'] + "/pending/" + eventKey);
 
                 setState(() {});
-
+                getAllEvents();
                 Navigator.of(context).pop();
               })
         ],
       ),
     ];
   }
-
 
   Map<String, Map<String, dynamic>> sortEvents(
       Map<String, Map<String, dynamic>> events) {
@@ -85,6 +98,8 @@ class _InvitesPageState extends State<InvitesPage> {
   }
 
   void getAllEvents() async {
+    pendingInvites = {};
+
     database.get<Map<String, dynamic>>('Events').then((value) {
       if (value != null) {
         setState(() {
@@ -104,23 +119,34 @@ class _InvitesPageState extends State<InvitesPage> {
           allEvents = sortEvents(allEvents);
           getPendingInvites();
         });
+      } else {
+        setState(() {
+          isDone = true;
+        });
       }
     });
   }
 
   Future<void> getPendingInvites() async {
+    isDone = false;
     database
         .get<Map<String, dynamic>>(
             'Users/' + user.info!['username'] + "/pending/")
-        .then((value) {
-      if (value != null) {
+        .then((invites) {
+      if (invites != null) {
         setState(() {
           pendingInvites = {};
-          value.forEach((eventkey, userEventInfo) {
+          invites.forEach((eventkey, userEventInfo) {
             pendingInvites[eventkey] = allEvents[eventkey]!;
+            eventInviters[eventkey] = userEventInfo["inviters"];
           });
         });
         pendingInvites = sortEvents(pendingInvites);
+        isDone = true;
+      } else {
+        setState(() {
+          isDone = true;
+        });
       }
     });
   }
@@ -132,6 +158,150 @@ class _InvitesPageState extends State<InvitesPage> {
         .join(' ');
   }
 
+  String getDateWordForm(String date) {
+    final DateFormat formatter = DateFormat('MM-dd-yyyy');
+    DateTime dt = formatter.parse(date);
+    int weekday = dt.weekday;
+    int month = dt.month;
+    int day = dt.day;
+
+    String strWeekday;
+    String strMonth;
+
+    switch (weekday) {
+      case 1:
+        {
+          strWeekday = "Monday";
+        }
+        break;
+
+      case 2:
+        {
+          strWeekday = "Tuesday";
+        }
+        break;
+
+      case 3:
+        {
+          strWeekday = "Wednesday";
+        }
+        break;
+
+      case 4:
+        {
+          strWeekday = "Thursday";
+        }
+        break;
+
+      case 5:
+        {
+          strWeekday = "Friday";
+        }
+        break;
+
+      case 6:
+        {
+          strWeekday = "Saturday";
+        }
+        break;
+
+      case 7:
+        {
+          strWeekday = "Sunday";
+        }
+        break;
+
+      default:
+        {
+          strWeekday = " ";
+        }
+        break;
+    }
+
+    switch (month) {
+      case 1:
+        {
+          strMonth = "January";
+        }
+        break;
+
+      case 2:
+        {
+          strMonth = "February";
+        }
+        break;
+
+      case 3:
+        {
+          strMonth = "March";
+        }
+        break;
+
+      case 4:
+        {
+          strMonth = "April";
+        }
+        break;
+
+      case 5:
+        {
+          strMonth = "May";
+        }
+        break;
+
+      case 6:
+        {
+          strMonth = "June";
+        }
+        break;
+
+      case 7:
+        {
+          strMonth = "July";
+        }
+        break;
+
+      case 8:
+        {
+          strMonth = "August";
+        }
+        break;
+
+      case 9:
+        {
+          strMonth = "September";
+        }
+        break;
+
+      case 10:
+        {
+          strMonth = "October";
+        }
+        break;
+
+      case 11:
+        {
+          strMonth = "November";
+        }
+        break;
+
+      case 12:
+        {
+          strMonth = "December";
+        }
+        break;
+
+      default:
+        {
+          strMonth = " ";
+        }
+        break;
+    }
+
+    print(strWeekday + ", " + strMonth + " " + day.toString());
+    return (strWeekday + ", " + strMonth + " " + day.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,157 +309,129 @@ class _InvitesPageState extends State<InvitesPage> {
         title: Text(widget.title),
       ),
       backgroundColor: Colors.white,
-      body: allEvents.isNotEmpty
+      body: isDone
           ? SingleChildScrollView(
               child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          border: Border.all(
-                            width: 3,
-                            color: Colors.orange,
-                            style: BorderStyle.solid,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            ListTile(
-                                title: Text("Pending Invites",
-                                    style: TextStyle(fontSize: 28)),
-                                trailing: IconButton(
-                                  icon: collapsePending,
-                                  onPressed: () {
-                                    setState(() {
-                                      if (pendingInvitesCollapsed == false) {
-                                        pendingInvitesCollapsed = true;
-                                        collapsePending =
-                                            Icon(Icons.arrow_left_outlined);
-                                      } else {
-                                        pendingInvitesCollapsed = false;
-                                        collapsePending = Icon(
-                                            Icons.arrow_drop_down_outlined);
-                                      }
-                                    });
-                                  },
-                                )),
-                            pendingInvitesCollapsed
-                                ? SizedBox()
-                                : Container(
-                                    height:
-                                        MediaQuery.of(context).size.height / 5,
-                                    child: pendingInvites.isNotEmpty
-                                        ? ListView.separated(
-                                            shrinkWrap: true,
-                                            physics: ScrollPhysics(),
-                                            padding: const EdgeInsets.all(20),
-                                            itemCount: pendingInvites.length,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              String key = pendingInvites.keys
-                                                  .elementAt(index);
-                                              return Container(
-                                                height: 50,
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 7,
-                                                      child: Column(
-                                                        children: [
-                                                          Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .topLeft,
-                                                              child: Text(
-                                                                  '${pendingInvites[key]?['name']}',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          22))),
-                                                          // Align(
-                                                          //   alignment: Alignment
-                                                          //       .centerLeft,
-                                                          //   child: Text(
-                                                          //       '${pendingInvites[key]?['time']}' +
-                                                          //           "  |  " +
-                                                          //           '${pendingInvites[key]?['date']}',
-                                                          //       style: TextStyle(
-                                                          //           fontSize:
-                                                          //               17)),
-                                                          // ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                        flex: 4,
-                                                        child: OutlinedButton(
-                                                          style: OutlinedButton.styleFrom(
-                                                              side: BorderSide(
-                                                                  color: Colors.orange)),
-                                                          child: Text("ACCEPT"),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              _showDialog(
-                                                                  "Do you want to accept event invite?",
-                                                                  "Sign Up Confirmation",
-                                                                  returnJoinActions());
-                                                            }
-                                                                //REMOVE EVENT FROM PENDING + ADD TO 'YOUR EVENTS'
-                                                                );
-                                                          },
-                                                        )),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: IconButton(
-                                                          icon: Icon(
-                                                              Icons.more_vert),
-                                                          onPressed: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          DetailsPage(
-                                                                            title:
-                                                                                "Event Info",
-                                                                            event:
-                                                                                pendingInvites[key],
-                                                                            eventKey:
-                                                                                key,
-                                                                          )),
-                                                            ).then((value) {
-                                                              getAllEvents();
-                                                            });
-                                                          }),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
+                children: [
+                  Container(
+                      height: MediaQuery.of(context).size.height / 5,
+                      child: pendingInvites.isNotEmpty
+                          ? ListView.separated(
+                              shrinkWrap: true,
+                              physics: ScrollPhysics(),
+                              padding: const EdgeInsets.all(20),
+                              itemCount: pendingInvites.length,
+                              itemBuilder:
+                                  (BuildContext context, int index) {
+                                String key =
+                                    pendingInvites.keys.elementAt(index);
+                                return Container(
+                                  height: 50,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 7,
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: Align(
+                                                  alignment:
+                                                      Alignment.topLeft,
+                                                  child: Text(
+                                                      '${pendingInvites[key]?['name']}',
+                                                      style: TextStyle(
+                                                          fontSize: 22))),
+                                            ),
+                                            Expanded(
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerLeft,
+                                                child: Text(
+                                                    getDateWordForm(
+                                                        '${pendingInvites[key]?['date']}'),
+                                                    style: TextStyle(
+                                                        fontSize: 17,
+                                                        color: Colors
+                                                            .black45)),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+
+                                      // ListView.builder(
+                                      //     shrinkWrap: true,
+                                      //     physics: ScrollPhysics(),
+                                      //     itemCount: eventInviters.length,
+                                      //     itemBuilder: (BuildContext context, int index) {
+                                      //       String key = eventInviters.keys.elementAt(index);
+                                      //       return Text(eventInviters[key]['name']);
+                                      //     }),
+
+
+                                      Expanded(
+                                          flex: 3,
+                                          child: OutlinedButton(
+                                            style:
+                                                OutlinedButton.styleFrom(
+                                                    side: BorderSide(
+                                                        color: Colors
+                                                            .orange)),
+                                            child: Text("Ignore"),
+                                            onPressed: () {
+                                              setState(() {
+                                                _showDialog(
+                                                    "Do you want to ignore event invite?",
+                                                    "Ignore Event Invite",
+                                                    returnIgnoreActions(
+                                                        key));
+                                              }
+                                                  //REMOVE EVENT FROM PENDING + ADD TO 'YOUR EVENTS'
+                                                  );
                                             },
-                                            separatorBuilder:
-                                                (BuildContext context,
-                                                        int index) =>
-                                                    const Divider(
-                                                        color: Colors.black26),
-                                          )
-                                        : Center(
-                                            child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 20),
-                                            child: Text("No Invites Yet",
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.grey)),
-                                          ))),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ]),
+                                          )),
+                                      Expanded(
+                                        flex: 1,
+                                        child: IconButton(
+                                            icon: Icon(Icons.more_vert),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DetailsPage(
+                                                          title:
+                                                              "Event Info",
+                                                          event:
+                                                              pendingInvites[
+                                                                  key],
+                                                          eventKey: key,
+                                                        )),
+                                              ).then((value) {
+                                                getAllEvents();
+                                              });
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (BuildContext context,
+                                      int index) =>
+                                  const Divider(color: Colors.black26),
+                            )
+                          : Center(
+                              child: Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: Text("No Invites Yet",
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.grey)),
+                            ))),
+
+                ],
+              ),
             )
           : Center(child: CircularProgressIndicator()),
     );

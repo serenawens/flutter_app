@@ -34,14 +34,11 @@ class _EditEventPageState extends State<EditEventPage> {
 
   void setEventValues() {
 
-    int volunteerLimit = widget.events[widget.eventKey]?["volunteerLimit"];
-    String limit = volunteerLimit.toString();
-
     eventName.text = widget.events[widget.eventKey]?["name"];
     eventDate.text = widget.events[widget.eventKey]?["date"];
     eventTime.text = widget.events[widget.eventKey]?["time"];
     eventLocation.text = widget.events[widget.eventKey]?["location"];
-    eventLimit.text = limit;
+    eventLimit.text = widget.events[widget.eventKey]?["volunteerLimit"];
     eventDetails.text = widget.events[widget.eventKey]?["details"];
   }
 

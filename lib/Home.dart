@@ -31,9 +31,8 @@ class _HomePageState extends State<HomePage> {
   bool allEventsCollapsed = false;
   Icon collapseAll = Icon(Icons.arrow_drop_down_outlined);
 
-  bool pendingInvitesCollapsed = false;
-  Icon collapsePending = Icon(Icons.arrow_drop_down_outlined);
   bool isDone = false;
+
   @override
   initState() {
     super.initState();
@@ -79,7 +78,6 @@ class _HomePageState extends State<HomePage> {
           });
           allEvents = sortEvents(allEvents);
           getUserEvents();
-          getPendingInvites();
         });
       }else {
         setState(() {
@@ -113,23 +111,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> getPendingInvites() async {
-    database
-        .get<Map<String, dynamic>>(
-            'Users/' + user.info!['username'] + "/pending/")
-        .then((value) {
-      if (value != null) {
-        setState(() {
-          pendingInvites = {};
-          value.forEach((eventkey, userEventInfo) {
-            pendingInvites[eventkey] = allEvents[eventkey]!;
-          });
-        });
-        pendingInvites = sortEvents(pendingInvites);
-      }
-    });
-  }
-
   String titleCase(String s) {
     return s
         .split(' ')
@@ -139,37 +120,39 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    void _showDialog(String message, String title, List<Widget> actions) {
-      showDialog(
-          context: context,
-          builder: (BuildContext) {
-            return AlertDialog(
-              title: Text(title),
-              content: Text(message),
-              actions: actions,
-            );
-          });
-    }
 
-    List<Widget> returnJoinActions() {
-      return [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                }),
-            ElevatedButton(
-                child: Text('Confirm Sign Up'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                })
-          ],
-        ),
-      ];
-    }
+
+    // void _showDialog(String message, String title, List<Widget> actions) {
+    //   showDialog(
+    //       context: context,
+    //       builder: (BuildContext) {
+    //         return AlertDialog(
+    //           title: Text(title),
+    //           content: Text(message),
+    //           actions: actions,
+    //         );
+    //       });
+    // }
+    //
+    // List<Widget> returnJoinActions() {
+    //   return [
+    //     Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //       children: [
+    //         ElevatedButton(
+    //             child: Text('Cancel'),
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //             }),
+    //         ElevatedButton(
+    //             child: Text('Confirm Sign Up'),
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //             })
+    //       ],
+    //     ),
+    //   ];
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -218,7 +201,7 @@ class _HomePageState extends State<HomePage> {
                               ? SizedBox()
                               : Container(
                                   height:
-                                      MediaQuery.of(context).size.height / 5,
+                                      MediaQuery.of(context).size.height / 3,
                                   child: userEvents.isNotEmpty
                                       ? ListView.separated(
                                           shrinkWrap: true,
@@ -342,7 +325,7 @@ class _HomePageState extends State<HomePage> {
                               : Container(
                                   //change size of the box around event list
                                   height:
-                                      MediaQuery.of(context).size.height / 5,
+                                      MediaQuery.of(context).size.height / 3,
                                   child: ListView.separated(
                                     shrinkWrap: true,
                                     physics: ScrollPhysics(),
