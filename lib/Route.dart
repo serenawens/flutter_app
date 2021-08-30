@@ -16,6 +16,7 @@ import 'package:flutter_app/PendingInvites.dart';
 import 'AdminEventAdd.dart';
 import 'ProfileInfo.dart';
 import 'User.dart';
+import 'cmdb.dart';
 
 /// This is the stateful widget that the main application instantiates.
 class RouteScreen extends StatefulWidget {
@@ -27,9 +28,31 @@ class RouteScreen extends StatefulWidget {
 
 /// This is the private State class that goes with MyStatefulWidget.
 class _RouteScreenState extends State<RouteScreen> {
-
   User user = User();
+  CMDB database = CMDB();
+  bool pending = false;
 
+  void getUserInfo() {
+    setState(() {});
+    database.get("Users/" + user.info!['username'] + "/pending/").then((value) {
+      setState(() {
+        if (value != null) {
+          print("not null");
+          pending = true;
+        } else {
+          pending = false;
+          print("it's null");
+        }
+      });
+      print("getting info");
+      print(pending);
+    });
+  }
+
+  @override
+  initState() {
+    getUserInfo();
+  }
 
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
@@ -43,23 +66,36 @@ class _RouteScreenState extends State<RouteScreen> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      getUserInfo();
     });
   }
+
+  static BottomNavigationBarItem invites = BottomNavigationBarItem(
+    icon: Icon(Icons.mail),
+    label: 'Invites',
+    backgroundColor: Colors.red,
+  );
 
   BottomNavigationBar getNavigationBar(String role) {
     if (role == "member") {
       return BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
             backgroundColor: Colors.red,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.mail),
-            label: 'Invites',
-            backgroundColor: Colors.red,
-          ),
+          pending
+              ? BottomNavigationBarItem(
+                  icon: Icon(Icons.mark_email_unread),
+                  label: 'Invites',
+                  backgroundColor: Colors.red,
+                )
+              : BottomNavigationBarItem(
+                  icon: Icon(Icons.mail),
+                  label: 'Invites',
+                  backgroundColor: Colors.red,
+                ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'My Profile',
@@ -70,18 +106,24 @@ class _RouteScreenState extends State<RouteScreen> {
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       );
-    }
-    else {
+    } else {
       _widgetOptions.add(AdminEventPage(title: "Add Volunteering Event"));
       return BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label:'Home',
+            label: 'Home',
           ),
-          BottomNavigationBarItem(
+          pending
+              ? BottomNavigationBarItem(
+            icon: Icon(Icons.mark_email_unread),
+            label: 'Invites',
+            backgroundColor: Colors.red,
+          )
+              : BottomNavigationBarItem(
             icon: Icon(Icons.mail),
             label: 'Invites',
+            backgroundColor: Colors.red,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -103,10 +145,9 @@ class _RouteScreenState extends State<RouteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: getNavigationBar(user.info!['role'])
-    );
+        body: Center(
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
+        bottomNavigationBar: getNavigationBar(user.info!['role']));
   }
 }

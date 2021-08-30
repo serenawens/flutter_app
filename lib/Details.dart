@@ -26,7 +26,6 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   bool joinedEvent = false;
-  bool eventFull = false;
   User user = User();
   CMDB database = CMDB();
   List volunteerList = [];
@@ -36,6 +35,24 @@ class _DetailsPageState extends State<DetailsPage> {
     // TODO: implement initState
     super.initState();
     getVolunteers();
+  }
+
+  bool eventFull(){
+    int limit = int.parse(widget.event!['volunteerLimit']);
+    if(volunteerList.length == limit) {
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+  ElevatedButton disableButton(String disabledButtonText){
+    return ElevatedButton(
+      child: Text(disabledButtonText),
+      onPressed: null,
+        style: ElevatedButton.styleFrom(primary: Colors.black87)
+    );
   }
 
   String getDateWordForm(String date){
@@ -325,10 +342,13 @@ class _DetailsPageState extends State<DetailsPage> {
                       title: Text(widget.event?['details']),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 170),
-                      child: Text(
-                        "Members Signed Up: ",
-                        style: TextStyle(fontSize: 20),
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Members Signed Up (${volunteerList.length}/${widget.event!['volunteerLimit']})",
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
                     ),
                     Padding(
@@ -344,7 +364,10 @@ class _DetailsPageState extends State<DetailsPage> {
                     ),
                     SizedBox(height: 20),
                     joinedEvent == false
-                        ? ElevatedButton(
+                        ?
+                    eventFull()?
+                        disableButton("Event Full"):
+                      ElevatedButton(
                             child: Text('Join Event'),
                             onPressed: () {
                               setState(() {
@@ -361,6 +384,8 @@ class _DetailsPageState extends State<DetailsPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
+                                eventFull()?
+                                    disableButton("Invite Friends"):
                                 ElevatedButton(
                                   child: Text('Invite Friends'),
                                   onPressed: () {

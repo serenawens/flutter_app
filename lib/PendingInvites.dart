@@ -145,7 +145,6 @@ class _InvitesPageState extends State<InvitesPage> {
 
             iconList.add(Icon(Icons.arrow_right_outlined));
             collapsedList.add(true);
-
           });
         });
         pendingInvites = sortEvents(pendingInvites);
@@ -350,45 +349,46 @@ class _InvitesPageState extends State<InvitesPage> {
                                           getDateWordForm(
                                               '${pendingInvites[eventKey]?['date']}'),
                                           style: TextStyle(
-                                              fontSize: 17, color: Colors.black45)),
+                                              fontSize: 17,
+                                              color: Colors.black45)),
                                     ),
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: Row(
-                                        children:[
+                                        children: [
                                           IconButton(
                                             icon: iconList[index],
                                             onPressed: () {
                                               setState(() {
-                                                if (collapsedList[index] == false) {
+                                                if (collapsedList[index] ==
+                                                    false) {
                                                   collapsedList[index] = true;
-                                                  iconList[index] =
-                                                      Icon(Icons.arrow_right_outlined);
+                                                  iconList[index] = Icon(Icons
+                                                      .arrow_right_outlined);
                                                 } else {
                                                   collapsedList[index] = false;
-                                                  iconList[index] = Icon(
-                                                      Icons.arrow_drop_down_outlined);
+                                                  iconList[index] = Icon(Icons
+                                                      .arrow_drop_down_outlined);
                                                 }
                                               });
                                             },
                                           ),
                                           Text("Inviters",
                                               style: TextStyle(fontSize: 17)),
-                                        ]
-                                        ,
+                                        ],
                                       ),
                                     ),
-
                                   ],
                                 ),
                               ),
                               Expanded(
                                   flex: 3,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(bottom:50),
+                                    padding: const EdgeInsets.only(bottom: 50),
                                     child: OutlinedButton(
                                       style: OutlinedButton.styleFrom(
-                                          side: BorderSide(color: Colors.orange)),
+                                          side:
+                                              BorderSide(color: Colors.orange)),
                                       child: Text("Ignore"),
                                       onPressed: () {
                                         setState(() {
@@ -401,46 +401,52 @@ class _InvitesPageState extends State<InvitesPage> {
                                     ),
                                   )),
                               Expanded(
-                                flex: 1,
-                                child: IconButton(
-                                    icon: Icon(Icons.more_vert),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => DetailsPage(
-                                                  title: "Event Info",
-                                                  event: pendingInvites[eventKey],
-                                                  eventKey: eventKey,
-                                                )),
-                                      ).then((value) {
-                                        getAllEvents();
-                                      });
-                                    }),
+                                flex: 3,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 50),
+                                  child: OutlinedButton(
+                                    style:OutlinedButton.styleFrom(
+                                        side:
+                                        BorderSide(color: Colors.orange)),
+                                      child: Text("Accept"),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => DetailsPage(
+                                                    title: "Event Info",
+                                                    event:
+                                                        pendingInvites[eventKey],
+                                                    eventKey: eventKey,
+                                                  )),
+                                        ).then((value) {
+                                          getAllEvents();
+                                        });
+                                      }),
+                                ),
                               ),
-
                             ],
                           ),
-                          collapsedList[index]?
-                          SizedBox():
-                          ListView.builder(
-                              shrinkWrap: true,
-                              physics: ScrollPhysics(),
-                              itemCount: eventInviters[eventKey].length,
-                              itemBuilder:
-                                  (BuildContext context, int index) {
-                                String username = eventInviters[eventKey]
-                                    .keys
-                                    .elementAt(index);
-                                print(eventInviters[eventKey][username]
-                                ['name']);
-                                return Padding(
-                                  padding: const EdgeInsets.only(left:40),
-                                  child: Text(titleCase(
-                                      eventInviters[eventKey][username]
-                                      ['name'])),
-                                );
-                              }),
+                          collapsedList[index]
+                              ? SizedBox()
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: ScrollPhysics(),
+                                  itemCount: eventInviters[eventKey].length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    String username = eventInviters[eventKey]
+                                        .keys
+                                        .elementAt(index);
+                                    print(eventInviters[eventKey][username]
+                                        ['name']);
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 40),
+                                      child: Text(titleCase(
+                                          eventInviters[eventKey][username]
+                                              ['name'])),
+                                    );
+                                  }),
                         ],
                       ),
                     );
