@@ -26,6 +26,7 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   bool joinedEvent = false;
+  bool eventFull = false;
   User user = User();
   CMDB database = CMDB();
   List volunteerList = [];

@@ -25,13 +25,6 @@ class _HomePageState extends State<HomePage> {
   Map<String, Map<String, dynamic>> userEvents = {};
   Map<String, Map<String, dynamic>> pendingInvites = {};
 
-  bool userEventsCollapsed = false;
-  Icon collapseUsers = Icon(Icons.arrow_drop_down_outlined);
-
-  bool allEventsCollapsed = false;
-  Icon collapseAll = Icon(Icons.arrow_drop_down_outlined);
-
-  bool isDone = false;
 
   @override
   initState() {
@@ -117,6 +110,14 @@ class _HomePageState extends State<HomePage> {
         .map((word) => word[0].toUpperCase() + word.substring(1))
         .join(' ');
   }
+
+  bool userEventsCollapsed = false;
+  Icon collapseUsers = Icon(Icons.arrow_drop_down_outlined);
+
+  bool allEventsCollapsed = false;
+  Icon collapseAll = Icon(Icons.arrow_drop_down_outlined);
+
+  bool isDone = false;
 
   @override
   Widget build(BuildContext context) {

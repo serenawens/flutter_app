@@ -339,7 +339,7 @@ class _InvitesPageState extends State<InvitesPage> {
                                                   alignment:
                                                       Alignment.topLeft,
                                                   child: Text(
-                                                      '${pendingInvites[key]?['name']}',
+                                                      '${pendingInvites[key]?['name']} (${eventInviters[key].length})',
                                                       style: TextStyle(
                                                           fontSize: 22))),
                                             ),
@@ -356,21 +356,10 @@ class _InvitesPageState extends State<InvitesPage> {
                                                             .black45)),
                                               ),
                                             ),
+
                                           ],
                                         ),
                                       ),
-
-
-                                      // ListView.builder(
-                                      //     shrinkWrap: true,
-                                      //     physics: ScrollPhysics(),
-                                      //     itemCount: eventInviters.length,
-                                      //     itemBuilder: (BuildContext context, int index) {
-                                      //       String key = eventInviters.keys.elementAt(index);
-                                      //       return Text(eventInviters[key]['name']);
-                                      //     }),
-
-
                                       Expanded(
                                           flex: 3,
                                           child: OutlinedButton(
