@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'EditEvent.dart';
 import "User.dart";
 import 'cmdb.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   //Class Constructor
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   initState() {
     super.initState();
     getAllEvents();
+    getCollapsedValues();
   }
 
   Map<String, Map<String, dynamic>> sortEvents(
@@ -111,6 +113,38 @@ class _HomePageState extends State<HomePage> {
         .join(' ');
   }
 
+  Future<void> getCollapsedValues() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (prefs.containsKey('userEventsCollapsed')) {
+        userEventsCollapsed = prefs.getBool("userEventsCollapsed")!;
+        collapseUsers = setCollapseIcons(userEventsCollapsed);
+        print(userEventsCollapsed);
+      }
+      if (prefs.containsKey('allEventsCollapsed')) {
+        allEventsCollapsed = prefs.getBool("allEventsCollapsed")!;
+        collapseAll = setCollapseIcons(allEventsCollapsed);
+        print(allEventsCollapsed);
+      }
+    });
+  }
+
+  Icon setCollapseIcons(bool isCollapsed){
+    if (isCollapsed == false) {
+      return
+          Icon(Icons.arrow_left_outlined);
+    } else {
+      return
+       Icon (Icons.arrow_drop_down_outlined);
+    }
+  }
+
+  void saveCollapsedValues(String key, bool value) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences.setMockInitialValues({});
+    prefs.setBool(key, value);
+  }
+
   bool userEventsCollapsed = false;
   Icon collapseUsers = Icon(Icons.arrow_drop_down_outlined);
 
@@ -165,7 +199,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(
@@ -185,6 +219,7 @@ class _HomePageState extends State<HomePage> {
                               trailing: IconButton(
                                 icon: collapseUsers,
                                 onPressed: () {
+
                                   setState(() {
                                     if (userEventsCollapsed == false) {
                                       userEventsCollapsed = true;
@@ -196,6 +231,7 @@ class _HomePageState extends State<HomePage> {
                                           Icons.arrow_drop_down_outlined);
                                     }
                                   });
+                                  saveCollapsedValues("userEventsCollapsed", userEventsCollapsed);
                                 },
                               )),
                           userEventsCollapsed
@@ -319,6 +355,7 @@ class _HomePageState extends State<HomePage> {
                                           Icons.arrow_drop_down_outlined);
                                     }
                                   });
+                                  saveCollapsedValues("allEventsCollapsed", allEventsCollapsed);
                                 },
                               )),
                           allEventsCollapsed
