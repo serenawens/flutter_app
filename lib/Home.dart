@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage> {
   Map<String, Map<String, dynamic>> userEvents = {};
   Map<String, Map<String, dynamic>> pendingInvites = {};
 
-
   @override
   initState() {
     super.initState();
@@ -92,7 +91,7 @@ class _HomePageState extends State<HomePage> {
           allEvents = sortEvents(allEvents);
           getUserEvents();
         });
-      }else {
+      } else {
         setState(() {
           isDone = true;
         });
@@ -245,8 +244,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getUserEvents() async {
-      isDone = false;
-      database
+    isDone = false;
+    database
         .get<Map<String, dynamic>>(
             'Users/' + user.info!['username'] + "/events/")
         .then((value) {
@@ -259,12 +258,11 @@ class _HomePageState extends State<HomePage> {
         });
         userEvents = sortEvents(userEvents);
         isDone = true;
-      }else {
+      } else {
         setState(() {
           isDone = true;
         });
       }
-
     });
   }
 
@@ -278,32 +276,29 @@ class _HomePageState extends State<HomePage> {
   Future<void> getCollapsedValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      if (prefs.containsKey('userEventsCollapsed')) {
-        userEventsCollapsed = prefs.getBool("userEventsCollapsed")!;
+      if (prefs.containsKey(user.info!['username'] + '/userEventsCollapsed')) {
+        userEventsCollapsed =
+            prefs.getBool(user.info!['username'] + "/userEventsCollapsed")!;
         collapseUsers = setCollapseIcons(userEventsCollapsed);
-        print(userEventsCollapsed);
       }
-      if (prefs.containsKey('allEventsCollapsed')) {
-        allEventsCollapsed = prefs.getBool("allEventsCollapsed")!;
+      if (prefs.containsKey(user.info!['username'] + '/allEventsCollapsed')) {
+        allEventsCollapsed =
+            prefs.getBool(user.info!['username'] + "/allEventsCollapsed")!;
         collapseAll = setCollapseIcons(allEventsCollapsed);
-        print(allEventsCollapsed);
       }
     });
   }
 
-  Icon setCollapseIcons(bool isCollapsed){
+  Icon setCollapseIcons(bool isCollapsed) {
     if (isCollapsed == false) {
-      return
-          Icon(Icons.arrow_left_outlined);
+      return Icon(Icons.arrow_left_outlined);
     } else {
-      return
-       Icon (Icons.arrow_drop_down_outlined);
+      return Icon(Icons.arrow_drop_down_outlined);
     }
   }
 
-  void saveCollapsedValues(String key, bool value) async{
+  void saveCollapsedValues(String key, bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    SharedPreferences.setMockInitialValues({});
     prefs.setBool(key, value);
   }
 
@@ -317,40 +312,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
-
-    // void _showDialog(String message, String title, List<Widget> actions) {
-    //   showDialog(
-    //       context: context,
-    //       builder: (BuildContext) {
-    //         return AlertDialog(
-    //           title: Text(title),
-    //           content: Text(message),
-    //           actions: actions,
-    //         );
-    //       });
-    // }
-    //
-    // List<Widget> returnJoinActions() {
-    //   return [
-    //     Row(
-    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //       children: [
-    //         ElevatedButton(
-    //             child: Text('Cancel'),
-    //             onPressed: () {
-    //               Navigator.of(context).pop();
-    //             }),
-    //         ElevatedButton(
-    //             child: Text('Confirm Sign Up'),
-    //             onPressed: () {
-    //               Navigator.of(context).pop();
-    //             })
-    //       ],
-    //     ),
-    //   ];
-    // }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -361,7 +322,8 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(
@@ -381,7 +343,6 @@ class _HomePageState extends State<HomePage> {
                               trailing: IconButton(
                                 icon: collapseUsers,
                                 onPressed: () {
-
                                   setState(() {
                                     if (userEventsCollapsed == false) {
                                       userEventsCollapsed = true;
@@ -389,11 +350,14 @@ class _HomePageState extends State<HomePage> {
                                           Icon(Icons.arrow_left_outlined);
                                     } else {
                                       userEventsCollapsed = false;
-                                      collapseUsers = Icon(
-                                          Icons.arrow_drop_down_outlined);
+                                      collapseUsers =
+                                          Icon(Icons.arrow_drop_down_outlined);
                                     }
                                   });
-                                  saveCollapsedValues("userEventsCollapsed", userEventsCollapsed);
+                                  saveCollapsedValues(
+                                      user.info!['username'] +
+                                          "/userEventsCollapsed",
+                                      userEventsCollapsed);
                                 },
                               )),
                           userEventsCollapsed
@@ -420,9 +384,8 @@ class _HomePageState extends State<HomePage> {
                                                     child: Column(
                                                       children: [
                                                         Align(
-                                                            alignment:
-                                                                Alignment
-                                                                    .topLeft,
+                                                            alignment: Alignment
+                                                                .topLeft,
                                                             child: Text(
                                                                 '${userEvents[key]?['name']} (${getEventSpots(userEvents[key]!)}/${getEventLimit(userEvents[key]!)})',
                                                                 style: TextStyle(
@@ -513,11 +476,14 @@ class _HomePageState extends State<HomePage> {
                                           Icon(Icons.arrow_left_outlined);
                                     } else {
                                       allEventsCollapsed = false;
-                                      collapseAll = Icon(
-                                          Icons.arrow_drop_down_outlined);
+                                      collapseAll =
+                                          Icon(Icons.arrow_drop_down_outlined);
                                     }
                                   });
-                                  saveCollapsedValues("allEventsCollapsed", allEventsCollapsed);
+                                  saveCollapsedValues(
+                                      user.info!['username'] +
+                                          "/allEventsCollapsed",
+                                      allEventsCollapsed);
                                 },
                               )),
                           allEventsCollapsed
@@ -572,8 +538,7 @@ class _HomePageState extends State<HomePage> {
                                                 ? Expanded(
                                                     flex: 1,
                                                     child: IconButton(
-                                                        icon:
-                                                            Icon(Icons.edit),
+                                                        icon: Icon(Icons.edit),
                                                         onPressed: () {
                                                           Navigator.push(
                                                             context,
@@ -609,16 +574,15 @@ class _HomePageState extends State<HomePage> {
                                                     Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
-                                                          builder:
-                                                              (context) =>
-                                                                  DetailsPage(
-                                                                    title:
-                                                                        "Event Info",
-                                                                    event: allEvents[
+                                                          builder: (context) =>
+                                                              DetailsPage(
+                                                                title:
+                                                                    "Event Info",
+                                                                event:
+                                                                    allEvents[
                                                                         key],
-                                                                    eventKey:
-                                                                        key,
-                                                                  )),
+                                                                eventKey: key,
+                                                              )),
                                                     ).then((value) {
                                                       getAllEvents();
                                                     });
@@ -637,7 +601,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             )

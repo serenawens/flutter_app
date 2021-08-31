@@ -13,6 +13,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Home.dart';
 import 'package:flutter_app/PendingInvites.dart';
+
 import 'AdminEventAdd.dart';
 import 'ProfileInfo.dart';
 import 'User.dart';
@@ -30,38 +31,90 @@ class RouteScreen extends StatefulWidget {
 class _RouteScreenState extends State<RouteScreen> {
   User user = User();
   CMDB database = CMDB();
-  bool pending = false;
 
-  void getUserInfo() {
-    setState(() {});
-    database.get("Users/" + user.info!['username'] + "/pending/").then((value) {
-      setState(() {
-        if (value != null) {
-          print("not null");
-          pending = true;
-        } else {
-          pending = false;
-          print("it's null");
-        }
-      });
-      print("getting info");
-      print(pending);
-    });
-  }
+  List<BottomNavigationBarItem> bottomNavigationBarItemList = [
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home),
+      label: 'Home',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(
+        Icons.mail,
+      ),
+      label: 'Invites',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.person),
+      label: 'My Profile',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.add),
+      label: 'Add Event',
+    ),
+  ];
+
+  static List<Widget> _widgetOptions = <Widget>[
+    HomePage(title: "Home"),
+    InvitesPage(title: "Event Invites"),
+    ProfilePage(title: "My Profile")
+  ];
+
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   @override
   initState() {
     getUserInfo();
   }
 
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static List<Widget> _widgetOptions = <Widget>[
-    HomePage(title: "Home"),
-    InvitesPage(title: "Event Invites"),
-    ProfilePage(title: "My Profile")
-  ];
+  void getUserInfo() {
+    setState(() {});
+    database
+        .get<Map<String, dynamic>>(
+            "Users/" + user.info!['username'] + "/pending/")
+        .then((value) {
+      setState(() {
+        if (value != null) {
+          bottomNavigationBarItemList[1] = BottomNavigationBarItem(
+            icon: Stack(
+              children: <Widget>[
+               Icon(Icons.mail),
+               Positioned(
+                  right: 0,
+                  child: new Container(
+                    padding: EdgeInsets.all(1),
+                    decoration: new BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 12,
+                      minHeight: 12,
+                    ),
+                    child: Text(
+                      "${value.length}",
+                      style: new TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            label: 'Invites',
+          );
+        } else {
+          bottomNavigationBarItemList[1] = BottomNavigationBarItem(
+            icon: Icon(Icons.mail),
+            label: 'Invites',
+          );
+        }
+      });
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -70,38 +123,15 @@ class _RouteScreenState extends State<RouteScreen> {
     });
   }
 
-  static BottomNavigationBarItem invites = BottomNavigationBarItem(
-    icon: Icon(Icons.mail),
-    label: 'Invites',
-    backgroundColor: Colors.red,
-  );
-
   BottomNavigationBar getNavigationBar(String role) {
     if (role == "member") {
+      setState(() {
+        if (bottomNavigationBarItemList.length > 3)
+          bottomNavigationBarItemList.removeLast();
+      });
+
       return BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Colors.red,
-          ),
-          pending
-              ? BottomNavigationBarItem(
-                  icon: Icon(Icons.mark_email_unread),
-                  label: 'Invites',
-                  backgroundColor: Colors.red,
-                )
-              : BottomNavigationBarItem(
-                  icon: Icon(Icons.mail),
-                  label: 'Invites',
-                  backgroundColor: Colors.red,
-                ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'My Profile',
-            backgroundColor: Colors.pink,
-          ),
-        ],
+        items: bottomNavigationBarItemList,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
@@ -109,31 +139,7 @@ class _RouteScreenState extends State<RouteScreen> {
     } else {
       _widgetOptions.add(AdminEventPage(title: "Add Volunteering Event"));
       return BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          pending
-              ? BottomNavigationBarItem(
-            icon: Icon(Icons.mark_email_unread),
-            label: 'Invites',
-            backgroundColor: Colors.red,
-          )
-              : BottomNavigationBarItem(
-            icon: Icon(Icons.mail),
-            label: 'Invites',
-            backgroundColor: Colors.red,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'My Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Add Event',
-          ),
-        ],
+        items: bottomNavigationBarItemList,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
