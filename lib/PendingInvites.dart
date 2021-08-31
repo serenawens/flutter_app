@@ -178,43 +178,43 @@ class _InvitesPageState extends State<InvitesPage> {
     switch (weekday) {
       case 1:
         {
-          strWeekday = "Monday";
+          strWeekday = "Mon";
         }
         break;
 
       case 2:
         {
-          strWeekday = "Tuesday";
+          strWeekday = "Tues";
         }
         break;
 
       case 3:
         {
-          strWeekday = "Wednesday";
+          strWeekday = "Wed";
         }
         break;
 
       case 4:
         {
-          strWeekday = "Thursday";
+          strWeekday = "Thurs";
         }
         break;
 
       case 5:
         {
-          strWeekday = "Friday";
+          strWeekday = "Fri";
         }
         break;
 
       case 6:
         {
-          strWeekday = "Saturday";
+          strWeekday = "Sat";
         }
         break;
 
       case 7:
         {
-          strWeekday = "Sunday";
+          strWeekday = "Sun";
         }
         break;
 
@@ -228,13 +228,13 @@ class _InvitesPageState extends State<InvitesPage> {
     switch (month) {
       case 1:
         {
-          strMonth = "January";
+          strMonth = "Jan";
         }
         break;
 
       case 2:
         {
-          strMonth = "February";
+          strMonth = "Feb";
         }
         break;
 
@@ -270,31 +270,31 @@ class _InvitesPageState extends State<InvitesPage> {
 
       case 8:
         {
-          strMonth = "August";
+          strMonth = "Aug";
         }
         break;
 
       case 9:
         {
-          strMonth = "September";
+          strMonth = "Sept";
         }
         break;
 
       case 10:
         {
-          strMonth = "October";
+          strMonth = "Oct";
         }
         break;
 
       case 11:
         {
-          strMonth = "November";
+          strMonth = "Nov";
         }
         break;
 
       case 12:
         {
-          strMonth = "December";
+          strMonth = "Dec";
         }
         break;
 
@@ -341,7 +341,7 @@ class _InvitesPageState extends State<InvitesPage> {
                                     Align(
                                         alignment: Alignment.topLeft,
                                         child: Text(
-                                            '${pendingInvites[eventKey]?['name']}  (${eventInviters[eventKey].length})',
+                                            '${pendingInvites[eventKey]?['name']}',
                                             style: TextStyle(fontSize: 22))),
                                     Align(
                                       alignment: Alignment.centerLeft,
@@ -373,7 +373,7 @@ class _InvitesPageState extends State<InvitesPage> {
                                               });
                                             },
                                           ),
-                                          Text("Inviters",
+                                          Text("Inviters  (${eventInviters[eventKey].length})",
                                               style: TextStyle(fontSize: 17)),
                                         ],
                                       ),
@@ -384,12 +384,12 @@ class _InvitesPageState extends State<InvitesPage> {
                               Expanded(
                                   flex: 3,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 50),
+                                    padding: const EdgeInsets.only(bottom: 50, left: 4),
                                     child: OutlinedButton(
                                       style: OutlinedButton.styleFrom(
                                           side:
-                                              BorderSide(color: Colors.orange)),
-                                      child: Text("Ignore"),
+                                              BorderSide(color: Colors.red)),
+                                      child: Text("Ignore", style: TextStyle(color: Colors.red)),
                                       onPressed: () {
                                         setState(() {
                                           _showDialog(
@@ -403,12 +403,12 @@ class _InvitesPageState extends State<InvitesPage> {
                               Expanded(
                                 flex: 3,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 50),
+                                  padding: const EdgeInsets.only(bottom: 50, left: 4),
                                   child: OutlinedButton(
                                     style:OutlinedButton.styleFrom(
                                         side:
-                                        BorderSide(color: Colors.orange)),
-                                      child: Text("Accept"),
+                                        BorderSide(color: Colors.green)),
+                                      child: Text("Accept", style: TextStyle(color: Colors.green)),
                                       onPressed: () {
                                         Navigator.push(
                                           context,

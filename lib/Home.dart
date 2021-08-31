@@ -34,6 +34,24 @@ class _HomePageState extends State<HomePage> {
     getCollapsedValues();
   }
 
+  bool eventFull(Map event){
+    int limit = int.parse(event['volunteerLimit']);
+    if(event['volunteers'].keys.length == limit) {
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+  int getEventSpots(Map event){
+    return event['volunteers'].keys.length;
+  }
+  
+  int getEventLimit(Map event){
+    return int.parse(event['volunteerLimit']);
+  }
+
   Map<String, Map<String, dynamic>> sortEvents(
       Map<String, Map<String, dynamic>> events) {
     var sortedKeys = events.keys.toList(growable: false)
@@ -80,6 +98,150 @@ class _HomePageState extends State<HomePage> {
         });
       }
     });
+  }
+
+  String getDateWordForm(String date) {
+    final DateFormat formatter = DateFormat('MM-dd-yyyy');
+    DateTime dt = formatter.parse(date);
+    int weekday = dt.weekday;
+    int month = dt.month;
+    int day = dt.day;
+
+    String strWeekday;
+    String strMonth;
+
+    switch (weekday) {
+      case 1:
+        {
+          strWeekday = "Mon";
+        }
+        break;
+
+      case 2:
+        {
+          strWeekday = "Tue";
+        }
+        break;
+
+      case 3:
+        {
+          strWeekday = "Wed";
+        }
+        break;
+
+      case 4:
+        {
+          strWeekday = "Thur";
+        }
+        break;
+
+      case 5:
+        {
+          strWeekday = "Fri";
+        }
+        break;
+
+      case 6:
+        {
+          strWeekday = "Sat";
+        }
+        break;
+
+      case 7:
+        {
+          strWeekday = "Sun";
+        }
+        break;
+
+      default:
+        {
+          strWeekday = " ";
+        }
+        break;
+    }
+
+    switch (month) {
+      case 1:
+        {
+          strMonth = "Jan";
+        }
+        break;
+
+      case 2:
+        {
+          strMonth = "Feb";
+        }
+        break;
+
+      case 3:
+        {
+          strMonth = "March";
+        }
+        break;
+
+      case 4:
+        {
+          strMonth = "April";
+        }
+        break;
+
+      case 5:
+        {
+          strMonth = "May";
+        }
+        break;
+
+      case 6:
+        {
+          strMonth = "June";
+        }
+        break;
+
+      case 7:
+        {
+          strMonth = "July";
+        }
+        break;
+
+      case 8:
+        {
+          strMonth = "Aug";
+        }
+        break;
+
+      case 9:
+        {
+          strMonth = "Sept";
+        }
+        break;
+
+      case 10:
+        {
+          strMonth = "Oct";
+        }
+        break;
+
+      case 11:
+        {
+          strMonth = "Nov";
+        }
+        break;
+
+      case 12:
+        {
+          strMonth = "Dec";
+        }
+        break;
+
+      default:
+        {
+          strMonth = " ";
+        }
+        break;
+    }
+
+    print(strWeekday + ", " + strMonth + " " + day.toString());
+    return (strWeekday + ", " + strMonth + " " + day.toString());
   }
 
   Future<void> getUserEvents() async {
@@ -262,7 +424,7 @@ class _HomePageState extends State<HomePage> {
                                                                 Alignment
                                                                     .topLeft,
                                                             child: Text(
-                                                                '${userEvents[key]?['name']}',
+                                                                '${userEvents[key]?['name']} (${getEventSpots(userEvents[key]!)}/${getEventLimit(userEvents[key]!)})',
                                                                 style: TextStyle(
                                                                     fontSize:
                                                                         22))),
@@ -272,7 +434,7 @@ class _HomePageState extends State<HomePage> {
                                                           child: Text(
                                                               '${userEvents[key]?['time']}' +
                                                                   "  |  " +
-                                                                  '${userEvents[key]?['date']}',
+                                                                  getDateWordForm('${userEvents[key]?['date']}'),
                                                               style: TextStyle(
                                                                   fontSize:
                                                                       17)),
@@ -384,17 +546,22 @@ class _HomePageState extends State<HomePage> {
                                                   Align(
                                                       alignment:
                                                           Alignment.topLeft,
-                                                      child: Text(
-                                                          '${allEvents[key]!['name']}',
+                                                      child:
+                                                      eventFull(allEvents[key]!)?
+                                                      Text("${allEvents[key]!['name']} (FULL)", style: TextStyle(
+                                                          fontSize: 22)):
+                                                      Text(
+                                                          '${allEvents[key]!['name']} (${getEventSpots(allEvents[key]!)}/${getEventLimit(allEvents[key]!)})',
                                                           style: TextStyle(
-                                                              fontSize: 24))),
+                                                              fontSize: 22))),
                                                   Align(
                                                     alignment:
                                                         Alignment.centerLeft,
-                                                    child: Text(
+                                                    child:
+                                                    Text(
                                                         '${allEvents[key]!['time']}' +
                                                             "  |  " +
-                                                            '${allEvents[key]!['date']}',
+                                                            getDateWordForm('${allEvents[key]?['date']}'),
                                                         style: TextStyle(
                                                             fontSize: 15)),
                                                   ),

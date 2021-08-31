@@ -30,36 +30,31 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text(widget.title),
       ),
       backgroundColor: Colors.white,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(titleCase(user.info!["name"]))),
-              Text(user.info!["username"]),
-              Text(user.info!["phoneNumber"].toString()),
-              Text(user.info!["role"]),
-              SizedBox(height: 30),
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: TextStyle(fontSize: 20),
-                ),
-                onPressed: () {
-                  user.info = {};
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => LoginPage(title: "Login")),
-                  );
-                },
-                child: Text('Sign Out'),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: <Widget>[
+            Text(titleCase(user.info!["name"]), style: TextStyle(fontSize: 40)),
+            Text(user.info!["username"]),
+            Text(user.info!["phoneNumber"].toString()),
+            Text(user.info!["role"]),
+            SizedBox(height: 30),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: TextStyle(fontSize: 20),
               ),
-            ],
-          ),
+              onPressed: () {
+                user.info = {};
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => LoginPage(title: "Login")),
+                );
+              },
+              child: Text('Sign Out'),
+            ),
+          ],
         ),
       ),
     );
