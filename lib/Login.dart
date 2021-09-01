@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/SignUp.dart';
 import 'package:flutter_app/User.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Route.dart';
 import 'cmdb.dart';
 
@@ -22,12 +23,6 @@ class _LoginPageState extends State<LoginPage> {
   User user = User();
   CMDB database = CMDB();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    database.initialize("serena-test");
-  }
 
   Future<bool> checkLoginInfo() async {
     Map<String, dynamic>? response =
@@ -70,6 +65,13 @@ class _LoginPageState extends State<LoginPage> {
       ),
     ];
   }
+
+  Future<void> setUserPrefValues() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("username", user.info!['username']);
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   checkLoginInfo().then((value) {
                     if (value == true) {
+                      setUserPrefValues();
                       Navigator.pop(context);
                       Navigator.push(
                         context,

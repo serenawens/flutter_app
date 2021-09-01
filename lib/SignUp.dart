@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Route.dart';
 import 'User.dart';
 import 'cmdb.dart';
@@ -75,13 +76,17 @@ class _SignUpPageState extends State<SignUpPage> {
     ];
   }
 
+  Future<void> setUserPrefValues() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("username", user.info!['username']);
+  }
+
   TextEditingController firstName = TextEditingController();
   TextEditingController lastName = TextEditingController();
   TextEditingController grade = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
-  // TextEditingController phoneNumber = TextEditingController();
 
   String? dropdownValue;
 
@@ -238,6 +243,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                         user.info = newUser;
 
+                        setUserPrefValues();
                         Navigator.pop(context);
                         Navigator.push(
                           context,

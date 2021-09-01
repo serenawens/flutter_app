@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
     ];
   }
 
-  String titleCase(String s){
+  String titleCase(String s) {
     return s
         .split(' ')
         .map((word) => word[0].toUpperCase() + word.substring(1))
@@ -67,15 +67,24 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: <Widget>[
-            Center(child: Text(titleCase(user.info!["name"]), style: TextStyle(fontSize: 40, decoration: TextDecoration.underline))),
-            SizedBox(
-              height: 50
-            ),
+            Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(titleCase(user.info!["name"]),
+                      style: TextStyle(
+                          fontSize: 40, decoration: TextDecoration.underline)),
+                )),
+            SizedBox(height: 30),
             Align(
                 alignment: Alignment.centerLeft,
                 child: Text("Username: " + user.info!["username"])),
-            Align(alignment: Alignment.centerLeft, child: Text("Phone Number: " + user.info!["phoneNumber"].toString())),
-            Align(alignment: Alignment.centerLeft, child: Text("Role: " + titleCase(user.info!["role"]))),
+            Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                    "Phone Number: " + user.info!["phoneNumber"].toString())),
+            Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Role: " + titleCase(user.info!["role"]))),
             SizedBox(height: 30),
             Text("Change Password"),
             TextField(
@@ -108,43 +117,50 @@ class _ProfilePageState extends State<ProfilePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [ElevatedButton(
-                  child: Text("Cancel"),
-                  onPressed: (){
-                    newPassword.text = "";
-                    oldPassword.text = "";
-                    newPConfirm.text = "";
-                  },
-                ),
-                  ElevatedButton(
-                    child: Text("Change Password"),
-                    onPressed: (){
-                      print(user.info);
-                      print(oldPassword.text == user.info!['password'] );
-                      print(newPConfirm.text == newPassword.text);
-                      if (oldPassword.text == user.info!['password'] && newPConfirm.text == newPassword.text){
-                        user.info!['password'] = newPassword.text;
-                      database.get<Map<String, dynamic>>("Users/" + user.info!['username']).then((value) {
-                          value!['password'] = newPassword.text;
-                          database.update("Users/" + user.info!['username'] + "/",value ).then((value) {
-                            if (value == true){
-                              _showDialog("Password successfully changed", 'Success!', changePasswordPopup());
-                              newPassword.text = "";
-                              oldPassword.text = "";
-                              newPConfirm.text = "";
-                            }
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      child: Text("Cancel"),
+                      onPressed: () {
+                        newPassword.text = "";
+                        oldPassword.text = "";
+                        newPConfirm.text = "";
+                      },
+                    ),
+                    ElevatedButton(
+                      child: Text("Change Password"),
+                      onPressed: () {
+                        print(user.info);
+                        print(oldPassword.text == user.info!['password']);
+                        print(newPConfirm.text == newPassword.text);
+                        if (oldPassword.text == user.info!['password'] &&
+                            newPConfirm.text == newPassword.text) {
+                          user.info!['password'] = newPassword.text;
+                          database
+                              .get<Map<String, dynamic>>(
+                                  "Users/" + user.info!['username'])
+                              .then((value) {
+                            value!['password'] = newPassword.text;
+                            database
+                                .update("Users/" + user.info!['username'] + "/",
+                                    value)
+                                .then((value) {
+                              if (value == true) {
+                                _showDialog("Password successfully changed",
+                                    'Success!', changePasswordPopup());
+                                newPassword.text = "";
+                                oldPassword.text = "";
+                                newPConfirm.text = "";
+                              }
+                            });
                           });
-                        });
-                      }
-                      else{
-                        _showDialog("Incorrect, try again", 'Password Change', changePasswordPopup());
-
-                      }
-                    },
-                  )]
-
-              ),
+                        } else {
+                          _showDialog("Incorrect, try again", 'Password Change',
+                              changePasswordPopup());
+                        }
+                      },
+                    )
+                  ]),
             ),
             TextButton(
               style: TextButton.styleFrom(

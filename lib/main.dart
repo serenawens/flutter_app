@@ -43,6 +43,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Login.dart';
+import 'package:flutter_app/Route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
 
@@ -77,6 +78,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   CMDB database = CMDB();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    database.initialize("serena-test");
+  }
+
   User user = User();
 
   Future<Widget> loadFromFuture() async {
@@ -88,26 +97,31 @@ class _MyAppState extends State<MyApp> {
           .get<Map<String, dynamic>>('Users/' + username! + "/")
           .then((value) {
         user.info = value;
-        return Future.value(new HomePage(title: "Home"));
+        return Future.value(new RouteScreen());
+
       });
     }
-    // return Future.value(Future.delayed(const Duration(milliseconds: 500), () {
-    //    new LoginPage(title: "Login");
-    // }));
-    return Future.value(new LoginPage(title: "Login"));
-
+    else {
+      return Future.value(
+          Future.delayed(const Duration(milliseconds: 4000), () {
+            return (new LoginPage(title: "Login"));
+          }));
+    }
+    throw ("");
   }
 
   @override
   Widget build(BuildContext context) {
     return new SplashScreen(
         seconds: 4,
-        navigateAfterFuture: loadFromFuture(),
+        // navigateAfterFuture: loadFromFuture(),
+        navigateAfterSeconds: LoginPage(title:"Login"),
         title: new Text(
           'Welcome In SplashScreen',
           style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
         image: new Image.network('https://i.imgur.com/TyCSG9A.png'),
+        //change network to assets
         backgroundColor: Colors.white,
         styleTextUnderTheLoader: new TextStyle(),
         photoSize: 100.0,
