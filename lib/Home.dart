@@ -33,21 +33,20 @@ class _HomePageState extends State<HomePage> {
     getCollapsedValues();
   }
 
-  bool eventFull(Map event){
+  bool eventFull(Map event) {
     int limit = int.parse(event['volunteerLimit']);
-    if(event['volunteers'].keys.length == limit) {
+    if (event['volunteers'].keys.length == limit) {
       return true;
-    }
-    else{
+    } else {
       return false;
     }
   }
 
-  int getEventSpots(Map event){
+  int getEventSpots(Map event) {
     return event['volunteers'].keys.length;
   }
-  
-  int getEventLimit(Map event){
+
+  int getEventLimit(Map event) {
     return int.parse(event['volunteerLimit']);
   }
 
@@ -291,9 +290,9 @@ class _HomePageState extends State<HomePage> {
 
   Icon setCollapseIcons(bool isCollapsed) {
     if (isCollapsed == false) {
-      return Icon(Icons.arrow_left_outlined);
-    } else {
       return Icon(Icons.arrow_drop_down_outlined);
+    } else {
+      return Icon(Icons.arrow_left_outlined);
     }
   }
 
@@ -362,88 +361,180 @@ class _HomePageState extends State<HomePage> {
                               )),
                           userEventsCollapsed
                               ? SizedBox()
-                              : Container(
-                                  height:
-                                      MediaQuery.of(context).size.height / 3,
-                                  child: userEvents.isNotEmpty
-                                      ? ListView.separated(
-                                          shrinkWrap: true,
-                                          physics: ScrollPhysics(),
-                                          padding: const EdgeInsets.all(20),
-                                          itemCount: userEvents.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            String key = userEvents.keys
-                                                .elementAt(index);
-                                            return Container(
-                                              height: 50,
-                                              child: Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 7,
-                                                    child: Column(
-                                                      children: [
-                                                        Align(
-                                                            alignment: Alignment
-                                                                .topLeft,
-                                                            child: Text(
-                                                                '${userEvents[key]?['name']} (${getEventSpots(userEvents[key]!)}/${getEventLimit(userEvents[key]!)})',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        22))),
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          child: Text(
-                                                              '${userEvents[key]?['time']}' +
-                                                                  "  |  " +
-                                                                  getDateWordForm('${userEvents[key]?['date']}'),
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      17)),
+                              : userEvents.length > 3
+                                  ? Container(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              3,
+                                      child: userEvents.isNotEmpty
+                                          ? ListView.separated(
+                                              shrinkWrap: true,
+                                              physics: ScrollPhysics(),
+                                              padding: const EdgeInsets.all(20),
+                                              itemCount: userEvents.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                String key = userEvents.keys
+                                                    .elementAt(index);
+                                                return Container(
+                                                  height: 50,
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 7,
+                                                        child: Column(
+                                                          children: [
+                                                            Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topLeft,
+                                                                child: Text(
+                                                                    '${userEvents[key]?['name']} (${getEventSpots(userEvents[key]!)}/${getEventLimit(userEvents[key]!)})',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            22))),
+                                                            Align(
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                              child: Text(
+                                                                  '${userEvents[key]?['time']}' +
+                                                                      "  |  " +
+                                                                      getDateWordForm(
+                                                                          '${userEvents[key]?['date']}'),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          17)),
+                                                            ),
+                                                          ],
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: IconButton(
+                                                            icon: Icon(Icons
+                                                                .more_vert),
+                                                            onPressed: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            DetailsPage(
+                                                                              title: "Event Info",
+                                                                              event: userEvents[key],
+                                                                              eventKey: key,
+                                                                            )),
+                                                              ).then((value) {
+                                                                getAllEvents();
+                                                              });
+                                                            }),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: IconButton(
-                                                        icon: Icon(
-                                                            Icons.more_vert),
-                                                        onPressed: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        DetailsPage(
-                                                                          title:
-                                                                              "Event Info",
-                                                                          event:
-                                                                              userEvents[key],
-                                                                          eventKey:
-                                                                              key,
-                                                                        )),
-                                                          ).then((value) {
-                                                            getAllEvents();
-                                                          });
-                                                        }),
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (BuildContext context,
+                                                          int index) =>
+                                                      const Divider(
+                                                          color:
+                                                              Colors.black26),
+                                            )
+                                          : Center(
+                                              child: Container(
+                                              alignment: Alignment.center,
+                                              height: 100,
+                                              child: Text("No Events Yet",
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.grey)),
+                                            )))
+                                  : Container(
+                                      child: userEvents.isNotEmpty
+                                          ? ListView.separated(
+                                              shrinkWrap: true,
+                                              physics: ScrollPhysics(),
+                                              padding: const EdgeInsets.all(20),
+                                              itemCount: userEvents.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                String key = userEvents.keys
+                                                    .elementAt(index);
+                                                return Container(
+                                                  height: 50,
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 7,
+                                                        child: Column(
+                                                          children: [
+                                                            Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topLeft,
+                                                                child: Text(
+                                                                    '${userEvents[key]?['name']} (${getEventSpots(userEvents[key]!)}/${getEventLimit(userEvents[key]!)})',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            22))),
+                                                            Align(
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                              child: Text(
+                                                                  '${userEvents[key]?['time']}' +
+                                                                      "  |  " +
+                                                                      getDateWordForm(
+                                                                          '${userEvents[key]?['date']}'),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          17)),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: IconButton(
+                                                            icon: Icon(Icons
+                                                                .more_vert),
+                                                            onPressed: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            DetailsPage(
+                                                                              title: "Event Info",
+                                                                              event: userEvents[key],
+                                                                              eventKey: key,
+                                                                            )),
+                                                              ).then((value) {
+                                                                getAllEvents();
+                                                              });
+                                                            }),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                          separatorBuilder:
-                                              (BuildContext context,
-                                                      int index) =>
-                                                  const Divider(
-                                                      color: Colors.black26),
-                                        )
-                                      : Center(
-                                          child: Text("No Events Yet",
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.grey)))),
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (BuildContext context,
+                                                          int index) =>
+                                                      const Divider(
+                                                          color:
+                                                              Colors.black26),
+                                            )
+                                          : Center(
+                                              child: Container(
+                                              alignment: Alignment.center,
+                                              height: 100,
+                                              child: Text("No Events Yet",
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.grey)),
+                                            ))),
                         ],
                       ),
                     ),
@@ -490,8 +581,6 @@ class _HomePageState extends State<HomePage> {
                               ? SizedBox()
                               : Container(
                                   //change size of the box around event list
-                                  height:
-                                      MediaQuery.of(context).size.height / 3,
                                   child: ListView.separated(
                                     shrinkWrap: true,
                                     physics: ScrollPhysics(),
@@ -512,22 +601,25 @@ class _HomePageState extends State<HomePage> {
                                                   Align(
                                                       alignment:
                                                           Alignment.topLeft,
-                                                      child:
-                                                      eventFull(allEvents[key]!)?
-                                                      Text("${allEvents[key]!['name']} (FULL)", style: TextStyle(
-                                                          fontSize: 22)):
-                                                      Text(
-                                                          '${allEvents[key]!['name']} (${getEventSpots(allEvents[key]!)}/${getEventLimit(allEvents[key]!)})',
-                                                          style: TextStyle(
-                                                              fontSize: 22))),
+                                                      child: eventFull(
+                                                              allEvents[key]!)
+                                                          ? Text(
+                                                              "${allEvents[key]!['name']} (FULL)",
+                                                              style: TextStyle(
+                                                                  fontSize: 22))
+                                                          : Text(
+                                                              '${allEvents[key]!['name']} (${getEventSpots(allEvents[key]!)}/${getEventLimit(allEvents[key]!)})',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      22))),
                                                   Align(
                                                     alignment:
                                                         Alignment.centerLeft,
-                                                    child:
-                                                    Text(
+                                                    child: Text(
                                                         '${allEvents[key]!['time']}' +
                                                             "  |  " +
-                                                            getDateWordForm('${allEvents[key]?['date']}'),
+                                                            getDateWordForm(
+                                                                '${allEvents[key]?['date']}'),
                                                         style: TextStyle(
                                                             fontSize: 15)),
                                                   ),
