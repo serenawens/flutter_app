@@ -35,7 +35,8 @@ class _HomePageState extends State<HomePage> {
 
   bool eventFull(Map event) {
     int limit = int.parse(event['volunteerLimit']);
-    if (event['volunteers'].keys.length == limit) {
+
+    if (event["volunteer"] != null && event['volunteers'].keys.length == limit) {
       return true;
     } else {
       return false;
@@ -43,6 +44,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   int getEventSpots(Map event) {
+    if (event['volunteers'] == null){
+      return 0;
+    }
     return event['volunteers'].keys.length;
   }
 
@@ -578,7 +582,96 @@ class _HomePageState extends State<HomePage> {
                                 },
                               )),
                           allEventsCollapsed
-                              ? SizedBox()
+                              ? SizedBox():
+                          allEvents.length > 3 ?
+                          Container(
+                              height:
+                              MediaQuery.of(context).size.height /
+                                  3,
+                              child: allEvents.isNotEmpty
+                                  ? ListView.separated(
+                                shrinkWrap: true,
+                                physics: ScrollPhysics(),
+                                padding: const EdgeInsets.all(20),
+                                itemCount: allEvents.length,
+                                itemBuilder:
+                                    (BuildContext context,
+                                    int index) {
+                                  String key = allEvents.keys
+                                      .elementAt(index);
+                                  return Container(
+                                    height: 50,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 7,
+                                          child: Column(
+                                            children: [
+                                              Align(
+                                                  alignment:
+                                                  Alignment
+                                                      .topLeft,
+                                                  child: Text(
+                                                      '${allEvents[key]?['name']} (${getEventSpots(allEvents[key]!)}/${getEventLimit(allEvents[key]!)})',
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                          22))),
+                                              Align(
+                                                alignment: Alignment
+                                                    .centerLeft,
+                                                child: Text(
+                                                    '${userEvents[key]?['time']}' +
+                                                        "  |  " +
+                                                        getDateWordForm(
+                                                            '${allEvents[key]?['date']}'),
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                        17)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: IconButton(
+                                              icon: Icon(Icons
+                                                  .more_vert),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                          DetailsPage(
+                                                            title: "Event Info",
+                                                            event: allEvents[key],
+                                                            eventKey: key,
+                                                          )),
+                                                ).then((value) {
+                                                  getAllEvents();
+                                                });
+                                              }),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context,
+                                    int index) =>
+                                const Divider(
+                                    color:
+                                    Colors.black26),
+                              )
+                                  : Center(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    height: 100,
+                                    child: Text("No Events Yet",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.grey)),
+                                  )))
                               : Container(
                                   //change size of the box around event list
                                   child: ListView.separated(
@@ -688,7 +781,7 @@ class _HomePageState extends State<HomePage> {
                                             int index) =>
                                         const Divider(color: Colors.black26),
                                   ),
-                                ),
+                                )
                         ],
                       ),
                     ),
