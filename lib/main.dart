@@ -78,36 +78,35 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   CMDB database = CMDB();
+  String? _username;
+  User user = User();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     database.initialize("serena-test");
+    checkLogging().then((isLogging) {
+      if (isLogging) {
+        database
+            .get<Map<String, dynamic>>('Users/' + _username! + "/")
+            .then((value) {
+          user.info = value;
+        });
+      }
+    });
   }
 
-  User user = User();
-
-  Future<Widget> loadFromFuture() async {
+  Future<bool> checkLogging() async {
     // <fetch data from server. ex. login>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey("username")) {
-      String? username = prefs.getString('username');
-      database
-          .get<Map<String, dynamic>>('Users/' + username! + "/")
-          .then((value) {
-        user.info = value;
-        return Future.value(new RouteScreen());
-
+      setState(() {
+        _username = prefs.getString('username')!;
       });
+
+      return true;
     }
-    else {
-      return Future.value(
-          Future.delayed(const Duration(milliseconds: 4000), () {
-            return (new LoginPage(title: "Login"));
-          }));
-    }
-    throw ("");
+    return false;
   }
 
   @override
@@ -115,7 +114,8 @@ class _MyAppState extends State<MyApp> {
     return new SplashScreen(
         seconds: 4,
         // navigateAfterFuture: loadFromFuture(),
-        navigateAfterSeconds: LoginPage(title:"Login"),
+        navigateAfterSeconds:
+            _username != null ? RouteScreen() : LoginPage(title: "Login"),
         title: new Text(
           'Welcome In SplashScreen',
           style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),

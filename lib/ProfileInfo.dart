@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Login.dart';
 import 'User.dart';
 import 'cmdb.dart';
@@ -32,6 +33,11 @@ class _ProfilePageState extends State<ProfilePage> {
             actions: actions,
           );
         });
+  }
+
+  Future<void> removeUserPrefKey() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("username");
   }
 
   List<Widget> changePasswordPopup() {
@@ -69,11 +75,11 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
             Center(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(titleCase(user.info!["name"]),
-                      style: TextStyle(
-                          fontSize: 40, decoration: TextDecoration.underline)),
-                )),
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(titleCase(user.info!["name"]),
+                  style: TextStyle(
+                      fontSize: 40, decoration: TextDecoration.underline)),
+            )),
             SizedBox(height: 30),
             Align(
                 alignment: Alignment.centerLeft,
@@ -167,13 +173,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 textStyle: TextStyle(fontSize: 20),
               ),
               onPressed: () {
-                user.info = {};
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => LoginPage(title: "Login")),
-                );
+                removeUserPrefKey().then((value) {
+                  user.info = {};
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LoginPage(title: "Login")),
+                  );
+                });
               },
               child: Text('Sign Out'),
             ),
