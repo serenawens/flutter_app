@@ -14,7 +14,7 @@ class CMDB {
   }
 
   Future<void> initialize(String endpoint) async {
-    String url = "https://keyclubapp-96443-default-rtdb.firebaseio.com/";
+    String url = "https://codingminds-default-rtdb.firebaseio.com";
     if (_url == null) {
       _url = url + "/" + endpoint;
     }

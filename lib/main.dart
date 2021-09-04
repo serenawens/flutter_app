@@ -84,7 +84,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    database.initialize("");
+    database.initialize("serena-test");
     checkLogging().then((isLogging) {
       if (isLogging) {
         database
@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return new SplashScreen(
-        seconds: 4,
+        seconds: 8,
         // navigateAfterFuture: loadFromFuture(),
         navigateAfterSeconds:
             _username != null ? RouteScreen() : LoginPage(title: "Login"),

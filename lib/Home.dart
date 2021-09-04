@@ -620,7 +620,7 @@ class _HomePageState extends State<HomePage> {
                                                 alignment: Alignment
                                                     .centerLeft,
                                                 child: Text(
-                                                    '${userEvents[key]?['time']}' +
+                                                    '${allEvents[key]?['time']}' +
                                                         "  |  " +
                                                         getDateWordForm(
                                                             '${allEvents[key]?['date']}'),
