@@ -21,7 +21,6 @@ class _AddEventPageState extends State<AddEventPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    database.initialize("serena-test");
   }
 
   void _showDialog(String message, String title, List<Widget> actions) {

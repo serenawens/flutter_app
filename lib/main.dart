@@ -84,7 +84,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    database.initialize("serena-test");
+    database.initialize("");
     checkLogging().then((isLogging) {
       if (isLogging) {
         database

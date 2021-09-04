@@ -26,7 +26,6 @@ class _SignUpPageState extends State<SignUpPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    database.initialize("serena-test");
     getResponse();
   }
 
