@@ -33,75 +33,6 @@ class _HomePageState extends State<HomePage> {
     getCollapsedValues();
   }
 
-  bool eventFull(Map event) {
-    int limit = int.parse(event['volunteerLimit']);
-
-    if (event["volunteer"] != null && event['volunteers'].keys.length == limit) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  int getEventSpots(Map event) {
-    if (event['volunteers'] == null){
-      return 0;
-    }
-    return event['volunteers'].keys.length;
-  }
-
-  int getEventLimit(Map event) {
-    return int.parse(event['volunteerLimit']);
-  }
-
-  Map<String, Map<String, dynamic>> sortEvents(
-      Map<String, Map<String, dynamic>> events) {
-    var sortedKeys = events.keys.toList(growable: false)
-      ..sort((k1, k2) => events[k1]!['date']!.compareTo(events[k2]!['date']!));
-    LinkedHashMap<String, Map<String, dynamic>?> sortedMap =
-        new LinkedHashMap<String, Map<String, dynamic>?>.fromIterable(
-            sortedKeys,
-            key: (k) => k,
-            value: (k) => events[k]);
-
-    return sortedMap as Map<String, Map<String, dynamic>>;
-  }
-
-  void _resetEvents() {
-    allEvents = {};
-    userEvents = {};
-    pendingInvites = {};
-  }
-
-  void getAllEvents() async {
-    _resetEvents();
-    database.get<Map<String, dynamic>>('Events').then((value) {
-      if (value != null) {
-        setState(() {
-          allEvents = {};
-          value.forEach((key, value) {
-            DateTime now = DateTime.now();
-            String date = value['date'];
-            final DateFormat formatter = DateFormat('MM-dd-yyyy');
-            DateTime dt1 = formatter.parse(date);
-            if (!dt1.isBefore(now) ||
-                (dt1.day == now.day &&
-                    dt1.year == now.year &&
-                    dt1.month == now.month)) {
-              allEvents[key] = value as Map<String, dynamic>;
-            }
-          });
-          allEvents = sortEvents(allEvents);
-          getUserEvents();
-        });
-      } else {
-        setState(() {
-          isDone = true;
-        });
-      }
-    });
-  }
-
   String getDateWordForm(String date) {
     final DateFormat formatter = DateFormat('MM-dd-yyyy');
     DateTime dt = formatter.parse(date);
@@ -246,6 +177,76 @@ class _HomePageState extends State<HomePage> {
     return (strWeekday + ", " + strMonth + " " + day.toString());
   }
 
+  bool eventFull(Map event) {
+    int limit = int.parse(event['volunteerLimit']);
+
+    if (event["volunteer"] != null &&
+        event['volunteers'].keys.length == limit) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  int getEventSpots(Map event) {
+    if (event['volunteers'] == null) {
+      return 0;
+    }
+    return event['volunteers'].keys.length;
+  }
+
+  int getEventLimit(Map event) {
+    return int.parse(event['volunteerLimit']);
+  }
+
+  Map<String, Map<String, dynamic>> sortEvents(
+      Map<String, Map<String, dynamic>> events) {
+    var sortedKeys = events.keys.toList(growable: false)
+      ..sort((k1, k2) => events[k1]!['date']!.compareTo(events[k2]!['date']!));
+    LinkedHashMap<String, Map<String, dynamic>?> sortedMap =
+        new LinkedHashMap<String, Map<String, dynamic>?>.fromIterable(
+            sortedKeys,
+            key: (k) => k,
+            value: (k) => events[k]);
+
+    return sortedMap as Map<String, Map<String, dynamic>>;
+  }
+
+  void _resetEvents() {
+    allEvents = {};
+    userEvents = {};
+    pendingInvites = {};
+  }
+
+  void getAllEvents() async {
+    _resetEvents();
+    database.get<Map<String, dynamic>>('Events').then((value) {
+      if (value != null) {
+        setState(() {
+          allEvents = {};
+          value.forEach((key, value) {
+            DateTime now = DateTime.now();
+            String date = value['date'];
+            final DateFormat formatter = DateFormat('MM-dd-yyyy');
+            DateTime dt1 = formatter.parse(date);
+            if (!dt1.isBefore(now) ||
+                (dt1.day == now.day &&
+                    dt1.year == now.year &&
+                    dt1.month == now.month)) {
+              allEvents[key] = value as Map<String, dynamic>;
+            }
+          });
+          allEvents = sortEvents(allEvents);
+          getUserEvents();
+        });
+      } else {
+        setState(() {
+          isDone = true;
+        });
+      }
+    });
+  }
+
   Future<void> getUserEvents() async {
     isDone = false;
     database
@@ -276,6 +277,19 @@ class _HomePageState extends State<HomePage> {
         .join(' ');
   }
 
+  bool userEventsCollapsed = false;
+  Icon collapseUsers = Icon(Icons.arrow_drop_down_outlined);
+
+  bool allEventsCollapsed = false;
+  Icon collapseAll = Icon(Icons.arrow_drop_down_outlined);
+
+  bool isDone = false;
+
+  void saveCollapsedValues(String key, bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, value);
+  }
+
   Future<void> getCollapsedValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -300,18 +314,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void saveCollapsedValues(String key, bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(key, value);
-  }
-
-  bool userEventsCollapsed = false;
-  Icon collapseUsers = Icon(Icons.arrow_drop_down_outlined);
-
-  bool allEventsCollapsed = false;
-  Icon collapseAll = Icon(Icons.arrow_drop_down_outlined);
-
-  bool isDone = false;
 
   @override
   Widget build(BuildContext context) {
@@ -393,11 +395,20 @@ class _HomePageState extends State<HomePage> {
                                                                 alignment:
                                                                     Alignment
                                                                         .topLeft,
-                                                                child: Text(
-                                                                    '${userEvents[key]?['name']} (${getEventSpots(userEvents[key]!)}/${getEventLimit(userEvents[key]!)})',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            22))),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                        '${userEvents[key]?['name']}',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                22)),
+                                                                    Text(
+                                                                        '${getEventLimit(userEvents[key]!) - getEventSpots(userEvents[key]!)} spots left',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                15))
+                                                                  ],
+                                                                )),
                                                             Align(
                                                               alignment: Alignment
                                                                   .centerLeft,
@@ -478,11 +489,20 @@ class _HomePageState extends State<HomePage> {
                                                                 alignment:
                                                                     Alignment
                                                                         .topLeft,
-                                                                child: Text(
-                                                                    '${userEvents[key]?['name']} (${getEventSpots(userEvents[key]!)}/${getEventLimit(userEvents[key]!)})',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            22))),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                        '${userEvents[key]?['name']}',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            22)),
+                                                                    Text(
+                                                                        ' (${getEventLimit(userEvents[key]!) - getEventSpots(userEvents[key]!)} spots)',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            18))
+                                                                  ],
+                                                                )),
                                                             Align(
                                                               alignment: Alignment
                                                                   .centerLeft,
@@ -582,206 +602,224 @@ class _HomePageState extends State<HomePage> {
                                 },
                               )),
                           allEventsCollapsed
-                              ? SizedBox():
-                          allEvents.length > 3 ?
-                          Container(
-                              height:
-                              MediaQuery.of(context).size.height /
-                                  3,
-                              child: allEvents.isNotEmpty
-                                  ? ListView.separated(
-                                shrinkWrap: true,
-                                physics: ScrollPhysics(),
-                                padding: const EdgeInsets.all(20),
-                                itemCount: allEvents.length,
-                                itemBuilder:
-                                    (BuildContext context,
-                                    int index) {
-                                  String key = allEvents.keys
-                                      .elementAt(index);
-                                  return Container(
-                                    height: 50,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 7,
-                                          child: Column(
-                                            children: [
-                                              Align(
-                                                  alignment:
-                                                  Alignment
-                                                      .topLeft,
-                                                  child: Text(
-                                                      '${allEvents[key]?['name']} (${getEventSpots(allEvents[key]!)}/${getEventLimit(allEvents[key]!)})',
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                          22))),
-                                              Align(
-                                                alignment: Alignment
-                                                    .centerLeft,
-                                                child: Text(
-                                                    '${allEvents[key]?['time']}' +
-                                                        "  |  " +
-                                                        getDateWordForm(
-                                                            '${allEvents[key]?['date']}'),
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                        17)),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: IconButton(
-                                              icon: Icon(Icons
-                                                  .more_vert),
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder:
-                                                          (context) =>
-                                                          DetailsPage(
-                                                            title: "Event Info",
-                                                            event: allEvents[key],
-                                                            eventKey: key,
-                                                          )),
-                                                ).then((value) {
-                                                  getAllEvents();
-                                                });
-                                              }),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                separatorBuilder:
-                                    (BuildContext context,
-                                    int index) =>
-                                const Divider(
-                                    color:
-                                    Colors.black26),
-                              )
-                                  : Center(
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 100,
-                                    child: Text("No Events Yet",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.grey)),
-                                  )))
-                              : Container(
-                                  //change size of the box around event list
-                                  child: ListView.separated(
-                                    shrinkWrap: true,
-                                    physics: ScrollPhysics(),
-                                    padding: const EdgeInsets.all(20),
-                                    itemCount: allEvents.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      String key =
-                                          allEvents.keys.elementAt(index);
-                                      return Container(
-                                        height: 50,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 7,
-                                              child: Column(
-                                                children: [
-                                                  Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      child: eventFull(
-                                                              allEvents[key]!)
-                                                          ? Text(
-                                                              "${allEvents[key]!['name']} (FULL)",
-                                                              style: TextStyle(
-                                                                  fontSize: 22))
-                                                          : Text(
-                                                              '${allEvents[key]!['name']} (${getEventSpots(allEvents[key]!)}/${getEventLimit(allEvents[key]!)})',
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      22))),
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Text(
-                                                        '${allEvents[key]!['time']}' +
-                                                            "  |  " +
-                                                            getDateWordForm(
-                                                                '${allEvents[key]?['date']}'),
-                                                        style: TextStyle(
-                                                            fontSize: 15)),
+                              ? SizedBox()
+                              : allEvents.length > 3
+                                  ? Container(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              3,
+                                      child: allEvents.isNotEmpty
+                                          ? ListView.separated(
+                                              shrinkWrap: true,
+                                              physics: ScrollPhysics(),
+                                              padding: const EdgeInsets.all(20),
+                                              itemCount: allEvents.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                String key = allEvents.keys
+                                                    .elementAt(index);
+                                                return Container(
+                                                  height: 50,
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 7,
+                                                        child: Column(
+                                                          children: [
+                                                            Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topLeft,
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                        '${allEvents[key]?['name']}',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            22)),
+                                                                    eventFull(allEvents[key]!)?
+                                                                    Text(
+                                                                        "${allEvents[key]!['name']} (FULL)",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            15)):
+                                                                    Text(
+                                                                        '${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            15))
+                                                                  ],
+                                                                )),
+                                                            Align(
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                              child: Text(
+                                                                  '${allEvents[key]?['time']}' +
+                                                                      "  |  " +
+                                                                      getDateWordForm(
+                                                                          '${allEvents[key]?['date']}'),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          17)),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: IconButton(
+                                                            icon: Icon(Icons
+                                                                .more_vert),
+                                                            onPressed: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            DetailsPage(
+                                                                              title: "Event Info",
+                                                                              event: allEvents[key],
+                                                                              eventKey: key,
+                                                                            )),
+                                                              ).then((value) {
+                                                                getAllEvents();
+                                                              });
+                                                            }),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (BuildContext context,
+                                                          int index) =>
+                                                      const Divider(
+                                                          color:
+                                                              Colors.black26),
+                                            )
+                                          : Center(
+                                              child: Container(
+                                              alignment: Alignment.center,
+                                              height: 100,
+                                              child: Text("No Events Yet",
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.grey)),
+                                            )))
+                                  : Container(
+                                      //change size of the box around event list
+                                      child: ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: ScrollPhysics(),
+                                        padding: const EdgeInsets.all(20),
+                                        itemCount: allEvents.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          String key =
+                                              allEvents.keys.elementAt(index);
+                                          return Container(
+                                            height: 50,
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 7,
+                                                  child: Column(
+                                                    children: [
+                                                      Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                          child: eventFull(
+                                                                  allEvents[
+                                                                      key]!)
+                                                              ? Text(
+                                                                  "${allEvents[key]!['name']} (FULL)",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          22))
+                                                              : Text(
+                                                                  '${allEvents[key]!['name']} (${getEventSpots(allEvents[key]!)}/${getEventLimit(allEvents[key]!)})',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          22))),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                            '${allEvents[key]!['time']}' +
+                                                                "  |  " +
+                                                                getDateWordForm(
+                                                                    '${allEvents[key]?['date']}'),
+                                                            style: TextStyle(
+                                                                fontSize: 15)),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                user.info!["role"] == "admin"
+                                                    ? Expanded(
+                                                        flex: 1,
+                                                        child: IconButton(
+                                                            icon: Icon(
+                                                                Icons.edit),
+                                                            onPressed: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            EditEventPage(
+                                                                              title: "Edit Event",
+                                                                              events: allEvents,
+                                                                              eventKey: key,
+                                                                            )),
+                                                              ).then((value) {
+                                                                // if (value !=
+                                                                //     null) {
+                                                                //   setState(() {
+                                                                //     allEvents =
+                                                                //         value;
+                                                                //   });
+                                                                // }
+                                                                getAllEvents();
+                                                              });
+                                                            }),
+                                                      )
+                                                    : SizedBox(),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: IconButton(
+                                                      icon:
+                                                          Icon(Icons.more_vert),
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      DetailsPage(
+                                                                        title:
+                                                                            "Event Info",
+                                                                        event: allEvents[
+                                                                            key],
+                                                                        eventKey:
+                                                                            key,
+                                                                      )),
+                                                        ).then((value) {
+                                                          getAllEvents();
+                                                        });
+                                                      }),
+                                                ),
+                                              ],
                                             ),
-                                            user.info!["role"] == "admin"
-                                                ? Expanded(
-                                                    flex: 1,
-                                                    child: IconButton(
-                                                        icon: Icon(Icons.edit),
-                                                        onPressed: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        EditEventPage(
-                                                                          title:
-                                                                              "Edit Event",
-                                                                          events:
-                                                                              allEvents,
-                                                                          eventKey:
-                                                                              key,
-                                                                        )),
-                                                          ).then((value) {
-                                                            // if (value !=
-                                                            //     null) {
-                                                            //   setState(() {
-                                                            //     allEvents =
-                                                            //         value;
-                                                            //   });
-                                                            // }
-                                                            getAllEvents();
-                                                          });
-                                                        }),
-                                                  )
-                                                : SizedBox(),
-                                            Expanded(
-                                              flex: 1,
-                                              child: IconButton(
-                                                  icon: Icon(Icons.more_vert),
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              DetailsPage(
-                                                                title:
-                                                                    "Event Info",
-                                                                event:
-                                                                    allEvents[
-                                                                        key],
-                                                                eventKey: key,
-                                                              )),
-                                                    ).then((value) {
-                                                      getAllEvents();
-                                                    });
-                                                  }),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    separatorBuilder: (BuildContext context,
-                                            int index) =>
-                                        const Divider(color: Colors.black26),
-                                  ),
-                                )
+                                          );
+                                        },
+                                        separatorBuilder:
+                                            (BuildContext context, int index) =>
+                                                const Divider(
+                                                    color: Colors.black26),
+                                      ),
+                                    )
                         ],
                       ),
                     ),

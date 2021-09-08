@@ -54,6 +54,7 @@ import 'cmdb.dart';
 void main() {
   runApp(new MaterialApp(
     home: new MyApp(),
+    debugShowCheckedModeBanner: false,
     theme: ThemeData(
       // This is the theme of your application.
       //
