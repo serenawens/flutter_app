@@ -87,6 +87,49 @@ class _InvitesPageState extends State<InvitesPage> {
     ];
   }
 
+  List<Widget> returnEventIsFullActions(String eventKey) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+              child: Text('Delete Invite'),
+              onPressed: () {
+                //Remove from database's event pending list
+                database.delete("Events/" +
+                    eventKey +
+                    "/pending/" +
+                    user.info!['username'] +
+                    "/");
+
+                //Remove from YOUR event pending list
+                database.delete(
+                    "Users/" + user.info!['username'] + "/pending/" + eventKey);
+
+                setState(() {});
+                getAllEvents();
+                Navigator.of(context).pop();
+              }),
+          ElevatedButton(
+              child: Text('Go To Event Details'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailsPage(
+                            title: "Event Info",
+                            event: pendingInvites[eventKey],
+                            eventKey: eventKey,
+                          )),
+                ).then((value) {
+                  getAllEvents();
+                });
+              })
+        ],
+      ),
+    ];
+  }
+
   Map<String, Map<String, dynamic>> sortEvents(
       Map<String, Map<String, dynamic>> events) {
     var sortedKeys = events.keys.toList(growable: false)
@@ -157,6 +200,7 @@ class _InvitesPageState extends State<InvitesPage> {
       }
     });
   }
+
 
   String titleCase(String s) {
     return s
@@ -373,7 +417,8 @@ class _InvitesPageState extends State<InvitesPage> {
                                               });
                                             },
                                           ),
-                                          Text("Inviters  (${eventInviters[eventKey].length})",
+                                          Text(
+                                              "Inviters  (${eventInviters[eventKey].length})",
                                               style: TextStyle(fontSize: 17)),
                                         ],
                                       ),
@@ -384,12 +429,13 @@ class _InvitesPageState extends State<InvitesPage> {
                               Expanded(
                                   flex: 3,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 50, left: 4),
+                                    padding: const EdgeInsets.only(
+                                        bottom: 50, left: 4),
                                     child: OutlinedButton(
                                       style: OutlinedButton.styleFrom(
-                                          side:
-                                              BorderSide(color: Colors.red)),
-                                      child: Text("Ignore", style: TextStyle(color: Colors.red)),
+                                          side: BorderSide(color: Colors.red)),
+                                      child: Text("Ignore",
+                                          style: TextStyle(color: Colors.red)),
                                       onPressed: () {
                                         setState(() {
                                           _showDialog(
@@ -403,25 +449,40 @@ class _InvitesPageState extends State<InvitesPage> {
                               Expanded(
                                 flex: 3,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 50, left: 4),
+                                  padding: const EdgeInsets.only(
+                                      bottom: 50, left: 4),
                                   child: OutlinedButton(
-                                    style:OutlinedButton.styleFrom(
-                                        side:
-                                        BorderSide(color: Colors.green)),
-                                      child: Text("Accept", style: TextStyle(color: Colors.green)),
+                                      style: OutlinedButton.styleFrom(
+                                          side:
+                                              BorderSide(color: Colors.green)),
+                                      child: Text("Accept",
+                                          style:
+                                              TextStyle(color: Colors.green)),
                                       onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => DetailsPage(
-                                                    title: "Event Info",
-                                                    event:
-                                                        pendingInvites[eventKey],
-                                                    eventKey: eventKey,
-                                                  )),
-                                        ).then((value) {
-                                          getAllEvents();
-                                        });
+                                        // if (pendingInvites[eventKey]!['volunteers'].size() ==
+                                        //     int.parse(pendingInvites[eventKey]![
+                                        //         'volunteerLimit'])) {
+                                        //   _showDialog(
+                                        //       "The volunteer spots for this event have been filled",
+                                        //       "Event Full",
+                                        //       returnEventIsFullActions(
+                                        //           eventKey));
+                                        // } else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetailsPage(
+                                                      title: "Event Info",
+                                                      event: pendingInvites[
+                                                          eventKey],
+                                                      eventKey: eventKey,
+                                                    )),
+                                          ).then((value) {
+                                            getAllEvents();
+                                          });
+
+
                                       }),
                                 ),
                               ),

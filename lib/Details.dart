@@ -48,11 +48,23 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   ElevatedButton disableButton(String disabledButtonText){
-    return ElevatedButton(
-      child: Text(disabledButtonText),
-      onPressed: null,
-        style: ElevatedButton.styleFrom(primary: Colors.black87)
-    );
+
+    if (disabledButtonText == "Event Full"){
+      print("Event full");
+      return ElevatedButton(
+          child: Text(disabledButtonText),
+          onPressed: null,
+        style: ElevatedButton.styleFrom(primary: Colors.orange)
+      );
+    }
+    else {
+      return ElevatedButton(
+          child: Text(disabledButtonText),
+          onPressed: null,
+          style: ElevatedButton.styleFrom(primary: Colors.black87)
+      );
+    }
+
   }
 
   String getDateWordForm(String date){
@@ -339,10 +351,10 @@ class _DetailsPageState extends State<DetailsPage> {
                           style: TextStyle(fontSize: 20)),
                     ),
                     ListTile(
-                      title: Text(widget.event?['details']),
+                      title: Text('DETAILS: ${widget.event?['details']}'),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 8),
+                      padding: const EdgeInsets.only(left: 20),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -352,7 +364,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 20),
+                      padding: const EdgeInsets.only(left: 22),
                       child: ListView.builder(
                           itemCount: volunteerList.length,
                           shrinkWrap: true,

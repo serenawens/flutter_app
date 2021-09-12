@@ -78,46 +78,70 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.only(top: 10),
               child: Text(titleCase(user.info!["name"]),
                   style: TextStyle(
-                      fontSize: 40, decoration: TextDecoration.underline)),
+                    fontSize: 40,
+                  )),
             )),
             SizedBox(height: 30),
-            Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Username: " + user.info!["username"])),
-            Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                    "Phone Number: " + user.info!["phoneNumber"].toString())),
-            Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Role: " + titleCase(user.info!["role"]))),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Username: " + user.info!["username"],
+                      style: TextStyle(fontSize: 20))),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                      "Phone Number: " + user.info!["phoneNumber"].toString(),
+                      style: TextStyle(fontSize: 19))),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Role: " + titleCase(user.info!["role"]), style: TextStyle(fontSize: 20))),
+            ),
             SizedBox(height: 30),
-            Text("Change Password"),
-            TextField(
-              obscureText: false,
-              controller: oldPassword,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter old password',
-                labelStyle: new TextStyle(color: Colors.grey),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Change Password", style: TextStyle(fontSize: 18)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                obscureText: false,
+                controller: oldPassword,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter old password',
+                  labelStyle: new TextStyle(color: Colors.grey),
+                ),
               ),
             ),
-            TextField(
-              obscureText: false,
-              controller: newPassword,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter new password',
-                labelStyle: new TextStyle(color: Colors.grey),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                obscureText: false,
+                controller: newPassword,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter new password',
+                  labelStyle: new TextStyle(color: Colors.grey),
+                ),
               ),
             ),
-            TextField(
-              obscureText: false,
-              controller: newPConfirm,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter new password again',
-                labelStyle: new TextStyle(color: Colors.grey),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                obscureText: false,
+                controller: newPConfirm,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter new password again',
+                  labelStyle: new TextStyle(color: Colors.grey),
+                ),
               ),
             ),
             Padding(

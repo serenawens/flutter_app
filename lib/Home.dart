@@ -178,14 +178,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool eventFull(Map event) {
-    int limit = int.parse(event['volunteerLimit']);
 
-    if (event["volunteer"] != null &&
-        event['volunteers'].keys.length == limit) {
-      return true;
-    } else {
-      return false;
+    if (event['volunteers'] != null) {
+      int limit = int.parse(event['volunteerLimit']);
+
+      if (event['volunteers'].keys.length == limit) {
+        return true;
+      } else {
+        return false;
+      }
     }
+    return false;
   }
 
   int getEventSpots(Map event) {
@@ -197,6 +200,14 @@ class _HomePageState extends State<HomePage> {
 
   int getEventLimit(Map event) {
     return int.parse(event['volunteerLimit']);
+  }
+
+  bool oneSpotLeft(Map event, String key){
+    int spotsLeft = getEventLimit(event[key]!) - getEventSpots(event[key]!);
+
+    if(spotsLeft ==1 )
+      return true;
+    return false;
   }
 
   Map<String, Map<String, dynamic>> sortEvents(
@@ -365,15 +376,21 @@ class _HomePageState extends State<HomePage> {
                                       userEventsCollapsed);
                                 },
                               )),
+
+
+                          //IF MY EVENTS BOX IS COLLAPSED
                           userEventsCollapsed
                               ? SizedBox()
-                              : userEvents.length > 3
+
+
+                              : //MY EVENTS BOX IS NOT COLLAPSED
+                                //AND IF MORE THAN 3 EVENTS, KEEP CONTAINER SIZE AT CERTAIN LIMIT
+                              userEvents.length > 3
                                   ? Container(
                                       height:
                                           MediaQuery.of(context).size.height /
-                                              3,
-                                      child: userEvents.isNotEmpty
-                                          ? ListView.separated(
+                                              3.35,
+                                      child: ListView.separated(
                                               shrinkWrap: true,
                                               physics: ScrollPhysics(),
                                               padding: const EdgeInsets.all(20),
@@ -391,6 +408,26 @@ class _HomePageState extends State<HomePage> {
                                                         flex: 7,
                                                         child: Column(
                                                           children: [
+
+                                                            eventFull(userEvents[key]!) ?
+                                                            Align(
+                                                                alignment:
+                                                                Alignment
+                                                                    .topLeft,
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                        '${userEvents[key]?['name']}',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            22)),
+                                                                    Text(
+                                                                        '(FULL)',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            15))
+                                                                  ],
+                                                                )):
                                                             Align(
                                                                 alignment:
                                                                     Alignment
@@ -402,8 +439,16 @@ class _HomePageState extends State<HomePage> {
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                                 22)),
+
+
+                                                                    oneSpotLeft(userEvents, key)?
                                                                     Text(
-                                                                        '${getEventLimit(userEvents[key]!) - getEventSpots(userEvents[key]!)} spots left',
+                                                                        ' (1 spot left)',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            15)):
+                                                                    Text(
+                                                                        ' (${getEventLimit(userEvents[key]!) - getEventSpots(userEvents[key]!)} spots left)',
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                                 15))
@@ -455,17 +500,13 @@ class _HomePageState extends State<HomePage> {
                                                       const Divider(
                                                           color:
                                                               Colors.black26),
-                                            )
-                                          : Center(
-                                              child: Container(
-                                              alignment: Alignment.center,
-                                              height: 100,
-                                              child: Text("No Events Yet",
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.grey)),
-                                            )))
-                                  : Container(
+                                            ))
+
+
+                                  : //IF EVENT COUNT IS LESS THAN 3 -- CONTAINER SIZE IS FLEXIBLE
+                                  Container(
+
+                                    //IF THE NUM OF EVENTS ISN"T 0
                                       child: userEvents.isNotEmpty
                                           ? ListView.separated(
                                               shrinkWrap: true,
@@ -485,6 +526,25 @@ class _HomePageState extends State<HomePage> {
                                                         flex: 7,
                                                         child: Column(
                                                           children: [
+                                                            eventFull(userEvents[key]!) ?
+                                                            Align(
+                                                                alignment:
+                                                                Alignment
+                                                                    .topLeft,
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                        '${userEvents[key]?['name']}',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            22)),
+                                                                    Text(
+                                                                        ' (FULL)',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            15))
+                                                                  ],
+                                                                )):
                                                             Align(
                                                                 alignment:
                                                                     Alignment
@@ -496,11 +556,18 @@ class _HomePageState extends State<HomePage> {
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                             22)),
+
+                                                                    oneSpotLeft(userEvents, key)?
                                                                     Text(
-                                                                        ' (${getEventLimit(userEvents[key]!) - getEventSpots(userEvents[key]!)} spots)',
+                                                                        ' (1 spot left)',
                                                                         style: TextStyle(
                                                                             fontSize:
-                                                                            18))
+                                                                            17)):
+                                                                    Text(
+                                                                        ' (${getEventLimit(userEvents[key]!) - getEventSpots(userEvents[key]!)} spots left)',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            17))
                                                                   ],
                                                                 )),
                                                             Align(
@@ -550,7 +617,10 @@ class _HomePageState extends State<HomePage> {
                                                           color:
                                                               Colors.black26),
                                             )
-                                          : Center(
+
+
+                                          : // IF NO EVENTS MY EVENTS SECTION WILL SAY "NO EVENTS YET"
+                                      Center(
                                               child: Container(
                                               alignment: Alignment.center,
                                               height: 100,
@@ -563,6 +633,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
+
+
+
+                  // ALL EVENTS CONTAINER
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: Container(
@@ -601,115 +675,165 @@ class _HomePageState extends State<HomePage> {
                                       allEventsCollapsed);
                                 },
                               )),
+
+
+                          //IF ALL EVENTS IS COLLAPSED
                           allEventsCollapsed
                               ? SizedBox()
-                              : allEvents.length > 3
+
+
+                              : //IF ALL EVENTS SECTION IS NOT COLLAPSED
+                                // AND HAS MORE THAN 3 EVENTS --> MAKE IT LIMITED CONTAINER SIZE
+                              allEvents.length > 3
                                   ? Container(
                                       height:
                                           MediaQuery.of(context).size.height /
-                                              3,
-                                      child: allEvents.isNotEmpty
-                                          ? ListView.separated(
-                                              shrinkWrap: true,
-                                              physics: ScrollPhysics(),
-                                              padding: const EdgeInsets.all(20),
-                                              itemCount: allEvents.length,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                String key = allEvents.keys
-                                                    .elementAt(index);
-                                                return Container(
-                                                  height: 50,
-                                                  child: Row(
+                                              3.35,
+                                      child:
+                                      ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: ScrollPhysics(),
+                                        padding: const EdgeInsets.all(20),
+                                        itemCount: allEvents.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          String key =
+                                          allEvents.keys.elementAt(index);
+                                          return Container(
+                                            height: 50,
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 7,
+                                                  child: Column(
                                                     children: [
-                                                      Expanded(
-                                                        flex: 7,
-                                                        child: Column(
-                                                          children: [
-                                                            Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                                child: Row(
-                                                                  children: [
-                                                                    Text(
-                                                                        '${allEvents[key]?['name']}',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                            22)),
-                                                                    eventFull(allEvents[key]!)?
-                                                                    Text(
-                                                                        "${allEvents[key]!['name']} (FULL)",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                            15)):
-                                                                    Text(
-                                                                        '${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                            15))
-                                                                  ],
-                                                                )),
-                                                            Align(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              child: Text(
-                                                                  '${allEvents[key]?['time']}' +
-                                                                      "  |  " +
-                                                                      getDateWordForm(
-                                                                          '${allEvents[key]?['date']}'),
+                                                      Align(
+                                                          alignment: Alignment.topLeft,
+
+                                                          child:
+
+
+                                                          // IF THE EVENT IS FULL SHOW FULL
+                                                          eventFull(allEvents[key]!) ?
+                                                          Row(
+                                                            children: [
+                                                              Text(
+                                                                  "${allEvents[key]!['name']}",
                                                                   style: TextStyle(
                                                                       fontSize:
+                                                                      22)),
+                                                              Text(
+                                                                  " (FULL)",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                      17))
+                                                            ],
+                                                          )
+
+                                                          // IF EVENT IS NOT FULL, DISPLAY HOW MANY SPOTS ARE LEFT
+                                                              : Row(
+                                                                children: [
+                                                                  Text(
+                                                                  '${allEvents[key]!['name']} ',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                      22)),
+
+                                                                  oneSpotLeft(allEvents, key)?
+                                                                  Text(
+                                                                      ' (1 spot left)',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                          17)):
+                                                                  Text(
+                                                                      ' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)',
+                                                                      style: TextStyle(
+                                                                          fontSize:
                                                                           17)),
-                                                            ),
-                                                          ],
-                                                        ),
+
+                                                                ],
+                                                              ),
                                                       ),
-                                                      Expanded(
-                                                        flex: 1,
-                                                        child: IconButton(
-                                                            icon: Icon(Icons
-                                                                .more_vert),
-                                                            onPressed: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            DetailsPage(
-                                                                              title: "Event Info",
-                                                                              event: allEvents[key],
-                                                                              eventKey: key,
-                                                                            )),
-                                                              ).then((value) {
-                                                                getAllEvents();
-                                                              });
-                                                            }),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                            '${allEvents[key]!['time']}' +
+                                                                "  |  " +
+                                                                getDateWordForm(
+                                                                    '${allEvents[key]?['date']}'),
+                                                            style: TextStyle(
+                                                                fontSize: 15)),
                                                       ),
                                                     ],
                                                   ),
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (BuildContext context,
-                                                          int index) =>
-                                                      const Divider(
-                                                          color:
-                                                              Colors.black26),
-                                            )
-                                          : Center(
-                                              child: Container(
-                                              alignment: Alignment.center,
-                                              height: 100,
-                                              child: Text("No Events Yet",
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.grey)),
-                                            )))
+                                                ),
+                                                user.info!["role"] == "admin"
+                                                    ? Expanded(
+                                                  flex: 1,
+                                                  child: IconButton(
+                                                      icon: Icon(
+                                                          Icons.edit),
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                  EditEventPage(
+                                                                    title: "Edit Event",
+                                                                    events: allEvents,
+                                                                    eventKey: key,
+                                                                  )),
+                                                        ).then((value) {
+                                                          getAllEvents();
+                                                        });
+                                                      }),
+                                                )
+                                                    : SizedBox(),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: IconButton(
+                                                      icon:
+                                                      Icon(Icons.more_vert),
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                  DetailsPage(
+                                                                    title:
+                                                                    "Event Info",
+                                                                    event: allEvents[
+                                                                    key],
+                                                                    eventKey:
+                                                                    key,
+                                                                  )),
+                                                        ).then((value) {
+                                                          getAllEvents();
+                                                        });
+                                                      }),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        separatorBuilder:
+                                            (BuildContext context, int index) =>
+                                        const Divider(
+                                            color: Colors.black26),
+                                      ) )
+
+
+                                  //IF THERE ARE 3 OR LESS EVENTS
                                   : Container(
                                       //change size of the box around event list
-                                      child: ListView.separated(
+                                      child:
+
+                                      // IF ALL EVENTS LIST ISN'T EMPTY
+                                      allEvents.isNotEmpty?
+                                      ListView.separated(
                                         shrinkWrap: true,
                                         physics: ScrollPhysics(),
                                         padding: const EdgeInsets.all(20),
@@ -727,21 +851,53 @@ class _HomePageState extends State<HomePage> {
                                                   child: Column(
                                                     children: [
                                                       Align(
-                                                          alignment:
-                                                              Alignment.topLeft,
-                                                          child: eventFull(
-                                                                  allEvents[
-                                                                      key]!)
-                                                              ? Text(
-                                                                  "${allEvents[key]!['name']} (FULL)",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          22))
-                                                              : Text(
-                                                                  '${allEvents[key]!['name']} (${getEventSpots(allEvents[key]!)}/${getEventLimit(allEvents[key]!)})',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          22))),
+                                                        alignment: Alignment.topLeft,
+
+                                                        child:
+
+
+                                                        // IF THE EVENT IS FULL SHOW FULL
+                                                        eventFull(allEvents[key]!) ?
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                                "${allEvents[key]!['name']}",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                    22)),
+                                                            Text(
+                                                                " (FULL)",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                    17))
+                                                          ],
+                                                        )
+
+                                                        // IF EVENT IS NOT FULL, DISPLAY HOW MANY SPOTS ARE LEFT
+                                                            : Row(
+                                                          children: [
+                                                            Text(
+                                                                '${allEvents[key]!['name']}',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                    22)),
+
+
+                                                            oneSpotLeft(allEvents, key)?
+                                                            Text(
+                                                                ' (1 spot left)',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                    17)):
+                                                            Text(
+                                                                ' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                    17)),
+
+                                                          ],
+                                                        ),
+                                                      ),
                                                       Align(
                                                         alignment: Alignment
                                                             .centerLeft,
@@ -774,13 +930,6 @@ class _HomePageState extends State<HomePage> {
                                                                               eventKey: key,
                                                                             )),
                                                               ).then((value) {
-                                                                // if (value !=
-                                                                //     null) {
-                                                                //   setState(() {
-                                                                //     allEvents =
-                                                                //         value;
-                                                                //   });
-                                                                // }
                                                                 getAllEvents();
                                                               });
                                                             }),
@@ -818,7 +967,20 @@ class _HomePageState extends State<HomePage> {
                                             (BuildContext context, int index) =>
                                                 const Divider(
                                                     color: Colors.black26),
-                                      ),
+                                      )
+
+
+                                       : // IF NO EVENTS IN THE ALL EVENTS SECTION WILL SAY "NO EVENTS YET"
+                                      Center(
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            height: 100,
+                                            child: Text("No Events Yet",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.grey)),
+                                          ))
+
                                     )
                         ],
                       ),
