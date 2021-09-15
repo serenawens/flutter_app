@@ -47,7 +47,6 @@ import 'package:flutter_app/Route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
 
-import 'Home.dart';
 import 'User.dart';
 import 'cmdb.dart';
 
@@ -85,7 +84,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    database.initialize("serena-test");
+    database.initialize("2021-22 School Year");
     checkLogging().then((isLogging) {
       if (isLogging) {
         database
@@ -118,10 +117,10 @@ class _MyAppState extends State<MyApp> {
         navigateAfterSeconds:
             _username != null ? RouteScreen() : LoginPage(title: "Login"),
         title: new Text(
-          'Welcome In SplashScreen',
+          'LC Key Club',
           style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
-        image: new Image.network('https://i.imgur.com/TyCSG9A.png'),
+        image: new Image.asset('Images/KEY-CLUB-SEAL-Color-1.png'),
         //change network to assets
         backgroundColor: Colors.white,
         styleTextUnderTheLoader: new TextStyle(),
