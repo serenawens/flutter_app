@@ -117,7 +117,7 @@ class _MyAppState extends State<MyApp> {
         navigateAfterSeconds:
             _username != null ? RouteScreen() : LoginPage(title: "Login"),
         title: new Text(
-          'LC Key Club',
+          'Welcome to Key Club',
           style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
         image: new Image.asset('Images/KEY-CLUB-SEAL-Color-1.png'),

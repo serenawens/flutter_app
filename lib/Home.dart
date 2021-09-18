@@ -707,52 +707,48 @@ class _HomePageState extends State<HomePage> {
                                                   flex: 7,
                                                   child: Column(
                                                     children: [
-                                                      Align(
-                                                          alignment: Alignment.topLeft,
-
-                                                          child:
-
-
-                                                          // IF THE EVENT IS FULL SHOW FULL
-                                                          eventFull(allEvents[key]!) ?
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                  "${allEvents[key]!['name']}",
+                                                      Expanded(
+                                                        flex: 7,
+                                                        child: Column(
+                                                          children: [
+                                                            Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topLeft,
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                        '${allEvents[key]?['name']}',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            20)),
+                                                                    eventFull(allEvents[key]!)?
+                                                                    Text(
+                                                                        "${allEvents[key]!['name']} (FULL)",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            14)):
+                                                                    Text(
+                                                                        '${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                            14))
+                                                                  ],
+                                                                )),
+                                                            Align(
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                              child: Text(
+                                                                  '${allEvents[key]?['time']}' +
+                                                                      "  |  " +
+                                                                      getDateWordForm(
+                                                                          '${allEvents[key]?['date']}'),
                                                                   style: TextStyle(
                                                                       fontSize:
-                                                                      22)),
-                                                              Text(
-                                                                  " (FULL)",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                      17))
-                                                            ],
-                                                          )
-
-                                                          // IF EVENT IS NOT FULL, DISPLAY HOW MANY SPOTS ARE LEFT
-                                                              : Row(
-                                                                children: [
-                                                                  Text(
-                                                                  '${allEvents[key]!['name']} ',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                      22)),
-
-                                                                  oneSpotLeft(allEvents, key)?
-                                                                  Text(
-                                                                      ' (1 spot left)',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                          17)):
-                                                                  Text(
-                                                                      ' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                          17)),
-
-                                                                ],
-                                                              ),
+                                                                          15)),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                       Align(
                                                         alignment: Alignment
