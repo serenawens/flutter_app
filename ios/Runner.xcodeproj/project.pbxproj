@@ -363,10 +363,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-<<<<<<< HEAD
-=======
 				MARKETING_VERSION = 1.0.2;
->>>>>>> c20ba33 (update)
 				PRODUCT_BUNDLE_IDENTIFIER = com.serena.flutterApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -498,10 +495,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-<<<<<<< HEAD
-=======
-				MARKETING_VERSION = 1.0.2;
->>>>>>> c20ba33 (update)
 				PRODUCT_BUNDLE_IDENTIFIER = com.serena.flutterApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -525,10 +518,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-<<<<<<< HEAD
-=======
-				MARKETING_VERSION = 1.0.2;
->>>>>>> c20ba33 (update)
 				PRODUCT_BUNDLE_IDENTIFIER = com.serena.flutterApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
