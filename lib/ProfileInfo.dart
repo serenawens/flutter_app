@@ -104,94 +104,115 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Text("Role: " + titleCase(user.info!["role"]), style: TextStyle(fontSize: 20))),
             ),
             SizedBox(height: 30),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Change Password", style: TextStyle(fontSize: 18)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                obscureText: false,
-                controller: oldPassword,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter old password',
-                  labelStyle: new TextStyle(color: Colors.grey),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                obscureText: false,
-                controller: newPassword,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter new password',
-                  labelStyle: new TextStyle(color: Colors.grey),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                obscureText: false,
-                controller: newPConfirm,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter new password again',
-                  labelStyle: new TextStyle(color: Colors.grey),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.all(
+            //         Radius.circular(10),
+            //       ),
+            //       border: Border.all(
+            //         width: 3,
+            //         color: Colors.orange,
+            //         style: BorderStyle.solid,
+            //       ),
+            //     ),
+            //     child:
+              Column(
                   children: [
-                    ElevatedButton(
-                      child: Text("Cancel"),
-                      onPressed: () {
-                        newPassword.text = "";
-                        oldPassword.text = "";
-                        newPConfirm.text = "";
-                      },
+                    SizedBox(height:10),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15, top: 10),
+                      child: Text("Change Password", style: TextStyle(fontSize: 18)),
                     ),
-                    ElevatedButton(
-                      child: Text("Change Password"),
-                      onPressed: () {
-                        print(user.info);
-                        print(oldPassword.text == user.info!['password']);
-                        print(newPConfirm.text == newPassword.text);
-                        if (oldPassword.text == user.info!['password'] &&
-                            newPConfirm.text == newPassword.text) {
-                          user.info!['password'] = newPassword.text;
-                          database
-                              .get<Map<String, dynamic>>(
-                                  "Users/" + user.info!['username'])
-                              .then((value) {
-                            value!['password'] = newPassword.text;
-                            database
-                                .update("Users/" + user.info!['username'] + "/",
-                                    value)
-                                .then((value) {
-                              if (value == true) {
-                                _showDialog("Password successfully changed",
-                                    'Success!', changePasswordPopup());
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                      child: TextField(
+                        obscureText: false,
+                        controller: oldPassword,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Enter old password',
+                          labelStyle: new TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                      child: TextField(
+                        obscureText: false,
+                        controller: newPassword,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Enter new password',
+                          labelStyle: new TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                      child: TextField(
+                        obscureText: false,
+                        controller: newPConfirm,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Enter new password again',
+                          labelStyle: new TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              child: Text("Cancel"),
+                              onPressed: () {
                                 newPassword.text = "";
                                 oldPassword.text = "";
                                 newPConfirm.text = "";
-                              }
-                            });
-                          });
-                        } else {
-                          _showDialog("Incorrect, try again", 'Password Change',
-                              changePasswordPopup());
-                        }
-                      },
-                    )
-                  ]),
-            ),
+                              },
+                            ),
+                            ElevatedButton(
+                              child: Text("Change Password"),
+                              onPressed: () {
+                                print(user.info);
+                                print(oldPassword.text == user.info!['password']);
+                                print(newPConfirm.text == newPassword.text);
+                                if (oldPassword.text == user.info!['password'] &&
+                                    newPConfirm.text == newPassword.text) {
+                                  user.info!['password'] = newPassword.text;
+                                  database
+                                      .get<Map<String, dynamic>>(
+                                          "Users/" + user.info!['username'])
+                                      .then((value) {
+                                    value!['password'] = newPassword.text;
+                                    database
+                                        .update("Users/" + user.info!['username'] + "/",
+                                            value)
+                                        .then((value) {
+                                      if (value == true) {
+                                        _showDialog("Password successfully changed",
+                                            'Success!', changePasswordPopup());
+                                        newPassword.text = "";
+                                        oldPassword.text = "";
+                                        newPConfirm.text = "";
+                                      }
+                                    });
+                                  });
+                                } else {
+                                  _showDialog("Incorrect, try again", 'Password Change',
+                                      changePasswordPopup());
+                                }
+                              },
+                            )
+                          ]),
+                    ),
+                  ],
+                ),
+            //   ),
+            // ),
             TextButton(
               style: TextButton.styleFrom(
                 textStyle: TextStyle(fontSize: 20),
