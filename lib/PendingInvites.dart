@@ -427,7 +427,7 @@ class _InvitesPageState extends State<InvitesPage> {
                                 ),
                               ),
                               Expanded(
-                                  flex: 3,
+                                  flex: 4,
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                         bottom: 50, left: 4),
@@ -447,7 +447,7 @@ class _InvitesPageState extends State<InvitesPage> {
                                     ),
                                   )),
                               Expanded(
-                                flex: 3,
+                                flex: 4,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       bottom: 50, left: 4),
