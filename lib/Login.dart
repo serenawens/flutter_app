@@ -83,69 +83,82 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Enter Your Login Info:',
-                style: TextStyle(fontSize: 30),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: username,
-                  obscureText: false,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Username',
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Image(
+                    image: AssetImage('Images/KEY-CLUB-SEAL-Color-1.png'),
+                    height: 100
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: password,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Password',
+                SizedBox(
+                  height: 20
+                ),
+                Text(
+                  'Login Info',
+                  style: TextStyle(fontSize: 30),
+                ),
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8, right: 15, left: 15),
+                  child: TextField(
+                    controller: username,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Username',
+                    ),
                   ),
                 ),
-              ),
-              ElevatedButton(
-                child: Text('Login', style: TextStyle(fontSize: 20)),
-                onPressed: () {
-                  checkLoginInfo().then((value) {
-                    if (value == true) {
-                      setUserPrefValues();
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RouteScreen()),
-                      );
-                    } else {
-                      _showDialog("Wrong username or passcode, try again",
-                          "ERROR", returnLoginError());
-                    }
-                  });
-                },
-              ),
-              ElevatedButton(
-                child: Text('Sign Up Here', style: TextStyle(fontSize: 14)),
-                style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.only(
-                        right: 10, left: 10, top: 2, bottom: 2)),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SignUpPage(title: 'Sign Up')),
-                  );
-                },
-              ),
-            ],
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8, right: 15, left: 15),
+                  child: TextField(
+                    controller: password,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Password',
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  child: Text('Login', style: TextStyle(fontSize: 20)),
+                  onPressed: () {
+                    checkLoginInfo().then((value) {
+                      if (value == true) {
+                        setUserPrefValues();
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RouteScreen()),
+                        );
+                      } else {
+                        _showDialog("Wrong username or passcode, try again",
+                            "ERROR", returnLoginError());
+                      }
+                    });
+                  },
+                ),
+                ElevatedButton(
+                  child: Text('Sign Up Here', style: TextStyle(fontSize: 14)),
+                  style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.only(
+                          right: 10, left: 10, top: 2, bottom: 2)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SignUpPage(title: 'Sign Up')),
+                    );
+                  },
+                ),
+                SizedBox(height: 50)
+              ],
+            ),
           ),
         ),
       ),

@@ -102,10 +102,10 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("Sign Up for an Account:", style: TextStyle(fontSize: 30)),
+              Text("Create an Account", style: TextStyle(fontSize: 30)),
               SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8, left: 20, right:20),
                 child: TextField(
                   controller: firstName,
                   obscureText: false,
@@ -116,7 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8, left: 20, right:20),
                 child: TextField(
                   controller: lastName,
                   obscureText: false,
@@ -127,7 +127,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               SizedBox(
-                width: 384,
+                width: 345,
                 height: 60,
                 child: Card(
                   shape: RoundedRectangleBorder(
@@ -151,7 +151,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
+                          padding: const EdgeInsets.only(left: 10.0),
                           child: Text(value),
                         ),
                       );
@@ -160,7 +160,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8, left: 20, right:20),
                 child: TextField(
                   controller: phoneNumber,
                   obscureText: false,
@@ -171,7 +171,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8, left: 20, right:20),
                 child: TextField(
                   onChanged: (String? newValue) {
                     if (response != null) {
@@ -197,7 +197,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8, left: 20, right:20),
                 child: TextField(
                   controller: password,
                   obscureText: false,
