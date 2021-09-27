@@ -29,9 +29,9 @@ class _LoginPageState extends State<LoginPage> {
         await database.get<Map<String, dynamic>>('Users');
 
     for (var key in response!.keys) {
-      print(key == username.text);
-      print(response[key]['password'] == password.text);
-      if (key == username.text && response[key]['password'] == password.text) {
+      print(key == username.text.trim());
+      print(response[key]['password'] == password.text.trim());
+      if (key == username.text.trim() && response[key]['password'] == password.text.trim()) {
         user.info = response[key];
         return true;
       }

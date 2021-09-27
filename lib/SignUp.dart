@@ -226,13 +226,13 @@ class _SignUpPageState extends State<SignUpPage> {
                       } else {
                         // Sign Up a user (Create a new user)
                         var newUser = {
-                          "username": username.text.toLowerCase(),
-                          'password': password.text.toLowerCase(),
+                          "username": username.text.toLowerCase().trim(),
+                          'password': password.text.toLowerCase().trim(),
                           'grade': dropdownValue!.toLowerCase(),
                           'phoneNumber': phoneNumber.text.toLowerCase(),
-                          'name': firstName.text.toLowerCase() +
+                          'name': firstName.text.toLowerCase().trim() +
                               " " +
-                              lastName.text.toLowerCase(),
+                              lastName.text.toLowerCase().trim(),
                           'role': 'member',
                         };
 
