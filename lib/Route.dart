@@ -137,7 +137,7 @@ class _RouteScreenState extends State<RouteScreen> {
         onTap: _onItemTapped,
       );
     } else {
-      _widgetOptions.add(AdminEventPage(title: "Add Volunteering Event"));
+      _widgetOptions.add(AdminEventPage(title: "Create Event"));
       return BottomNavigationBar(
         items: bottomNavigationBarItemList,
         currentIndex: _selectedIndex,

@@ -86,8 +86,10 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(8.0),
               child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Username: " + user.info!["username"],
-                      style: TextStyle(fontSize: 20))),
+                  child:
+                  Text("Username: " + user.info!["username"],
+                      style: TextStyle(fontSize: 20)),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -96,6 +98,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Text(
                       "Phone Number: " + user.info!["phoneNumber"].toString(),
                       style: TextStyle(fontSize: 19))),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Grade: " + titleCase(user.info!["grade"]), style: TextStyle(fontSize: 20))),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -123,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(height:10),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 15, top: 10),
-                      child: Text("Change Password", style: TextStyle(fontSize: 18)),
+                      child: Text("Change Password", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
@@ -213,6 +221,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
             //   ),
             // ),
+            SizedBox(height: 10),
             TextButton(
               style: TextButton.styleFrom(
                 textStyle: TextStyle(fontSize: 20),
@@ -228,7 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 });
               },
-              child: Text('Sign Out'),
+              child: Text('Sign Out', style: TextStyle(fontSize: 21,fontWeight: FontWeight.w500)),
             ),
           ],
         ),

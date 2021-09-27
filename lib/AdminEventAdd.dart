@@ -26,22 +26,25 @@ class _AdminEventPageState extends State<AdminEventPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ListTile(
-              title: Text('Add Volunteering Event',
-                  style: TextStyle(fontSize: 25)),
-              trailing: IconButton(
-                  icon: Icon(Icons.add, size: 30),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                AddEventPage(title: 'Add Event')));
-                  }),
+            Text('Add Volunteering',
+            style: TextStyle(fontSize: 35)),
+            Text('Event',
+                style: TextStyle(fontSize: 35)),
+            SizedBox(height: 30),
+            RawMaterialButton(
+              onPressed: () {Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          AddEventPage(title: 'Create Event'))); },
+              fillColor: Colors.orangeAccent,
+              child: Icon(Icons.add, size: 30.0),
+              padding: EdgeInsets.all(15.0),
+              shape: CircleBorder(),
             ),
           ],
+            ),
         ),
-      ),
     );
   }
 }
