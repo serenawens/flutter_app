@@ -585,10 +585,10 @@ class _HomePageState extends State<HomePage> {
                                                                               fontSize:
                                                                               17)):
                                                                       Text(
-                                                                          ' (${getEventLimit(userEvents[key]!) - getEventSpots(userEvents[key]!)} spots left)',
+                                                                          ' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)',
                                                                           style: TextStyle(
                                                                               fontSize:
-                                                                              17))
+                                                                              15))
                                                                     ],
                                                                   )),
                                                               Align(
@@ -762,15 +762,15 @@ class _HomePageState extends State<HomePage> {
                                                                               20)),
                                                                       eventFull(allEvents[key]!)?
                                                                       Text(
-                                                                          "${allEvents[key]!['name']} (FULL)",
+                                                                          " (FULL)",
                                                                           style: TextStyle(
                                                                               fontSize:
                                                                               14)):
                                                                       Text(
-                                                                          '${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left',
+                                                                          ' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)',
                                                                           style: TextStyle(
                                                                               fontSize:
-                                                                              14))
+                                                                              15))
                                                                     ],
                                                                   )),
                                                               Align(
@@ -788,17 +788,7 @@ class _HomePageState extends State<HomePage> {
                                                             ],
                                                           ),
                                                         ),
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          child: Text(
-                                                              '${allEvents[key]!['time']}' +
-                                                                  "  |  " +
-                                                                  getDateWordForm(
-                                                                      '${allEvents[key]?['date']}'),
-                                                              style: TextStyle(
-                                                                  fontSize: 13)),
-                                                        ),
+
                                                       ],
                                                     ),
                                                   ),
@@ -944,7 +934,7 @@ class _HomePageState extends State<HomePage> {
                                                                       fontSize:
                                                                       17)):
                                                               Text(
-                                                                  ' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)',
+                                                                      ' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)',
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                       17)),

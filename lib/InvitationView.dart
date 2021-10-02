@@ -39,7 +39,7 @@ class _InvitationPageState extends State<InvitationPage> {
         });
   }
 
-  List<Widget> returnInviteActions() {
+  List<Widget> returnInviteActions(String username) {
     return [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -52,13 +52,98 @@ class _InvitationPageState extends State<InvitationPage> {
           ElevatedButton(
               child: Text('Yes, Invite'),
               onPressed: () {
-                setState(() {});
+                if ( filteredNames[username]!['pendingTrue'] == 'false'){
+                  database.update(
+                      "Users/" +
+                          username +
+                          "/pending/" +
+                          widget.eventKey +
+                          "/",
+                      {"eventID": widget.eventKey}).then((value) {
+                    database.update(
+                        "Users/" +
+                            username +
+                            "/pending/" +
+                            widget.eventKey +
+                            "/inviters/" +
+                            user.info!['username'] +
+                            "/",
+                        {"name": user.info!['name']});
+                  });
+                }
+                else{
+                  database.update(
+                      "Users/" +
+                          username +
+                          "/pending/" +
+                          widget.eventKey +
+                          "/inviters/" +
+                          user.info!['username'] +
+                          "/",
+                      {"name": user.info!['name']});
+                }
+                database.update(
+                    "Events/" +
+                        widget.eventKey +
+                        "/pending/" +
+                        username +
+                        "/",
+                    {
+                      "name":
+                      filteredNames[username]!['name']!.toLowerCase()
+                    });
+                setState(() {
+                  names[username]!['invitedByYou'] = 'true';
+                  filteredNames = names;
+                });
                 Navigator.of(context).pop();
               })
         ],
       ),
     ];
   }
+
+  List<Widget> returnCancelInviteActions(String username) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+              child: Text('Nevermind'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+          ElevatedButton(
+              child: Text('Cancel Invite'),
+              onPressed: () {
+                getInviteePendingInvitersList(username);
+
+                // setState(() {
+                //   names[username]!['invitedByYou'] = 'false';
+                //   filteredNames = names;
+                // });
+                Navigator.of(context).pop();
+              })
+        ],
+      ),
+    ];
+  }
+
+  Future<void> getInviteePendingInvitersList(String username) async {
+    Map<String, Map<String, String>> userMap = {};
+
+    database.get<Map<String, dynamic>>('Users').then((users) {
+      users!.forEach((key, userInfo){
+        if (key == username){
+          List<String> userInviterList = users[key]['pending'][widget.eventKey]['inviters'];
+          print(userInviterList);
+        }
+      });
+    });
+
+    }
+
+
 
   final TextEditingController _filter = new TextEditingController();
 
@@ -177,55 +262,15 @@ class _InvitationPageState extends State<InvitationPage> {
           onTap: () => print(filteredNames[username]),
           trailing: filteredNames[username]!['invitedByYou'] == 'true'
               ? ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    // _showDialog('Do you want to uninvite ${filteredNames[username]!['name']}?', 'Cancel Invite Confirmation', returnCancelInviteActions(username));
+
+                  },
                   child: Text('Invited'),
                   style: ElevatedButton.styleFrom(primary: Colors.black12))
               : ElevatedButton(
                   onPressed: () {
-                    if ( filteredNames[username]!['pendingTrue'] == 'false'){
-                      database.update(
-                          "Users/" +
-                              username +
-                              "/pending/" +
-                              widget.eventKey +
-                              "/",
-                          {"eventID": widget.eventKey}).then((value) {
-                        database.update(
-                            "Users/" +
-                                username +
-                                "/pending/" +
-                                widget.eventKey +
-                                "/inviters/" +
-                                user.info!['username'] +
-                                "/",
-                            {"name": user.info!['name']});
-                      });
-                    }
-                    else{
-                      database.update(
-                          "Users/" +
-                              username +
-                              "/pending/" +
-                              widget.eventKey +
-                              "/inviters/" +
-                              user.info!['username'] +
-                              "/",
-                          {"name": user.info!['name']});
-                    }
-                    database.update(
-                        "Events/" +
-                            widget.eventKey +
-                            "/pending/" +
-                            username +
-                            "/",
-                        {
-                          "name":
-                              filteredNames[username]!['name']!.toLowerCase()
-                        });
-                    setState(() {
-                      names[username]!['invitedByYou'] = 'true';
-                      filteredNames = names;
-                    });
+                    _showDialog("Do you want to invite ${filteredNames[username]!['name']}? You won't be able to cancel your invite.", 'Invite Confirmation', returnInviteActions(username));
                   },
                   child: Text('Invite'),
                 ),

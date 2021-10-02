@@ -396,6 +396,31 @@ class _InvitesPageState extends State<InvitesPage> {
                                               fontSize: 17,
                                               color: Colors.black45)),
                                     ),
+                                    // Align(
+                                    //   alignment: Alignment.centerLeft,
+                                    //   child: ListTile(
+                                    //     leading: IconButton(
+                                    //       icon: iconList[index],
+                                    //       onPressed: () {
+                                    //         setState(() {
+                                    //           if (collapsedList[index] ==
+                                    //               false) {
+                                    //             collapsedList[index] = true;
+                                    //             iconList[index] = Icon(Icons
+                                    //                 .arrow_right_outlined);
+                                    //           } else {
+                                    //             collapsedList[index] = false;
+                                    //             iconList[index] = Icon(Icons
+                                    //                 .arrow_drop_down_outlined);
+                                    //           }
+                                    //         });
+                                    //       },
+                                    //     ),
+                                    //     title: Text(
+                                    //         "Inviters  (${eventInviters[eventKey].length})",
+                                    //         style: TextStyle(fontSize: 17)),
+                                    //   ),
+                                    // ),
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: Row(
@@ -418,7 +443,7 @@ class _InvitesPageState extends State<InvitesPage> {
                                             },
                                           ),
                                           Text(
-                                              "Inviters  (${eventInviters[eventKey].length})",
+                                              "Inviters (${eventInviters[eventKey].length})",
                                               style: TextStyle(fontSize: 17)),
                                         ],
                                       ),
@@ -502,7 +527,7 @@ class _InvitesPageState extends State<InvitesPage> {
                                     print(eventInviters[eventKey][username]
                                         ['name']);
                                     return Padding(
-                                      padding: const EdgeInsets.only(left: 40),
+                                      padding: const EdgeInsets.only(left: 53),
                                       child: Text(titleCase(
                                           eventInviters[eventKey][username]
                                               ['name'])),

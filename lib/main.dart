@@ -85,6 +85,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     database.initialize("2021-22 School Year");
+    // database.initialize("");
     checkLogging().then((isLogging) {
       if (isLogging) {
         database
