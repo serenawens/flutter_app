@@ -111,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   alignment: Alignment.centerLeft,
                   child: Text("Role: " + titleCase(user.info!["role"]), style: TextStyle(fontSize: 20))),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 15),
             // Padding(
             //   padding: const EdgeInsets.all(8.0),
             //   child: Container(

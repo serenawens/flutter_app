@@ -126,9 +126,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
-              SizedBox(
-                width: 345,
-                height: 60,
+              Container(
+                width: MediaQuery.of(context).size.width/1.09,
+                //width: 345,
+                height:MediaQuery.of(context).size.width/6.5,
                 child: Card(
                   shape: RoundedRectangleBorder(
                       side: new BorderSide(color: Colors.black12, width: 2),

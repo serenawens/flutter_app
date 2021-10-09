@@ -31,15 +31,18 @@ class _EditEventPageState extends State<EditEventPage> {
   TextEditingController eventLocation = TextEditingController();
   TextEditingController eventLimit = TextEditingController();
   TextEditingController eventDetails = TextEditingController();
+  TextEditingController signUpLink = TextEditingController();
 
   void setEventValues() {
-
     eventName.text = widget.events[widget.eventKey]?["name"];
     eventDate.text = widget.events[widget.eventKey]?["date"];
     eventTime.text = widget.events[widget.eventKey]?["time"];
     eventLocation.text = widget.events[widget.eventKey]?["location"];
     eventLimit.text = widget.events[widget.eventKey]?["volunteerLimit"];
     eventDetails.text = widget.events[widget.eventKey]?["details"];
+    if(widget.events[widget.eventKey]?["link"] != null){
+      signUpLink.text = widget.events[widget.eventKey]?["link"];
+    }
   }
 
   @override
@@ -55,6 +58,7 @@ class _EditEventPageState extends State<EditEventPage> {
     widget.events[widget.eventKey]?["location"] = eventLocation.text;
     widget.events[widget.eventKey]?["volunteerLimit"] = eventLimit.text;
     widget.events[widget.eventKey]?["details"] = eventDetails.text;
+    widget.events[widget.eventKey]?["link"] = signUpLink.text;
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -76,6 +80,18 @@ class _EditEventPageState extends State<EditEventPage> {
             actions: actions,
           );
         });
+  }
+
+  List<Widget> returnChangesError() {
+    return [
+      Center(
+        child: ElevatedButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            }),
+      ),
+    ];
   }
 
   List<Widget> returnDeleteActions() {
@@ -269,6 +285,18 @@ class _EditEventPageState extends State<EditEventPage> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: signUpLink,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(borderSide: BorderSide()),
+                      labelText: 'Sign Up Link (optional)',
+                    ),
+                  ),
+                ),
+                SizedBox(height:10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -286,13 +314,22 @@ class _EditEventPageState extends State<EditEventPage> {
                       child:
                           Text('Save Changes', style: TextStyle(fontSize: 20)),
                       onPressed: () {
-                        if (eventName.text == null ||
-                            eventDate.text == null ||
-                            eventTime.text == null ||
-                            eventLocation.text == null ||
-                            eventLimit.text == null ||
-                            eventDetails.text == null) {
-                          Navigator.pop(context);
+                        // if (eventName.text == null ||
+                        //     eventDate.text == null ||
+                        //     eventTime.text == null ||
+                        //     eventLocation.text == null ||
+                        //     eventLimit.text == null ||
+                        //     eventDetails.text == null) {
+                        //   Navigator.pop(context);
+                        // }
+                        if (eventName.text.isEmpty ||
+                            eventDate.text.isEmpty ||
+                            eventTime.text.isEmpty ||
+                            eventLocation.text.isEmpty ||
+                            eventLimit.text.isEmpty||
+                            eventDetails.text.isEmpty) {
+                          _showDialog("All fields must be filled out",
+                              "Missing Information", returnChangesError());
                         } else {
                           addEvent().then((value) {
                             database.update("Events/" + widget.eventKey + "/",

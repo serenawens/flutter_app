@@ -37,11 +37,13 @@ class _AddEventPageState extends State<AddEventPage> {
 
   List<Widget> returnCreateError() {
     return [
-      ElevatedButton(
-          child: Text('OK'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          }),
+      Center(
+        child: ElevatedButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            }),
+      ),
     ];
   }
 
@@ -51,18 +53,34 @@ class _AddEventPageState extends State<AddEventPage> {
   TextEditingController eventLocation = TextEditingController();
   TextEditingController eventLimit = TextEditingController();
   TextEditingController eventDetails = TextEditingController();
+  TextEditingController signUpLink = TextEditingController();
 
   Map<String, dynamic> addEvent() {
-    Map<String, dynamic> events = {
-      "name": eventName.text,
-      'date': eventDate.text,
-      'time': eventTime.text,
-      'location': eventLocation.text,
-      'volunteerLimit': eventLimit.text,
-      'details': eventDetails.text,
-    };
-    return events;
-  }
+    if (signUpLink.text.isEmpty){
+      Map<String, dynamic> events = {
+        "name": eventName.text,
+        'date': eventDate.text,
+        'time': eventTime.text,
+        'location': eventLocation.text,
+        'volunteerLimit': eventLimit.text,
+        'details': eventDetails.text,
+      };
+      return events;
+    }
+    else{
+      Map<String, dynamic> events = {
+        "name": eventName.text,
+        'date': eventDate.text,
+        'time': eventTime.text,
+        'location': eventLocation.text,
+        'volunteerLimit': eventLimit.text,
+        'details': eventDetails.text,
+        'link': signUpLink.text
+      };
+      return events;
+    }
+    }
+
 
   String formatTimeOfDay(TimeOfDay tod) {
     final now = new DateTime.now();
@@ -227,6 +245,18 @@ class _AddEventPageState extends State<AddEventPage> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: signUpLink,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(borderSide: BorderSide()),
+                      labelText: 'Sign Up Link (optional)',
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
                 ElevatedButton(
                     child: Text('Create Event', style: TextStyle(fontSize: 20)),
                     onPressed: () {

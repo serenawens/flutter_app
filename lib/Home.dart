@@ -725,7 +725,7 @@ class _HomePageState extends State<HomePage> {
                                   ? Container(
                                       height:
                                           MediaQuery.of(context).size.height /
-                                              3.35,
+                                             3.0,
                                       child:
                                       ListView.separated(
                                         shrinkWrap: true,
@@ -765,12 +765,18 @@ class _HomePageState extends State<HomePage> {
                                                                           " (FULL)",
                                                                           style: TextStyle(
                                                                               fontSize:
+                                                                              17)):
+                                                                      oneSpotLeft(allEvents, key)?
+                                                                      Text(
+                                                                          ' (1 spot left)',
+                                                                          style: TextStyle(
+                                                                              fontSize:
                                                                               14)):
                                                                       Text(
                                                                           ' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)',
                                                                           style: TextStyle(
                                                                               fontSize:
-                                                                              15))
+                                                                              14))
                                                                     ],
                                                                   )),
                                                               Align(
@@ -932,12 +938,12 @@ class _HomePageState extends State<HomePage> {
                                                                   ' (1 spot left)',
                                                                   style: TextStyle(
                                                                       fontSize:
-                                                                      17)):
+                                                                      14)):
                                                               Text(
                                                                       ' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)',
                                                                   style: TextStyle(
                                                                       fontSize:
-                                                                      17)),
+                                                                      14)),
 
                                                             ],
                                                           ),

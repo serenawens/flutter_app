@@ -1,8 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/InvitationView.dart';
 import 'package:intl/intl.dart';
 import 'User.dart';
 import 'cmdb.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailsPage extends StatefulWidget {
   //Class Constructor
@@ -37,38 +39,32 @@ class _DetailsPageState extends State<DetailsPage> {
     getVolunteers();
   }
 
-  bool eventFull(){
+
+  bool eventFull() {
     int limit = int.parse(widget.event!['volunteerLimit']);
-    if(volunteerList.length == limit) {
+    if (volunteerList.length == limit) {
       return true;
-    }
-    else{
+    } else {
       return false;
     }
   }
 
-  ElevatedButton disableButton(String disabledButtonText){
-
-    if (disabledButtonText == "Event Full"){
+  ElevatedButton disableButton(String disabledButtonText) {
+    if (disabledButtonText == "Event Full") {
       print("Event full");
       return ElevatedButton(
           child: Text(disabledButtonText),
           onPressed: null,
-        style: ElevatedButton.styleFrom(primary: Colors.orange)
-      );
-    }
-    else {
+          style: ElevatedButton.styleFrom(primary: Colors.orange));
+    } else {
       return ElevatedButton(
           child: Text(disabledButtonText),
           onPressed: null,
-          style: ElevatedButton.styleFrom(primary: Colors.black87)
-      );
+          style: ElevatedButton.styleFrom(primary: Colors.black87));
     }
-
   }
 
-  String getDateWordForm(String date){
-
+  String getDateWordForm(String date) {
     final DateFormat formatter = DateFormat('MM-dd-yyyy');
     DateTime dt = formatter.parse(date);
     int weekday = dt.weekday;
@@ -78,120 +74,139 @@ class _DetailsPageState extends State<DetailsPage> {
     String strWeekday;
     String strMonth;
 
-    switch(weekday) {
-      case 1: {
-        strWeekday = "Monday";
-      }
-      break;
+    switch (weekday) {
+      case 1:
+        {
+          strWeekday = "Monday";
+        }
+        break;
 
-      case 2: {
-        strWeekday =  "Tuesday";
-      }
-      break;
+      case 2:
+        {
+          strWeekday = "Tuesday";
+        }
+        break;
 
-      case 3: {
-        strWeekday =  "Wednesday";
-      }
-      break;
+      case 3:
+        {
+          strWeekday = "Wednesday";
+        }
+        break;
 
-      case 4: {
-        strWeekday =  "Thursday";
-      }
-      break;
+      case 4:
+        {
+          strWeekday = "Thursday";
+        }
+        break;
 
-      case 5: {
-        strWeekday =  "Friday";
-      }
-      break;
+      case 5:
+        {
+          strWeekday = "Friday";
+        }
+        break;
 
-      case 6: {
-        strWeekday =  "Saturday";
-      }
-      break;
+      case 6:
+        {
+          strWeekday = "Saturday";
+        }
+        break;
 
-      case 7: {
-        strWeekday =  "Sunday";
-      }
-      break;
+      case 7:
+        {
+          strWeekday = "Sunday";
+        }
+        break;
 
-      default: {
-        strWeekday = " ";
-      }
-      break;
+      default:
+        {
+          strWeekday = " ";
+        }
+        break;
     }
 
-    switch(month) {
-      case 1: {
-        strMonth = "January";
-      }
-      break;
+    switch (month) {
+      case 1:
+        {
+          strMonth = "January";
+        }
+        break;
 
-      case 2: {
-        strMonth =  "February";
-      }
-      break;
+      case 2:
+        {
+          strMonth = "February";
+        }
+        break;
 
-      case 3: {
-        strMonth = "March";
-      }
-      break;
+      case 3:
+        {
+          strMonth = "March";
+        }
+        break;
 
-      case 4: {
-        strMonth = "April";
-      }
-      break;
+      case 4:
+        {
+          strMonth = "April";
+        }
+        break;
 
-      case 5: {
-        strMonth = "May";
-      }
-      break;
+      case 5:
+        {
+          strMonth = "May";
+        }
+        break;
 
-      case 6: {
-        strMonth = "June";
-      }
-      break;
+      case 6:
+        {
+          strMonth = "June";
+        }
+        break;
 
-      case 7: {
-        strMonth = "July";
-      }
-      break;
+      case 7:
+        {
+          strMonth = "July";
+        }
+        break;
 
-      case 8: {
-        strMonth = "August";
-      }
-      break;
+      case 8:
+        {
+          strMonth = "August";
+        }
+        break;
 
-      case 9: {
-        strMonth = "September";
-      }
-      break;
+      case 9:
+        {
+          strMonth = "September";
+        }
+        break;
 
-      case 10: {
-        strMonth = "October";
-      }
-      break;
+      case 10:
+        {
+          strMonth = "October";
+        }
+        break;
 
-      case 11: {
-        strMonth = "November";
-      }
-      break;
+      case 11:
+        {
+          strMonth = "November";
+        }
+        break;
 
-      case 12: {
-        strMonth = "December";
-      }
-      break;
+      case 12:
+        {
+          strMonth = "December";
+        }
+        break;
 
-      default: {
-        strMonth = " ";
-      }
-      break;
+      default:
+        {
+          strMonth = " ";
+        }
+        break;
     }
 
     print(strWeekday + ", " + strMonth + " " + day.toString());
     return (strWeekday + ", " + strMonth + " " + day.toString());
-
   }
-
 
   String titleCase(String s) {
     return s
@@ -207,8 +222,7 @@ class _DetailsPageState extends State<DetailsPage> {
         .get<Map<String, dynamic>>("Events/" + widget.eventKey + "/volunteers/")
         .then((value) {
       flag = true;
-      setState(() {
-      });
+      setState(() {});
       if (value != null) {
         setState(() {
           value.forEach((key, name) {
@@ -222,9 +236,9 @@ class _DetailsPageState extends State<DetailsPage> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
-
     void _showDialog(String message, String title, List<Widget> actions) {
       showDialog(
           context: context,
@@ -250,7 +264,6 @@ class _DetailsPageState extends State<DetailsPage> {
             ElevatedButton(
                 child: Text('Confirm Sign Up'),
                 onPressed: () {
-
                   joinedEvent = true;
                   //add your name to the volunteer list
                   volunteerList.add(user.info!['name']);
@@ -273,15 +286,17 @@ class _DetailsPageState extends State<DetailsPage> {
                       {"eventID": widget.eventKey});
 
                   //Delete the event from your pending events list
-                  database.delete(
-                      "Users/" +
-                          user.info!['username'] +
-                          "/pending/" + widget.eventKey + "/");
+                  database.delete("Users/" +
+                      user.info!['username'] +
+                      "/pending/" +
+                      widget.eventKey +
+                      "/");
 
                   //Delete your name off the event database pending list
-                  database.delete(
-                      "Events/" +
-                          widget.eventKey + "/pending/" + user.info!['username']);
+                  database.delete("Events/" +
+                      widget.eventKey +
+                      "/pending/" +
+                      user.info!['username']);
 
                   setState(() {});
 
@@ -327,6 +342,7 @@ class _DetailsPageState extends State<DetailsPage> {
       ];
     }
 
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -334,35 +350,77 @@ class _DetailsPageState extends State<DetailsPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(top: 100),
+          padding: const EdgeInsets.only(top: 50),
           child: flag
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ListTile(
-                      title: Text(titleCase(widget.event?["name"]),
-                          style: TextStyle(fontSize: 50)),
-                      subtitle: Text(
-                          getDateWordForm(widget.event?["date"]) +
+                      title: SelectableText(titleCase(widget.event?["name"]),
+                          style: TextStyle(
+                              fontSize: 40, fontWeight: FontWeight.bold)),
+                      subtitle: SelectableText(
+                          "\n" +
+                              getDateWordForm(widget.event?["date"]) +
                               "\n" +
-                              widget.event?['time'] +
-                              "\n" +
-                              titleCase(widget.event?['location']),
+                              widget.event?['time'],
                           style: TextStyle(fontSize: 20)),
                     ),
-                    ListTile(
-                      title: Text('DETAILS: ${widget.event?['details']}'),
+                    SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 18),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Location:",
+                              style: TextStyle(
+                                  fontSize: 19, fontWeight: FontWeight.bold))),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 20),
+                        padding: const EdgeInsets.only(left: 18, right: 18),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: SelectableText(titleCase(widget.event?['location']),
+                                style: TextStyle(
+                                    fontSize: 19, color: Colors.black87)))),
+                    SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 18),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Details:",
+                              style: TextStyle(
+                                  fontSize: 19, fontWeight: FontWeight.bold))),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.only(left: 18, right: 18, top:3),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(widget.event?['details'],
+                                style: TextStyle(
+                                    fontSize: 17, color: Colors.black87)))),
+                    SizedBox(height: 10),
+                    widget.event?['link'] != null &&  widget.event?['link'] != ''?
+                    Padding(
+                        padding: const EdgeInsets.only(left: 18, right: 18),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                                child: new Text("Website Sign Up Link", style: new TextStyle(color: Colors.blue, decoration: TextDecoration.underline),),
+                                onTap: () => launch(widget.event?['link'])
+                            ),)):
+                        SizedBox(),
+                    SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 18),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Members Signed Up (${volunteerList.length}/${widget.event!['volunteerLimit']})",
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 23),
                         ),
                       ),
                     ),
+                    SizedBox(height: 5),
                     Padding(
                       padding: const EdgeInsets.only(left: 22),
                       child: ListView.builder(
@@ -370,47 +428,48 @@ class _DetailsPageState extends State<DetailsPage> {
                           shrinkWrap: true,
                           physics: ScrollPhysics(),
                           itemBuilder: (BuildContext context, int index) {
-                            return Text(titleCase('${volunteerList[index]}'),
+                            return Text(titleCase('- ${volunteerList[index]}'),
                                 style: TextStyle(fontSize: 15));
                           }),
                     ),
                     SizedBox(height: 20),
                     joinedEvent == false
-                        ?
-                    eventFull()?
-                        disableButton("Event Full"):
-                      ElevatedButton(
-                            child: Text('Join Event'),
-                            onPressed: () {
-                              setState(() {
-                                _showDialog(
-                                    "Confirm your sign up?",
-                                    "Sign Up Confirmation",
-                                    returnJoinActions());
-                              });
-                              //Add name to event
-                            },
-                          )
+                        ? eventFull()
+                            ? disableButton("Event Full")
+                            : ElevatedButton(
+                                child: Text('Join Event'),
+                                onPressed: () {
+                                  setState(() {
+                                    _showDialog(
+                                        "Confirm your sign up?",
+                                        "Sign Up Confirmation",
+                                        returnJoinActions());
+                                  });
+                                  //Add name to event
+                                },
+                              )
                         : Padding(
                             padding: const EdgeInsets.only(left: 10.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                eventFull()?
-                                    disableButton("Invite Friends"):
-                                ElevatedButton(
-                                  child: Text('Invite Friends'),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => InvitationPage(
-                                            title: "Invite a Friend",
-                                            eventKey: widget.eventKey),
+                                eventFull()
+                                    ? disableButton("Invite Friends")
+                                    : ElevatedButton(
+                                        child: Text('Invite Friends'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  InvitationPage(
+                                                      title: "Invite a Friend",
+                                                      eventKey:
+                                                          widget.eventKey),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
                                 ElevatedButton(
                                   child: Text('Cancel Sign Up'),
                                   onPressed: () {
