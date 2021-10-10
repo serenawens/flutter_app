@@ -111,6 +111,11 @@ class _EditEventPageState extends State<EditEventPage> {
                     widget.events[widget.eventKey]?['pending'];
                 Map volunteers = widget.events[widget.eventKey]?['volunteers'];
 
+                //Transfer event to "deleted events" section
+                Map tempEvents = widget.events;
+                String tempKey = widget.eventKey;
+                database.update('DeletedEvents/' + tempKey + '/', tempEvents[tempKey]);
+
                 if (pendingInvitations != null) {
                   //Remove the event from all member "pending" lists
                   pendingInvitations.forEach((users, value) {
@@ -129,9 +134,11 @@ class _EditEventPageState extends State<EditEventPage> {
                   });
                 }
 
-                //Remove the event from the Event
+                //Remove the event from the Event section
                 database.delete("Events/" + widget.eventKey).then((value) {
                   widget.events.remove(widget.eventKey);
+                  print(value);
+
                   setState(() {});
                   Navigator.of(context).pop();
                   Navigator.pop(context);

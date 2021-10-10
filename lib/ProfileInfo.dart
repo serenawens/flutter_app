@@ -35,6 +35,31 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
+  int countHours() {
+    //use user key to access events
+    //iterate through events
+    //IF event has already passsed (look at the date)
+    //Look at TIME ranges of those events
+    //Calculate the hours
+    //Add hours in
+    int totalHours = 0;
+    String username = user.info!['username'];
+    print(username);
+    database
+        .get<Map<String, dynamic>>('Users/' + username + '/' + 'events/')
+        .then((eventID) {
+          if(eventID != null){
+
+            eventID.forEach((key, value) {
+              // Map<String, dynamic> event = database.get<Map<String, dynamic>>(key)
+            });
+
+          }
+    });
+
+    return 0;
+  }
+
   Future<void> removeUserPrefKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove("username");
@@ -85,10 +110,9 @@ class _ProfilePageState extends State<ProfilePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Align(
-                  alignment: Alignment.centerLeft,
-                  child:
-                  Text("Username: " + user.info!["username"],
-                      style: TextStyle(fontSize: 20)),
+                alignment: Alignment.centerLeft,
+                child: Text("Username: " + user.info!["username"],
+                    style: TextStyle(fontSize: 20)),
               ),
             ),
             Padding(
@@ -103,13 +127,15 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(8.0),
               child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Grade: " + titleCase(user.info!["grade"]), style: TextStyle(fontSize: 20))),
+                  child: Text("Grade: " + titleCase(user.info!["grade"]),
+                      style: TextStyle(fontSize: 20))),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Role: " + titleCase(user.info!["role"]), style: TextStyle(fontSize: 20))),
+                  child: Text("Role: " + titleCase(user.info!["role"]),
+                      style: TextStyle(fontSize: 20))),
             ),
             SizedBox(height: 15),
             // Padding(
@@ -126,99 +152,105 @@ class _ProfilePageState extends State<ProfilePage> {
             //       ),
             //     ),
             //     child:
-              Column(
-                  children: [
-                    SizedBox(height:10),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 15, top: 10),
-                      child: Text("Change Password", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-                      child: TextField(
-                        obscureText: false,
-                        controller: oldPassword,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Enter old password',
-                          labelStyle: new TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-                      child: TextField(
-                        obscureText: false,
-                        controller: newPassword,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Enter new password',
-                          labelStyle: new TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-                      child: TextField(
-                        obscureText: false,
-                        controller: newPConfirm,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Enter new password again',
-                          labelStyle: new TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              child: Text("Cancel"),
-                              onPressed: () {
-                                newPassword.text = "";
-                                oldPassword.text = "";
-                                newPConfirm.text = "";
-                              },
-                            ),
-                            ElevatedButton(
-                              child: Text("Change Password"),
-                              onPressed: () {
-                                print(user.info);
-                                print(oldPassword.text == user.info!['password']);
-                                print(newPConfirm.text == newPassword.text);
-                                if (oldPassword.text == user.info!['password'] &&
-                                    newPConfirm.text == newPassword.text) {
-                                  user.info!['password'] = newPassword.text;
-                                  database
-                                      .get<Map<String, dynamic>>(
-                                          "Users/" + user.info!['username'])
-                                      .then((value) {
-                                    value!['password'] = newPassword.text;
-                                    database
-                                        .update("Users/" + user.info!['username'] + "/",
-                                            value)
-                                        .then((value) {
-                                      if (value == true) {
-                                        _showDialog("Password successfully changed",
-                                            'Success!', changePasswordPopup());
-                                        newPassword.text = "";
-                                        oldPassword.text = "";
-                                        newPConfirm.text = "";
-                                      }
-                                    });
-                                  });
-                                } else {
-                                  _showDialog("Incorrect, try again", 'Password Change',
-                                      changePasswordPopup());
-                                }
-                              },
-                            )
-                          ]),
-                    ),
-                  ],
+            Column(
+              children: [
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15, top: 10),
+                  child: Text("Change Password",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                  child: TextField(
+                    obscureText: false,
+                    controller: oldPassword,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Enter old password',
+                      labelStyle: new TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                  child: TextField(
+                    obscureText: false,
+                    controller: newPassword,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Enter new password',
+                      labelStyle: new TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                  child: TextField(
+                    obscureText: false,
+                    controller: newPConfirm,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Enter new password again',
+                      labelStyle: new TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          child: Text("Cancel"),
+                          onPressed: () {
+                            newPassword.text = "";
+                            oldPassword.text = "";
+                            newPConfirm.text = "";
+                          },
+                        ),
+                        ElevatedButton(
+                          child: Text("Change Password"),
+                          onPressed: () {
+                            print(user.info);
+                            print(oldPassword.text == user.info!['password']);
+                            print(newPConfirm.text == newPassword.text);
+                            if (oldPassword.text == user.info!['password'] &&
+                                newPConfirm.text == newPassword.text) {
+                              user.info!['password'] = newPassword.text;
+                              database
+                                  .get<Map<String, dynamic>>(
+                                      "Users/" + user.info!['username'])
+                                  .then((value) {
+                                value!['password'] = newPassword.text;
+                                database
+                                    .update(
+                                        "Users/" + user.info!['username'] + "/",
+                                        value)
+                                    .then((value) {
+                                  if (value == true) {
+                                    _showDialog("Password successfully changed",
+                                        'Success!', changePasswordPopup());
+                                    newPassword.text = "";
+                                    oldPassword.text = "";
+                                    newPConfirm.text = "";
+                                  }
+                                });
+                              });
+                            } else {
+                              _showDialog("Incorrect, try again",
+                                  'Password Change', changePasswordPopup());
+                            }
+                          },
+                        )
+                      ]),
+                ),
+              ],
+            ),
             //   ),
             // ),
             SizedBox(height: 10),
@@ -237,7 +269,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 });
               },
-              child: Text('Sign Out', style: TextStyle(fontSize: 21,fontWeight: FontWeight.w500)),
+              child: Text('Sign Out',
+                  style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
             ),
           ],
         ),
