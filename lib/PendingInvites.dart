@@ -1,12 +1,13 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/AddEvent.dart';
 import 'package:flutter_app/Details.dart';
 import 'package:intl/intl.dart';
 
 import 'User.dart';
 import 'cmdb.dart';
+
+import 'package:crypt/crypt.dart';
 
 class InvitesPage extends StatefulWidget {
   //Class Constructor
@@ -359,6 +360,51 @@ class _InvitesPageState extends State<InvitesPage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.add),
+      //   onPressed: (){
+      //     // Default rounds and random salt generated
+      //     final c1 = Crypt.sha256('p@ssw0rd');
+      //
+      //     // Random salt generated
+      //     final c2 = Crypt.sha256('p@ssw0rd', rounds: 10000);
+      //
+      //     // Default rounds
+      //     final c3 = Crypt.sha256('p@ssw0rd', salt: 'abcdefghijklmnop');
+      //
+      //     // No defaults used
+      //     final c4 = Crypt.sha256('p@ssw0rd', rounds: 10000,
+      //         salt: 'abcdefghijklmnop');
+      //
+      //     // SHA-512
+      //     final d1 = Crypt.sha512('p@ssw0rd');
+      //
+      //     for (final hashString in [
+      //       r'$5$zQUCjEzs9jnrRdCK$dbo1i9WjQjbUwOC4JCRAZHpfd31Dh676vI0L6w0dZw1',
+      //       c1.toString(),
+      //       c2.toString(),
+      //       c3.toString(),
+      //       c4.toString(),
+      //       d1.toString(),
+      //     ]) {
+      //       // Parse the crypt string: this extracts the type, rounds and salt
+      //       final h = Crypt(hashString);
+      //
+      //       final correctValue = 'p@ssw0rd';
+      //       final wrongValue = '123456';
+      //
+      //       if (!h.match(correctValue)) {
+      //         print('Error: unexpected non-match: $correctValue');
+      //       }
+      //
+      //       if (h.match(wrongValue)) {
+      //         print('Error: unexpected match: $wrongValue');
+      //       }
+      //
+      //     }
+      //
+      //   },
+      // ),
       backgroundColor: Colors.white,
       body: isDone
           ? pendingInvites.isNotEmpty

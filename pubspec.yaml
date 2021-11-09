@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   url_launcher: ^6.0.12
   linkify: ^4.1.0
+  crypt: ^4.0.1
 
 
 

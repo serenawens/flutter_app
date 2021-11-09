@@ -22,42 +22,55 @@ class _AdminEventPageState extends State<AdminEventPage> {
 
   void sortPastEvents() {
 
-    Map<String, dynamic> pastEvents = {};
-    List eventKeysToArchive = [];
-    DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat('MM-dd-yyyy');
+    // List eventKeysToArchive = [];
+    // DateTime now = DateTime.now();
+    // final DateFormat formatter = DateFormat('MM-dd-yyyy');
 
     database.get<Map<String, dynamic>>('Events').then((event) {
-      if(event!=null){
-        event.forEach((eventKey, eventInfo) {
-          DateTime dt = formatter.parse(eventInfo['date']);
-          if (dt.isBefore(now)) {
-            //adding new list to the PASTEVENTS section
-            database.update('PastEvents/' + eventKey + "/", eventInfo);
+        String eventKey = "";
+        Map<String, dynamic> eventInfo = event![eventKey];
+        database.update('PastEvents/' + eventKey + "/", eventInfo);
+        database.delete("Events/" + eventKey);
+        moveVolunteerEventToPast(eventKey);
 
-            eventKeysToArchive.add(eventKey);
-          }
-        });
+        // event.forEach((eventKey, eventInfo) {
+        //   DateTime dt = formatter.parse(eventInfo['date']);
+        //   print(dt);
+        //
+        //   if (dt.isBefore(now)) {
+        //     print("true");
+        //     //adding new list to the PASTEVENTS section
+        //     database.update('PastEvents/' + eventKey + "/", eventInfo);
+        //
+        //     eventKeysToArchive.add(eventKey);
+        //   }
+        // });
+
+
         //removing from the normal EVENTS section
         //ALSO moves events in volunteer section
-        eventKeysToArchive.forEach((key) {
-          database.delete("Events/" + key);
 
-          moveVolunteerEventToPast(key);
-        });
-        _showDialog("Events successfully moved to past events", 'Success', returnEventSortSuccess());
-      }
-      else{
-        print("No events to sort into Past events");
-        _showDialog("No events to sort into past events", "No Events", returnEventSortSuccess());
-      }
+      //   print(eventKeysToArchive);
+      //   eventKeysToArchive.forEach((key) {
+      //     database.delete("Events/" + key);
+      //
+      //     moveVolunteerEventToPast(key);
+      //   });
+      //   _showDialog("Events successfully moved to past events", 'Success', returnOK());
+      // }
+      // else{
+      //   print("No events to sort into Past events");
+      //   _showDialog("No events to sort into past events", "No Events", returnOK());
+      // }
     });
   }
+
   
   void moveVolunteerEventToPast(String theEventKey){
     database
         .get<Map<String, dynamic>>("PastEvents/" + theEventKey + "/volunteers/")
         .then((value) {
+          print(value);
       value!.forEach((user, name) {
         database.update(
             "Users/" + user + "/pastEvents/" + theEventKey + '/', {"eventID": theEventKey});
@@ -100,7 +113,7 @@ class _AdminEventPageState extends State<AdminEventPage> {
         });
   }
 
-  List<Widget> returnEventSortSuccess() {
+  List<Widget> returnOK() {
     return [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -124,6 +137,8 @@ class _AdminEventPageState extends State<AdminEventPage> {
       floatingActionButton: showFAB() == true?
       FloatingActionButton(
         onPressed: () {
+          // print("Floating Action pressed");
+          // moveVolunteerEventToPast("-MlmWRe2I3J_iVqAnSdj");
           sortPastEvents();
         },
         child: Icon(Icons.cleaning_services_outlined, color: Colors.black54),

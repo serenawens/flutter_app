@@ -50,7 +50,10 @@ import 'package:splashscreen/splashscreen.dart';
 import 'User.dart';
 import 'cmdb.dart';
 
-void main() {
+
+
+void main(){
+
   runApp(new MaterialApp(
     home: new MyApp(),
     debugShowCheckedModeBanner: false,

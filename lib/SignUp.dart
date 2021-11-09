@@ -29,6 +29,7 @@ class _SignUpPageState extends State<SignUpPage> {
     getResponse();
   }
 
+
   Future<void> getResponse() async {
     response = await database.get<Map<String, dynamic>>('Users');
   }

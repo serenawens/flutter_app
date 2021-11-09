@@ -39,7 +39,6 @@ class _DetailsPageState extends State<DetailsPage> {
     getVolunteers();
   }
 
-
   bool eventFull() {
     int limit = int.parse(widget.event!['volunteerLimit']);
     if (volunteerList.length == limit) {
@@ -236,7 +235,6 @@ class _DetailsPageState extends State<DetailsPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     void _showDialog(String message, String title, List<Widget> actions) {
@@ -342,7 +340,6 @@ class _DetailsPageState extends State<DetailsPage> {
       ];
     }
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -379,7 +376,8 @@ class _DetailsPageState extends State<DetailsPage> {
                         padding: const EdgeInsets.only(left: 18, right: 18),
                         child: Align(
                             alignment: Alignment.centerLeft,
-                            child: SelectableText(titleCase(widget.event?['location']),
+                            child: SelectableText(
+                                titleCase(widget.event?['location']),
                                 style: TextStyle(
                                     fontSize: 19, color: Colors.black87)))),
                     SizedBox(height: 10),
@@ -392,23 +390,29 @@ class _DetailsPageState extends State<DetailsPage> {
                                   fontSize: 19, fontWeight: FontWeight.bold))),
                     ),
                     Padding(
-                        padding: const EdgeInsets.only(left: 18, right: 18, top:3),
+                        padding:
+                            const EdgeInsets.only(left: 18, right: 18, top: 3),
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(widget.event?['details'],
                                 style: TextStyle(
                                     fontSize: 17, color: Colors.black87)))),
                     SizedBox(height: 10),
-                    widget.event?['link'] != null &&  widget.event?['link'] != ''?
-                    Padding(
-                        padding: const EdgeInsets.only(left: 18, right: 18),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: InkWell(
-                                child: new Text("Website Sign Up Link", style: new TextStyle(color: Colors.blue, decoration: TextDecoration.underline),),
-                                onTap: () => launch(widget.event?['link'])
-                            ),)):
-                        SizedBox(),
+                    widget.event?['link'] != null && widget.event?['link'] != ''
+                        ? Padding(
+                            padding: const EdgeInsets.only(left: 18, right: 18),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: InkWell(
+                                  child: new Text(
+                                    "Website Sign Up Link",
+                                    style: new TextStyle(
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.underline),
+                                  ),
+                                  onTap: () => launch(widget.event?['link'])),
+                            ))
+                        : SizedBox(),
                     SizedBox(height: 15),
                     Padding(
                       padding: const EdgeInsets.only(left: 18),
