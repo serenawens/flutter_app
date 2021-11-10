@@ -196,8 +196,8 @@ class _AddEventPageState extends State<AddEventPage> {
                           onPressed: () => TimeRangePicker.show(
                             context: context,
                             unSelectedEmpty: false,
-                            startTime: TimeOfDay(hour: 19, minute: 45),
-                            endTime: TimeOfDay(hour: 21, minute: 22),
+                            startTime: TimeOfDay(hour: 12, minute: 00),
+                            endTime: TimeOfDay(hour: 13, minute: 00),
                             onSubmitted: (TimeRangeValue value) {
                               setState(() {
                                 eventTime.text =

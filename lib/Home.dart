@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage> {
         break;
     }
 
-    print(strWeekday + ", " + strMonth + " " + day.toString());
+    // print(strWeekday + ", " + strMonth + " " + day.toString());
     return (strWeekday + ", " + strMonth + " " + day.toString());
   }
 
@@ -227,18 +227,85 @@ class _HomePageState extends State<HomePage> {
     pendingInvites = {};
   }
 
+  void moveEventToPast(eventKey, value){
+    database.update('PastEvents/' + eventKey + "/", value);
+    database.delete("Events/" + eventKey);
+  }
+
+  void deleteEventFromPending(eventKey) {
+    //DELETE EVENT FROM PENDING INVITES
+    database
+        .get<Map<String, dynamic>>(
+        "Events/" + eventKey + "/pending/")
+        .then((value) {
+
+      if(value != null){
+
+        print("YES PENDING");
+
+        value.forEach((username, name) {
+          print(username);
+
+          database.delete("Users/" + username + "/pending/" + eventKey);
+        });
+      }
+      else{
+        print("NO PENDING");
+      }
+    });
+  }
+
+  void moveVolunteerEventToPast(String eventKey, value){
+
+    //Move volunteer-related stuff to PAST EVENTS
+    database
+        .get<Map<String, dynamic>>(
+        "Events/" + eventKey + "/volunteers/")
+        .then((value) {
+      if (value != null) {
+
+        print("YES VOLUNTEERS");
+
+        value.forEach((user, name) {
+          database.update(
+              "Users/" + user + "/pastEvents/" + eventKey + '/',
+              {"eventID": eventKey});
+
+          database.delete("Users/" + user + "/events/" + eventKey);
+        });
+      }
+      else{
+        print("NO VOLUNTEERs: ERROR");
+      }
+    });
+
+    deleteEventFromPending(eventKey);
+    moveEventToPast(eventKey, value);
+  }
+
   void getAllEvents() async {
     _resetEvents();
-    database.get<Map<String, dynamic>>('Events').then((value) {
-      if (value != null) {
+    database.get<Map<String, dynamic>>('Events').then((eventMap) {
+      if (eventMap != null) {
         setState(() {
           allEvents = {};
-          value.forEach((key, value) {
-              allEvents[key] = value as Map<String, dynamic>;
+          eventMap.forEach((eventKey, value) {
+            DateTime now = DateTime.now();
+            String date = value['date'];
+            final DateFormat formatter = DateFormat('MM-dd-yyyy');
+            DateTime dt1 = formatter.parse(date);
+
+            if (dt1.isBefore(now)) {
+
+              moveVolunteerEventToPast(eventKey, value);
+
+            } else {
+              allEvents[eventKey] = value as Map<String, dynamic>;
+            }
           });
+
           allEvents = sortEvents(allEvents);
           getUserEvents();
-
         });
       } else {
         setState(() {
@@ -321,7 +388,6 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-
       backgroundColor: Colors.white,
       body: isDone
           ? SingleChildScrollView(

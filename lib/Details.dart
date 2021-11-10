@@ -203,7 +203,7 @@ class _DetailsPageState extends State<DetailsPage> {
         break;
     }
 
-    print(strWeekday + ", " + strMonth + " " + day.toString());
+    // print(strWeekday + ", " + strMonth + " " + day.toString());
     return (strWeekday + ", " + strMonth + " " + day.toString());
   }
 

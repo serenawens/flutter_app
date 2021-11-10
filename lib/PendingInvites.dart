@@ -350,7 +350,7 @@ class _InvitesPageState extends State<InvitesPage> {
         break;
     }
 
-    print(strWeekday + ", " + strMonth + " " + day.toString());
+    // print(strWeekday + ", " + strMonth + " " + day.toString());
     return (strWeekday + ", " + strMonth + " " + day.toString());
   }
 
