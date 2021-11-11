@@ -208,10 +208,14 @@ class _EditEventPageState extends State<EditEventPage> {
                                     lastDate: DateTime(2035))
                                 .then((date) {
                               setState(() {
-                                if (date.toString().length >= 10) {
-                                  eventDate.text =
-                                      date.toString().substring(0, 10);
-                                }
+                                final DateFormat formatter =
+                                DateFormat('MM-dd-yyyy');
+                                eventDate.text = formatter.format(date!);
+
+                                // if (date.toString().length >= 10) {
+                                //   eventDate.text =
+                                //       date.toString().substring(0, 10);
+                                // }
                               });
                             });
                           },

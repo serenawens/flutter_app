@@ -227,6 +227,33 @@ class _HomePageState extends State<HomePage> {
     pendingInvites = {};
   }
 
+  void moveFromPastBackToNormal(){
+    String eventKey = "-Mo0a2LcliqHSUKR8TCd";
+
+    database.get<Map<String, dynamic>>('PastEvents/' + eventKey + "/").then((value) {
+
+      if(value !=null) {
+        database.update('Events/' + eventKey + "/", value);
+        database.delete("PastEvents/" + eventKey);
+      }
+    });
+
+    database.get<Map<String, dynamic>>('Events/' + eventKey + "/" + "volunteers" + "/").then((value) {
+
+      if(value !=null) {
+        value.forEach((user,name) {
+
+          database.update(
+              "Users/" + user + "/events/" + eventKey + '/',
+              {"eventID": eventKey});
+
+          database.delete("Users/" + user + "/pastEvents/" + eventKey);
+
+        });
+      }
+    });
+  }
+
   void moveEventToPast(eventKey, value){
     database.update('PastEvents/' + eventKey + "/", value);
     database.delete("Events/" + eventKey);
