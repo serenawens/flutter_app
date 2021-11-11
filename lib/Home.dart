@@ -295,7 +295,10 @@ class _HomePageState extends State<HomePage> {
             final DateFormat formatter = DateFormat('MM-dd-yyyy');
             DateTime dt1 = formatter.parse(date);
 
-            if (dt1.isBefore(now)) {
+            print(dt1.toString());
+            print(now.toString());
+
+            if (dt1.isBefore(now)  && !(dt1.day == now.day && dt1.year == now.year && dt1.month == now.month)) {
 
               moveVolunteerEventToPast(eventKey, value);
 
