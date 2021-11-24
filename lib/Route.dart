@@ -45,7 +45,7 @@ class _RouteScreenState extends State<RouteScreen> {
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.person),
-      label: 'My Profile',
+      label: 'Profile',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.add),
@@ -56,7 +56,7 @@ class _RouteScreenState extends State<RouteScreen> {
   static List<Widget> _widgetOptions = <Widget>[
     HomePage(title: "Home"),
     InvitesPage(title: "Event Invites"),
-    ProfilePage(title: "My Profile")
+    ProfilePage(title: "Profile")
   ];
 
   int _selectedIndex = 0;

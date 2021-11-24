@@ -52,13 +52,13 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   Future<void> addEvent() async {
-    widget.events[widget.eventKey]?["name"] = eventName.text;
-    widget.events[widget.eventKey]?["date"] = eventDate.text;
-    widget.events[widget.eventKey]?["time"] = eventTime.text;
-    widget.events[widget.eventKey]?["location"] = eventLocation.text;
-    widget.events[widget.eventKey]?["volunteerLimit"] = eventLimit.text;
-    widget.events[widget.eventKey]?["details"] = eventDetails.text;
-    widget.events[widget.eventKey]?["link"] = signUpLink.text;
+    widget.events[widget.eventKey]?["name"] = eventName.text.trim();
+    widget.events[widget.eventKey]?["date"] = eventDate.text.trim();
+    widget.events[widget.eventKey]?["time"] = eventTime.text.trim();
+    widget.events[widget.eventKey]?["location"] = eventLocation.text.trim();
+    widget.events[widget.eventKey]?["volunteerLimit"] = eventLimit.text.trim();
+    widget.events[widget.eventKey]?["details"] = eventDetails.text.trim();
+    widget.events[widget.eventKey]?["link"] = signUpLink.text.trim();
   }
 
   String formatTimeOfDay(TimeOfDay tod) {

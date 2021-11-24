@@ -58,12 +58,12 @@ class _AddEventPageState extends State<AddEventPage> {
   Map<String, dynamic> addEvent() {
     if (signUpLink.text.isEmpty){
       Map<String, dynamic> events = {
-        "name": eventName.text,
-        'date': eventDate.text,
-        'time': eventTime.text,
-        'location': eventLocation.text,
-        'volunteerLimit': eventLimit.text,
-        'details': eventDetails.text,
+        "name": eventName.text.trim(),
+        'date': eventDate.text.trim(),
+        'time': eventTime.text.trim(),
+        'location': eventLocation.text.trim(),
+        'volunteerLimit': eventLimit.text.trim(),
+        'details': eventDetails.text.trim(),
       };
       return events;
     }

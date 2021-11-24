@@ -142,8 +142,8 @@ class _LoginPageState extends State<LoginPage> {
                     });
                   },
                 ),
-                ElevatedButton(
-                  child: Text('Sign Up Here', style: TextStyle(fontSize: 14)),
+                TextButton(
+                  child: Text('No account yet? Click here to sign up!', style: TextStyle(fontSize: 14)),
                   style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.only(
                           right: 10, left: 10, top: 2, bottom: 2)),
