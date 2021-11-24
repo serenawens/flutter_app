@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/ChangePassword.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'EditProfile.dart';
 import 'Login.dart';
 import 'User.dart';
 import 'cmdb.dart';
@@ -86,6 +87,33 @@ class _ProfilePageState extends State<ProfilePage> {
         .join(' ');
   }
 
+  String formatPhoneNumber(String number) {
+    String temp = number.trim();
+    String prettify = '';
+
+    if (temp.startsWith("+1")) {
+      temp = temp.trim().substring(2);
+    }
+
+    for (int i = 0; i < temp.length; i++) {
+      if (!(temp[i] == '+' ||
+          temp[i] == ' ' ||
+          temp[i] == '-' ||
+          temp[i] == '(' ||
+          temp[i] == ')')) {
+        prettify += temp[i];
+      }
+    }
+    print(prettify);
+
+    return "(" +
+        prettify.substring(0, 3) +
+        ")" + " " +
+        prettify.substring(3, 6) +
+        "-" +
+        prettify.substring(6);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,100 +122,76 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: <Widget>[
-            Center(
-                child: Padding(
-              padding: const EdgeInsets.only(top: 15),
-              child: Text(titleCase(user.info!["name"]),
-                  style: TextStyle(
-                    fontSize: 35,
-                    // fontWeight: FontWeight.bold,
-                  )),
-            )),
-            // SizedBox(height: 30),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 4, left: 4),
-                child: Text(user.info!["username"],
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontStyle: FontStyle.italic,
-                        color: Colors.black54)),
-              ),
+        padding: const EdgeInsets.only(top: 30, left: 20),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: ListView(children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Account Information",
+                    style:
+                        TextStyle(fontSize: 27, fontWeight: FontWeight.bold)),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              EditProfilePage(title: "Edit Profile")),
+                    );
+                  },
+                  child: Text("Edit", style: TextStyle(fontSize: 18)),
+                ),
+              ],
             ),
-            Center(
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text(titleCase(user.info!["grade"]),
-                  style: TextStyle(fontSize: 18)),
-              Text("  "),
-              Icon(Icons.circle_rounded, size: 5),
-              Text("  "),
-              Text(titleCase(user.info!["role"]),
-                  style: TextStyle(fontSize: 18))
-            ])),
-            Center(
-                child: Text(user.info!["phoneNumber"].toString(),
-                    style: TextStyle(fontSize: 19))),
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-            //   child: Container(
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.all(
-            //         Radius.circular(10),
-            //       ),
-            //       border: Border.all(
-            //         width: 3,
-            //         color: Colors.orange,
-            //         style: BorderStyle.solid,
-            //       ),
-            //     ),
-            //     child: Column(children: [
-            //       Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: Align(
-            //           alignment: Alignment.centerLeft,
-            //           child:
-            //               Text("Account Info", style: TextStyle(fontSize: 28)),
-            //         ),
-            //       ),
-            //       Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: Align(
-            //             alignment: Alignment.centerLeft,
-            //             child: Text(
-            //                 "Phone Number: " +
-            //                     user.info!["phoneNumber"].toString(),
-            //                 style: TextStyle(fontSize: 19))),
-            //       ),
-            //       Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: Align(
-            //             alignment: Alignment.centerLeft,
-            //             child: Text("Grade: " + titleCase(user.info!["grade"]),
-            //                 style: TextStyle(fontSize: 20))),
-            //       ),
-            //       Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: Align(
-            //             alignment: Alignment.centerLeft,
-            //             child: Text("Role: " + titleCase(user.info!["role"]),
-            //                 style: TextStyle(fontSize: 20))),
-            //       ),
-            //     ]),
-            //   ),
-            // ),
+            SizedBox(height: 15),
+            Row(children: [
+              Text("Username:           ", style: TextStyle(fontSize: 18)),
+              Text(user.info!["username"],
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16))
+            ]),
+            SizedBox(height: 7),
+            Row(children: [
+              Text("Name:                  ", style: TextStyle(fontSize: 18)),
+              Text(titleCase(user.info!["name"].toString()),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))
+            ]),
+            SizedBox(height: 7),
+            Row(children: [
+              Text("Grade:                  ", style: TextStyle(fontSize: 18)),
+              Text(titleCase(user.info!['grade']),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))
+            ]),
+            SizedBox(height: 7),
+            user.info!["role"].toString() == "admin"
+                ? Row(children: [
+                    Text("Role:                     ",
+                        style: TextStyle(fontSize: 18)),
+                    Text(titleCase(user.info!['role']),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18))
+                  ])
+                : SizedBox(),
+            SizedBox(height: 7),
+            Row(children: [
+              Text("Phone Number:   ", style: TextStyle(fontSize: 18)),
+              Text(formatPhoneNumber(user.info!['phoneNumber'].toString()),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))
+            ]),
+            SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              padding: const EdgeInsets.only(right: 8.0),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(
                     Radius.circular(10),
                   ),
                   border: Border.all(
-                    width: 3,
+                    width: 0.3,
                     color: Colors.orange,
                     style: BorderStyle.solid,
                   ),
@@ -195,43 +199,142 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(children: []),
               ),
             ),
-            SizedBox(height: 15),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ChangePasswordPage(title: "Change Password")),
-                );
-              },
-              child: Text('Change Password',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-            ),
-            Center(
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: TextStyle(fontSize: 20),
-                ),
-                onPressed: () {
-                  removeUserPrefKey().then((value) {
-                    user.info = {};
-                    Navigator.pop(context);
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => LoginPage(title: "Login")),
+                          builder: (context) =>
+                              ChangePasswordPage(title: "Change Password")),
                     );
-                  });
-                },
-                child: Text('Sign Out',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-              ),
+                  },
+                  child: Text('Change Password',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                ),
+                Container(
+                  child: TextButton(
+                    // style: TextButton.styleFrom(
+                    //   textStyle: TextStyle(fontSize: 14),
+                    // ),
+                    onPressed: () {
+                      removeUserPrefKey().then((value) {
+                        user.info = {};
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginPage(title: "Login")),
+                        );
+                      });
+                    },
+                    child: Text('Sign Out',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ]),
         ),
       ),
+
+      // Padding(
+      //   padding: const EdgeInsets.all(8.0),
+      //   child: ListView(
+      //     children: <Widget>[
+      //
+      //       Center(
+      //           child: Padding(
+      //         padding: const EdgeInsets.only(top: 15),
+      //         child: Text(titleCase(user.info!["name"]),
+      //             style: TextStyle(
+      //               fontSize: 35,
+      //               fontWeight: FontWeight.bold,
+      //             )),
+      //       )),
+      //       // SizedBox(height: 30),
+      //       Center(
+      //         child: Padding(
+      //           padding: const EdgeInsets.only(right: 4, left: 4),
+      //           child: Text(user.info!["username"],
+      //               style: TextStyle(
+      //                   fontSize: 20,
+      //                   fontStyle: FontStyle.italic,
+      //                   color: Colors.black54)),
+      //         ),
+      //       ),
+      //       Center(
+      //           child:
+      //               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      //         Text(titleCase(user.info!["grade"]),
+      //             style: TextStyle(fontSize: 18)),
+      //         Text("  "),
+      //         Icon(Icons.circle_rounded, size: 5),
+      //         Text("  "),
+      //         Text(titleCase(user.info!["role"]),
+      //             style: TextStyle(fontSize: 18))
+      //       ])),
+      //       Center(
+      //           child: Text(user.info!["phoneNumber"].toString(),
+      //               style: TextStyle(fontSize: 19))),
+      //       // Padding(
+      //       //   padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+      //       //   child: Container(
+      //       //     decoration: BoxDecoration(
+      //       //       borderRadius: BorderRadius.all(
+      //       //         Radius.circular(10),
+      //       //       ),
+      //       //       border: Border.all(
+      //       //         width: 3,
+      //       //         color: Colors.orange,
+      //       //         style: BorderStyle.solid,
+      //       //       ),
+      //       //     ),
+      //       //     child: Column(children: [
+      //       //       Padding(
+      //       //         padding: const EdgeInsets.all(8.0),
+      //       //         child: Align(
+      //       //           alignment: Alignment.centerLeft,
+      //       //           child:
+      //       //               Text("Account Info", style: TextStyle(fontSize: 28)),
+      //       //         ),
+      //       //       ),
+      //       //       Padding(
+      //       //         padding: const EdgeInsets.all(8.0),
+      //       //         child: Align(
+      //       //             alignment: Alignment.centerLeft,
+      //       //             child: Text(
+      //       //                 "Phone Number: " +
+      //       //                     user.info!["phoneNumber"].toString(),
+      //       //                 style: TextStyle(fontSize: 19))),
+      //       //       ),
+      //       //       Padding(
+      //       //         padding: const EdgeInsets.all(8.0),
+      //       //         child: Align(
+      //       //             alignment: Alignment.centerLeft,
+      //       //             child: Text("Grade: " + titleCase(user.info!["grade"]),
+      //       //                 style: TextStyle(fontSize: 20))),
+      //       //       ),
+      //       //       Padding(
+      //       //         padding: const EdgeInsets.all(8.0),
+      //       //         child: Align(
+      //       //             alignment: Alignment.centerLeft,
+      //       //             child: Text("Role: " + titleCase(user.info!["role"]),
+      //       //                 style: TextStyle(fontSize: 20))),
+      //       //       ),
+      //       //     ]),
+      //       //   ),
+      //       // ),
+      //       SizedBox(height: 15),
+
+      //
+      // ],
+      //   ),
+      // ),
     );
   }
 }
