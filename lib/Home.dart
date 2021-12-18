@@ -284,11 +284,14 @@ class _HomePageState extends State<HomePage> {
 
   void moveVolunteerEventToPast(String eventKey, value){
 
+    int eventHours = calculateEventHours(eventKey, value);
+
     //Move volunteer-related stuff to PAST EVENTS
     database
         .get<Map<String, dynamic>>(
         "Events/" + eventKey + "/volunteers/")
         .then((value) {
+
       if (value != null) {
 
         print("YES VOLUNTEERS");
@@ -299,10 +302,40 @@ class _HomePageState extends State<HomePage> {
               {"eventID": eventKey});
 
           database.delete("Users/" + user + "/events/" + eventKey);
+
+          // database.get<Map<String,dynamic>>("Users/" + user + "statistics/").then((userStats) {
+          //
+          //   if(userStats != null){
+          //
+          //     print('yes user stats');
+          //
+          //     int newUserHours = int.parse(userStats['totalHours']) + eventHours;
+          //     int newEventCount = int.parse(userStats['eventCount']) + 1;
+          //
+          //     database.update("Users/" + user + "/statistics", {
+          //       "totalHours": newUserHours.toString(),
+          //       'eventCount': newEventCount.toString()
+          //     });
+          //   }
+          //
+          //   else{
+          //     print('no userstats? ERROR');
+          //   }
+          //
+          // });
+
         });
       }
       else{
-        print("NO VOLUNTEERs: ERROR");
+        value!.forEach((user, name) {
+          database.update(
+              "Users/" + user + "/pastEvents/" + eventKey + '/',
+              {"eventID": eventKey});
+
+          database.delete("Users/" + user + "/events/" + eventKey);
+
+      });
+
       }
     });
 
@@ -366,6 +399,29 @@ class _HomePageState extends State<HomePage> {
         });
       }
     });
+  }
+
+  int calculateEventHours(String eventKey, value){
+    String eventTimeRange = value!["time"];
+
+    TimeOfDay st = stringToTimeOfDay(eventTimeRange.split(' - ')[0]);
+    TimeOfDay et = stringToTimeOfDay(eventTimeRange.split(' - ')[1]);
+
+    var format = DateFormat("HH:mm");
+    var start = format.parse(timeOfDayToString(st));
+    var end = format.parse(timeOfDayToString(et));
+
+    return end.difference(start).inHours;
+  }
+
+  TimeOfDay stringToTimeOfDay(String tod) {
+    final format = DateFormat.jm(); //"6:00 AM"
+    return TimeOfDay.fromDateTime(format.parse(tod));
+  }
+
+  String timeOfDayToString(TimeOfDay tod) {
+    String time = tod.toString();
+    return time.substring(10, 15);
   }
 
   String titleCase(String s) {
