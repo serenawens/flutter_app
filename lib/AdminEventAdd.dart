@@ -58,6 +58,62 @@ class _AdminEventPageState extends State<AdminEventPage> {
     ];
   }
 
+  void moveVolunteerEventToPastFromPastEvents(String eventKey){
+
+    //Move volunteer-related stuff to PAST EVENTS
+    database
+        .get<Map<String, dynamic>>(
+        "PastEvents/" + eventKey + "/volunteers/")
+        .then((value) {
+
+      if (value != null) {
+
+        print("YES VOLUNTEERS");
+
+        value.forEach((user, name) {
+          database.update(
+              "Users/" + user + "/pastEvents/" + eventKey + '/',
+              {"eventID": eventKey});
+
+          database.delete("Users/" + user + "/events/" + eventKey);
+
+          // database.get<Map<String,dynamic>>("Users/" + user + "statistics/").then((userStats) {
+          //
+          //   if(userStats != null){
+          //
+          //     print('yes user stats');
+          //
+          //     int newUserHours = int.parse(userStats['totalHours']) + eventHours;
+          //     int newEventCount = int.parse(userStats['eventCount']) + 1;
+          //
+          //     database.update("Users/" + user + "/statistics", {
+          //       "totalHours": newUserHours.toString(),
+          //       'eventCount': newEventCount.toString()
+          //     });
+          //   }
+          //
+          //   else{
+          //     print('no userstats? ERROR');
+          //   }
+          //
+          // });
+
+        });
+      }
+      else{
+        // value!.forEach((user, name) {
+        //   database.update(
+        //       "Users/" + user + "/pastEvents/" + eventKey + '/',
+        //       {"eventID": eventKey});
+        //
+        //   database.delete("Users/" + user + "/events/" + eventKey);
+        //
+        // });
+
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,6 +121,11 @@ class _AdminEventPageState extends State<AdminEventPage> {
         title: Text(widget.title),
       ),
       backgroundColor: Colors.white,
+      // floatingActionButton: FloatingActionButton(onPressed: () {
+      //   moveVolunteerEventToPastFromPastEvents("-MpxrD6utl84JwTEWa8p");
+      // },
+      //
+      // ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

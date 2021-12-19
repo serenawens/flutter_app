@@ -385,17 +385,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         fillColor: Colors.orangeAccent,
                       child: Icon(Icons.calculate_rounded, size: 40, color: Colors.white),
                         onPressed: (){
-                          // database.get<Map<String,dynamic>>("Users").then((value) {
-                          //   if(value!= null){
-                          //     value.keys.forEach((username) {
-                          //       calculateStatistics(username);
-                          //     });
-                          //     print("Done calcualted");
-                          //   }
-                          //   else{
-                          //     print("something went wrong");
-                          //   }
-                          // });
+                          database.get<Map<String,dynamic>>("Users").then((value) {
+                            if(value!= null){
+                              value.keys.forEach((username) {
+                                calculateStatistics(username);
+                              });
+                              print("Done calcualted");
+                            }
+                            else{
+                              print("something went wrong");
+                            }
+                          });
                     }
                     ),
                   ):

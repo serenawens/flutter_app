@@ -179,6 +179,7 @@ class _HomePageState extends State<HomePage> {
 
   bool eventFull(Map event) {
     if (event['volunteers'] != null) {
+
       int limit = int.parse(event['volunteerLimit']);
 
       if (event['volunteers'].keys.length == limit) {

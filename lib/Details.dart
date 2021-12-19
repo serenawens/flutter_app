@@ -32,6 +32,8 @@ class _DetailsPageState extends State<DetailsPage> {
   CMDB database = CMDB();
   List volunteerList = [];
   String eventOfficer = "";
+  bool hasEventOfficer = false;
+  bool isEventOfficer = false;
 
   @override
   void initState() {
@@ -42,7 +44,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   bool eventFull() {
     int limit = int.parse(widget.event!['volunteerLimit']);
-    if (volunteerList.length == limit) {
+    if (volunteerList.length + 1 == limit) {
       return true;
     } else {
       return false;
@@ -209,6 +211,9 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   String titleCase(String s) {
+    if(s == ''){
+      return s;
+    }
     return s
         .split(' ')
         .map((word) => word[0].toUpperCase() + word.substring(1))
@@ -225,11 +230,29 @@ class _DetailsPageState extends State<DetailsPage> {
       setState(() {});
       if (value != null) {
         setState(() {
-          value.forEach((key, name) {
-            if (user.info!['name'] == name['name']) {
+          value.forEach((key, info) {
+
+            //Current user is a volunteer
+            if (user.info!['name'] == info['name']) {
               joinedEvent = true;
             }
-            volunteerList.add(name['name']);
+
+            //Volunteer is not an event officer
+            if(info['eventOfficer'] == null){
+              volunteerList.add(info['name']);
+            }
+            //Volunteer IS an event officer
+            else if(info['eventOfficer'] != null) {
+
+              //Current user is that volunteer
+              if (user.info!['name'] == info['name']){
+                isEventOfficer = true;
+              }
+              eventOfficer = info['name'];
+              hasEventOfficer = true;
+            }
+
+
           });
         });
       }
@@ -355,9 +378,10 @@ class _DetailsPageState extends State<DetailsPage> {
                 child: Text('Confirm Sign Up'),
                 onPressed: () {
                   joinedEvent = true;
-                  //add your name as the eventOfficer and onto volunteerlist
+                  //add your name as the eventOfficer
                   eventOfficer = user.info!['name'];
-                  volunteerList.add(user.info!['name']);
+                  isEventOfficer = true;
+                  hasEventOfficer = true;
 
 
                   //add your name into the Event volunteer list database
@@ -444,8 +468,9 @@ class _DetailsPageState extends State<DetailsPage> {
                 child: Text('Confirm'),
                 onPressed: () {
                   joinedEvent = false;
-                  volunteerList.remove(user.info!['name']);
                   eventOfficer = "";
+                  hasEventOfficer = false;
+                  isEventOfficer = false;
 
                   database.delete("/Events/" +
                       widget.eventKey +
@@ -545,12 +570,13 @@ class _DetailsPageState extends State<DetailsPage> {
                             ))
                         : SizedBox(),
                     SizedBox(height: 15),
+                    Text("Event Officer: ${titleCase(eventOfficer)}"),
                     Padding(
                       padding: const EdgeInsets.only(left: 18),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Volunteers (${volunteerList.length}/${widget.event!['volunteerLimit']})",
+                          "Volunteers (${volunteerList.length}/${int.parse(widget.event!['volunteerLimit'])-1})",
                           style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -575,7 +601,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                 child: Text('Join Event'),
                                 onPressed: () {
                                   setState(() {
-                                    if(user.info!['role'] == 'admin'){
+                                    if(user.info!['role'] == 'admin' && hasEventOfficer == false){
                                       _showDialog("Would you like to sign up as the event's designated officer or as just a volunteer?", "Volunteer or Event Officer?", returnAdminJoinActions());
                                     }
                                     else{
