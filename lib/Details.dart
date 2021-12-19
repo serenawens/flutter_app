@@ -31,6 +31,7 @@ class _DetailsPageState extends State<DetailsPage> {
   User user = User();
   CMDB database = CMDB();
   List volunteerList = [];
+  String eventOfficer = "";
 
   @override
   void initState() {
@@ -311,7 +312,7 @@ class _DetailsPageState extends State<DetailsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
-                child: Text('Cancel'),
+                child: Text('Nevermind'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 }),
@@ -332,6 +333,136 @@ class _DetailsPageState extends State<DetailsPage> {
                       "/events/" +
                       widget.eventKey +
                       "/");
+                  setState(() {});
+                  Navigator.of(context).pop();
+                })
+          ],
+        ),
+      ];
+    }
+
+    List<Widget> returnEventOfficerJoinActions(){
+      return [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+            ElevatedButton(
+                child: Text('Confirm Sign Up'),
+                onPressed: () {
+                  joinedEvent = true;
+                  //add your name as the eventOfficer and onto volunteerlist
+                  eventOfficer = user.info!['name'];
+                  volunteerList.add(user.info!['name']);
+
+
+                  //add your name into the Event volunteer list database
+                  database.update(
+                      "/Events/" +
+                          widget.eventKey +
+                          "/volunteers/" +
+                          user.info!['username'],
+                      {"name": user.info!['name'], 'eventOfficer': "true"});
+
+                  database.update("/Events/" + widget.eventKey + "/hasEventOfficer/", {"true": user.info!['username']});
+
+                  //Adding event to your events in database
+                  database.update(
+                      "Users/" +
+                          user.info!['username'] +
+                          "/events/" +
+                          widget.eventKey +
+                          '/',
+                      {"eventID": widget.eventKey, "eventOfficer": "true"});
+
+                  //Delete the event from your pending events list
+                  database.delete("Users/" +
+                      user.info!['username'] +
+                      "/pending/" +
+                      widget.eventKey +
+                      "/");
+
+                  //Delete your name off the event database pending list
+                  database.delete("Events/" +
+                      widget.eventKey +
+                      "/pending/" +
+                      user.info!['username']);
+
+                  setState(() {});
+
+                  Navigator.of(context).pop();
+                }),
+          ]
+        )
+      ];
+    }
+
+    List<Widget> returnAdminJoinActions() {
+      return [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                child: Text('Volunteer'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _showDialog(
+                      "Confirm your sign up as a volunteer?",
+                      "Volunteer Sign Up Confirmation",
+                      returnJoinActions());
+                }),
+            ElevatedButton(
+                child: Text('Event Officer'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _showDialog(
+                      "Confirm your sign up as the Event Officer?",
+                      "Event Officer Sign Up Confirmation",
+                      returnEventOfficerJoinActions());
+                }),
+            // ElevatedButton(child: Text('Cancel'), onPressed: (){Navigator.of(context).pop();},)
+          ],
+        ),
+      ];
+    }
+
+    List<Widget> returnEventOfficerCancelActions() {
+      return [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                child: Text('Nevermind'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+            ElevatedButton(
+                child: Text('Confirm'),
+                onPressed: () {
+                  joinedEvent = false;
+                  volunteerList.remove(user.info!['name']);
+                  eventOfficer = "";
+
+                  database.delete("/Events/" +
+                      widget.eventKey +
+                      "/volunteers/" +
+                      user.info!['username'] +
+                      "/");
+
+                  database.delete("/Events/" +
+                      widget.eventKey +
+                      "/hasEventOfficer/" );
+
+                  database.delete("/Users/" +
+                      user.info!['username'] +
+                      "/events/" +
+                      widget.eventKey +
+                      "/");
+
                   setState(() {});
                   Navigator.of(context).pop();
                 })
@@ -419,8 +550,8 @@ class _DetailsPageState extends State<DetailsPage> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Members Signed Up (${volunteerList.length}/${widget.event!['volunteerLimit']})",
-                          style: TextStyle(fontSize: 23),
+                          "Volunteers (${volunteerList.length}/${widget.event!['volunteerLimit']})",
+                          style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -444,10 +575,15 @@ class _DetailsPageState extends State<DetailsPage> {
                                 child: Text('Join Event'),
                                 onPressed: () {
                                   setState(() {
-                                    _showDialog(
-                                        "Confirm your sign up?",
-                                        "Sign Up Confirmation",
-                                        returnJoinActions());
+                                    if(user.info!['role'] == 'admin'){
+                                      _showDialog("Would you like to sign up as the event's designated officer or as just a volunteer?", "Volunteer or Event Officer?", returnAdminJoinActions());
+                                    }
+                                    else{
+                                      _showDialog(
+                                          "Confirm your sign up?",
+                                          "Sign Up Confirmation",
+                                          returnJoinActions());
+                                    }
                                   });
                                   //Add name to event
                                 },
@@ -478,10 +614,18 @@ class _DetailsPageState extends State<DetailsPage> {
                                   child: Text('Cancel Sign Up'),
                                   onPressed: () {
                                     setState(() {
-                                      _showDialog(
-                                          "Are you sure you want to cancel your sign up?",
-                                          "Cancel Confirmation",
-                                          returnCancelActions());
+                                      if(eventOfficer == user.info!['name']){
+                                        _showDialog(
+                                            "Are you sure you want to cancel your sign up?",
+                                            "Cancellation Confirmation",
+                                            returnEventOfficerCancelActions());
+                                      }
+                                      else{
+                                        _showDialog(
+                                            "Are you sure you want to cancel your sign up?",
+                                            "Cancellation Confirmation",
+                                            returnCancelActions());
+                                      }
                                     });
                                   },
                                 ),

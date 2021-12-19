@@ -191,22 +191,21 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          database.get<Map<String,dynamic>>("Users").then((value) {
-            if(value!= null){
-              value.keys.forEach((username) {
-                calculateStatistics(username);
-              });
-              print("Done calcualted");
-            }
-            else{
-              print("something went wrong");
-            }
-          });
-
-        }
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: (){
+      //     database.get<Map<String,dynamic>>("Users").then((value) {
+      //       if(value!= null){
+      //         value.keys.forEach((username) {
+      //           calculateStatistics(username);
+      //         });
+      //         print("Done calcualted");
+      //       }
+      //       else{
+      //         print("something went wrong");
+      //       }
+      //     });
+      //   }
+      // ),
       backgroundColor: Colors.white,
       body: isDone
           ? Padding(
@@ -377,6 +376,30 @@ class _ProfilePageState extends State<ProfilePage> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w600)),
                   ),
+                  user.info!['username'] == "serenaw"?
+                  Padding(
+                    padding: const EdgeInsets.only(left:270, top: 40),
+                    child: RawMaterialButton(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(15.0),
+                        fillColor: Colors.orangeAccent,
+                      child: Icon(Icons.calculate_rounded, size: 40, color: Colors.white),
+                        onPressed: (){
+                          // database.get<Map<String,dynamic>>("Users").then((value) {
+                          //   if(value!= null){
+                          //     value.keys.forEach((username) {
+                          //       calculateStatistics(username);
+                          //     });
+                          //     print("Done calcualted");
+                          //   }
+                          //   else{
+                          //     print("something went wrong");
+                          //   }
+                          // });
+                    }
+                    ),
+                  ):
+                      SizedBox(),
                 ]),
               ),
             )
