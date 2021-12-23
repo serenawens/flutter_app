@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/InvitationView.dart';
@@ -34,6 +35,7 @@ class _DetailsPageState extends State<DetailsPage> {
   String eventOfficer = "";
   bool hasEventOfficer = false;
   bool isEventOfficer = false;
+  String eventOfficerPhone = "";
 
   @override
   void initState() {
@@ -64,6 +66,34 @@ class _DetailsPageState extends State<DetailsPage> {
           onPressed: null,
           style: ElevatedButton.styleFrom(primary: Colors.black87));
     }
+  }
+
+  String formatPhoneNumber(String number) {
+    String temp = number.trim();
+    String prettify = '';
+
+    if (temp.startsWith("+1")) {
+      temp = temp.trim().substring(2);
+    }
+
+    for (int i = 0; i < temp.length; i++) {
+      if (!(temp[i] == '+' ||
+          temp[i] == ' ' ||
+          temp[i] == '-' ||
+          temp[i] == '(' ||
+          temp[i] == ')')) {
+        prettify += temp[i];
+      }
+    }
+    print(prettify);
+
+    return "(" +
+        prettify.substring(0, 3) +
+        ")" +
+        " " +
+        prettify.substring(3, 6) +
+        "-" +
+        prettify.substring(6);
   }
 
   String getDateWordForm(String date) {
@@ -257,10 +287,39 @@ class _DetailsPageState extends State<DetailsPage> {
         });
       }
     });
+
+    if(widget.event!['hasEventOfficer'] != null){
+      String username = widget.event!['hasEventOfficer']['true'];
+      database.get<Map<String, dynamic>>("Users/" + username + '/').then((userInfo) {
+        setState(() {
+          if(userInfo != null){
+            eventOfficerPhone = formatPhoneNumber(userInfo['phoneNumber']);
+          }
+        });
+
+      });
+    }
+
+  }
+
+  SizedBox getEventOfficerInfo(){
+
+    return SizedBox(
+      height: 45,
+      child:
+      Column(
+        children: [
+            SelectableText(titleCase(eventOfficer)),
+            SizedBox(height: 4),
+            SelectableText(eventOfficerPhone),
+          ],
+      )
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+
     void _showDialog(String message, String title, List<Widget> actions) {
       showDialog(
           context: context,
@@ -269,6 +328,16 @@ class _DetailsPageState extends State<DetailsPage> {
               title: Text(title),
               content: Text(message),
               actions: actions,
+            );
+          });
+    }
+
+    void _showDiffDialog(Widget message) {
+      showDialog(
+          context: context,
+          builder: (BuildContext) {
+            return AlertDialog(
+              content: message,
             );
           });
     }
@@ -569,8 +638,35 @@ class _DetailsPageState extends State<DetailsPage> {
                                   onTap: () => launch(widget.event?['link'])),
                             ))
                         : SizedBox(),
-                    SizedBox(height: 15),
-                    Text("Event Officer: ${titleCase(eventOfficer)}"),
+
+                    Padding(
+                      padding: const EdgeInsets.only(left: 18.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Text(
+                                "Event Officer: ",
+                                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+
+                            Text("${titleCase(eventOfficer)}", style: TextStyle(fontSize: 17)),
+
+                            widget.event!['hasEventOfficer'] != null?
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: TextButton(onPressed: (){
+                                _showDiffDialog(getEventOfficerInfo());
+                              }, child: Text("[Contact Info]", style: TextStyle())),
+                            ):
+                                SizedBox(),
+                            // IconButton(onPressed: (){
+                            // }, icon: Icon(Icons.info_outlined, size: 18))
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.only(left: 18),
                       child: Align(
@@ -581,17 +677,20 @@ class _DetailsPageState extends State<DetailsPage> {
                         ),
                       ),
                     ),
+
                     SizedBox(height: 5),
                     Padding(
                       padding: const EdgeInsets.only(left: 22),
-                      child: ListView.builder(
-                          itemCount: volunteerList.length,
-                          shrinkWrap: true,
-                          physics: ScrollPhysics(),
-                          itemBuilder: (BuildContext context, int index) {
-                            return Text(titleCase('- ${volunteerList[index]}'),
-                                style: TextStyle(fontSize: 15));
-                          }),
+                      child: SizedBox(
+                        child: ListView.builder(
+                            itemCount: volunteerList.length,
+                            shrinkWrap: true,
+                            physics: ScrollPhysics(),
+                            itemBuilder: (BuildContext context, int index) {
+                              return Text(titleCase('- ${volunteerList[index]}'),
+                                  style: TextStyle(fontSize: 16));
+                            }),
+                      ),
                     ),
                     SizedBox(height: 20),
                     joinedEvent == false
@@ -642,7 +741,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                     setState(() {
                                       if(eventOfficer == user.info!['name']){
                                         _showDialog(
-                                            "Are you sure you want to cancel your sign up?",
+                                            "Are you sure you want to cancel your sign up? You are this event's designated officer.",
                                             "Cancellation Confirmation",
                                             returnEventOfficerCancelActions());
                                       }

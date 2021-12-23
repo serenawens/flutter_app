@@ -33,6 +33,8 @@ class _HomePageState extends State<HomePage> {
     getCollapsedValues();
   }
 
+
+
   String getDateWordForm(String date) {
     final DateFormat formatter = DateFormat('MM-dd-yyyy');
     DateTime dt = formatter.parse(date);
@@ -184,26 +186,40 @@ class _HomePageState extends State<HomePage> {
 
       if (event['volunteers'].keys.length == limit) {
         return true;
-      } else {
-        return false;
+      }
+      else if(event['hasEventOfficer'] == null && limit == event['volunteers'].keys.length-1){
+        return true;
       }
     }
     return false;
   }
 
-  int getEventSpots(Map event) {
+  int getEventSpotsFilled(Map event) {
+
     if (event['volunteers'] == null) {
       return 0;
     }
+    else if(event['hasEventOfficer'] != null){
+
+      //Just the eventOfficer is signed up
+      if(event['volunteers'].keys.length == 1){
+        return 0;
+      }
+      else{
+        return event['volunteers'].keys.length-1;
+      }
+    }
+
     return event['volunteers'].keys.length;
+
   }
 
   int getEventLimit(Map event) {
-    return int.parse(event['volunteerLimit']);
+    return int.parse(event['volunteerLimit'])-1;
   }
 
   bool oneSpotLeft(Map event, String key) {
-    int spotsLeft = getEventLimit(event[key]!) - getEventSpots(event[key]!);
+    int spotsLeft = getEventLimit(event[key]!) - getEventSpotsFilled(event[key]!);
 
     if (spotsLeft == 1) return true;
     return false;
@@ -586,7 +602,7 @@ class _HomePageState extends State<HomePage> {
                                                                             ? Text(
                                                                                 ' (1 spot left)',
                                                                                 style: TextStyle(fontSize: 15))
-                                                                            : Text(' (${getEventLimit(userEvents[key]!) - getEventSpots(userEvents[key]!)} spots left)', style: TextStyle(fontSize: 15))
+                                                                            : Text(' (${getEventLimit(userEvents[key]!) - getEventSpotsFilled(userEvents[key]!)} spots left)', style: TextStyle(fontSize: 15))
                                                                       ],
                                                                     )),
                                                             Align(
@@ -700,7 +716,7 @@ class _HomePageState extends State<HomePage> {
                                                                                 style: TextStyle(fontSize: 22)),
                                                                             oneSpotLeft(userEvents, key)
                                                                                 ? Text(' (1 spot left)', style: TextStyle(fontSize: 17))
-                                                                                : Text(' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)', style: TextStyle(fontSize: 15))
+                                                                                : Text(' (${getEventLimit(allEvents[key]!) - getEventSpotsFilled(allEvents[key]!)} spots left)', style: TextStyle(fontSize: 15))
                                                                           ],
                                                                         )),
                                                                 Align(
@@ -873,7 +889,7 @@ class _HomePageState extends State<HomePage> {
                                                                               style: TextStyle(fontSize: 17))
                                                                           : oneSpotLeft(allEvents, key)
                                                                               ? Text(' (1 spot left)', style: TextStyle(fontSize: 14))
-                                                                              : Text(' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)', style: TextStyle(fontSize: 14))
+                                                                              : Text(' (${getEventLimit(allEvents[key]!) - getEventSpotsFilled(allEvents[key]!)} spots left)', style: TextStyle(fontSize: 14))
                                                                     ],
                                                                   )),
                                                               Align(
@@ -1012,7 +1028,7 @@ class _HomePageState extends State<HomePage> {
                                                                             : Row(
                                                                                 children: [
                                                                                   Text('${allEvents[key]!['name']}', style: TextStyle(fontSize: 22)),
-                                                                                  oneSpotLeft(allEvents, key) ? Text(' (1 spot left)', style: TextStyle(fontSize: 14)) : Text(' (${getEventLimit(allEvents[key]!) - getEventSpots(allEvents[key]!)} spots left)', style: TextStyle(fontSize: 14)),
+                                                                                  oneSpotLeft(allEvents, key) ? Text(' (1 spot left)', style: TextStyle(fontSize: 14)) : Text(' (${getEventLimit(allEvents[key]!) - getEventSpotsFilled(allEvents[key]!)} spots left)', style: TextStyle(fontSize: 14)),
                                                                                 ],
                                                                               ),
                                                                   ),

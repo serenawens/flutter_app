@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'EditProfile.dart';
 import 'Login.dart';
+import 'PastEvents.dart';
 import 'User.dart';
 import 'cmdb.dart';
 
@@ -187,6 +188,46 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    void _showDialog(String message, String title, List<Widget> actions) {
+      showDialog(
+          context: context,
+          builder: (BuildContext) {
+            return AlertDialog(
+              title: Text(title),
+              content: Text(message),
+              actions: actions,
+            );
+          });
+    }
+    List<Widget> returnSignOutActions() {
+      return [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+            ElevatedButton(
+                child: Text('Sign Out'),
+                onPressed: () {
+                  removeUserPrefKey().then((value) {
+                    user.info = {};
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => LoginPage(title: "Login")),
+                    );
+                  });
+                })
+          ],
+        ),
+      ];
+    }
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -335,6 +376,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       subtitle: Text("hours volunteered",
                           style: TextStyle(color: Colors.black))),
                   ListTile(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PastEventsPage(title: "Past Events")),
+                        );
+                        },
                       leading:
                           Icon(Icons.equalizer, size: 45, color: Colors.orange),
                       title: Text("${userStats[1]}",
@@ -362,15 +411,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     //   textStyle: TextStyle(fontSize: 14),
                     // ),
                     onPressed: () {
-                      removeUserPrefKey().then((value) {
-                        user.info = {};
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginPage(title: "Login")),
-                        );
-                      });
+                      _showDialog("Are you sure you want to sign out?", "Sign Out Confirmation", returnSignOutActions());
                     },
                     child: Text('Sign Out',
                         style: TextStyle(
