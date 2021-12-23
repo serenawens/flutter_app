@@ -33,8 +33,6 @@ class _HomePageState extends State<HomePage> {
     getCollapsedValues();
   }
 
-
-
   String getDateWordForm(String date) {
     final DateFormat formatter = DateFormat('MM-dd-yyyy');
     DateTime dt = formatter.parse(date);
@@ -181,13 +179,13 @@ class _HomePageState extends State<HomePage> {
 
   bool eventFull(Map event) {
     if (event['volunteers'] != null) {
-
       int limit = int.parse(event['volunteerLimit']);
 
       if (event['volunteers'].keys.length == limit) {
         return true;
       }
-      else if(event['hasEventOfficer'] == null && limit == event['volunteers'].keys.length-1){
+      if (event['hasEventOfficer'] == null &&
+          limit - 1 == event['volunteers'].keys.length) {
         return true;
       }
     }
@@ -195,31 +193,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   int getEventSpotsFilled(Map event) {
-
     if (event['volunteers'] == null) {
       return 0;
-    }
-    else if(event['hasEventOfficer'] != null){
-
+    } else if (event['hasEventOfficer'] != null) {
       //Just the eventOfficer is signed up
-      if(event['volunteers'].keys.length == 1){
+      if (event['volunteers'].keys.length == 1) {
         return 0;
-      }
-      else{
-        return event['volunteers'].keys.length-1;
+      } else {
+        return event['volunteers'].keys.length - 1;
       }
     }
 
     return event['volunteers'].keys.length;
-
   }
 
   int getEventLimit(Map event) {
-    return int.parse(event['volunteerLimit'])-1;
+    return int.parse(event['volunteerLimit']) - 1;
   }
 
   bool oneSpotLeft(Map event, String key) {
-    int spotsLeft = getEventLimit(event[key]!) - getEventSpotsFilled(event[key]!);
+    int spotsLeft =
+        getEventLimit(event[key]!) - getEventSpotsFilled(event[key]!);
 
     if (spotsLeft == 1) return true;
     return false;
@@ -244,34 +238,34 @@ class _HomePageState extends State<HomePage> {
     pendingInvites = {};
   }
 
-  void moveFromPastBackToNormal(){
+  void moveFromPastBackToNormal() {
     String eventKey = "-Mo0a2LcliqHSUKR8TCd";
 
-    database.get<Map<String, dynamic>>('PastEvents/' + eventKey + "/").then((value) {
-
-      if(value !=null) {
+    database
+        .get<Map<String, dynamic>>('PastEvents/' + eventKey + "/")
+        .then((value) {
+      if (value != null) {
         database.update('Events/' + eventKey + "/", value);
         database.delete("PastEvents/" + eventKey);
       }
     });
 
-    database.get<Map<String, dynamic>>('Events/' + eventKey + "/" + "volunteers" + "/").then((value) {
-
-      if(value !=null) {
-        value.forEach((user,name) {
-
-          database.update(
-              "Users/" + user + "/events/" + eventKey + '/',
+    database
+        .get<Map<String, dynamic>>(
+            'Events/' + eventKey + "/" + "volunteers" + "/")
+        .then((value) {
+      if (value != null) {
+        value.forEach((user, name) {
+          database.update("Users/" + user + "/events/" + eventKey + '/',
               {"eventID": eventKey});
 
           database.delete("Users/" + user + "/pastEvents/" + eventKey);
-
         });
       }
     });
   }
 
-  void moveEventToPast(eventKey, value){
+  void moveEventToPast(eventKey, value) {
     database.update('PastEvents/' + eventKey + "/", value);
     database.delete("Events/" + eventKey);
   }
@@ -279,12 +273,9 @@ class _HomePageState extends State<HomePage> {
   void deleteEventFromPending(eventKey) {
     //DELETE EVENT FROM PENDING INVITES
     database
-        .get<Map<String, dynamic>>(
-        "Events/" + eventKey + "/pending/")
+        .get<Map<String, dynamic>>("Events/" + eventKey + "/pending/")
         .then((value) {
-
-      if(value != null){
-
+      if (value != null) {
         print("YES PENDING");
 
         value.forEach((username, name) {
@@ -292,30 +283,24 @@ class _HomePageState extends State<HomePage> {
 
           database.delete("Users/" + username + "/pending/" + eventKey);
         });
-      }
-      else{
+      } else {
         print("NO PENDING");
       }
     });
   }
 
-  void moveVolunteerEventToPast(String eventKey, value){
-
+  void moveVolunteerEventToPast(String eventKey, value) {
     int eventHours = calculateEventHours(eventKey, value);
 
     //Move volunteer-related stuff to PAST EVENTS
     database
-        .get<Map<String, dynamic>>(
-        "Events/" + eventKey + "/volunteers/")
+        .get<Map<String, dynamic>>("Events/" + eventKey + "/volunteers/")
         .then((value) {
-
       if (value != null) {
-
         print("YES VOLUNTEERS");
 
         value.forEach((user, name) {
-          database.update(
-              "Users/" + user + "/pastEvents/" + eventKey + '/',
+          database.update("Users/" + user + "/pastEvents/" + eventKey + '/',
               {"eventID": eventKey});
 
           database.delete("Users/" + user + "/events/" + eventKey);
@@ -340,19 +325,14 @@ class _HomePageState extends State<HomePage> {
           //   }
           //
           // });
-
         });
-      }
-      else{
+      } else {
         value!.forEach((user, name) {
-          database.update(
-              "Users/" + user + "/pastEvents/" + eventKey + '/',
+          database.update("Users/" + user + "/pastEvents/" + eventKey + '/',
               {"eventID": eventKey});
 
           database.delete("Users/" + user + "/events/" + eventKey);
-
-      });
-
+        });
       }
     });
 
@@ -375,10 +355,11 @@ class _HomePageState extends State<HomePage> {
             print(dt1.toString());
             print(now.toString());
 
-            if (dt1.isBefore(now)  && !(dt1.day == now.day && dt1.year == now.year && dt1.month == now.month)) {
-
+            if (dt1.isBefore(now) &&
+                !(dt1.day == now.day &&
+                    dt1.year == now.year &&
+                    dt1.month == now.month)) {
               moveVolunteerEventToPast(eventKey, value);
-
             } else {
               allEvents[eventKey] = value as Map<String, dynamic>;
             }
@@ -418,7 +399,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  int calculateEventHours(String eventKey, value){
+  int calculateEventHours(String eventKey, value) {
     String eventTimeRange = value!["time"];
 
     TimeOfDay st = stringToTimeOfDay(eventTimeRange.split(' - ')[0]);
@@ -550,122 +531,122 @@ class _HomePageState extends State<HomePage> {
                                       height:
                                           MediaQuery.of(context).size.height /
                                               3.35,
-                                        child: ListView.separated(
-                                          shrinkWrap: true,
-                                          physics: ScrollPhysics(),
-                                          padding: const EdgeInsets.all(20),
-                                          itemCount: userEvents.length,
-                                          itemBuilder:
-                                              (BuildContext context, int index) {
-                                            String key =
-                                                userEvents.keys.elementAt(index);
-                                            return InkWell(
-                                                child: Container(
-                                                  height: 50,
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        flex: 7,
-                                                        child: Column(
-                                                          children: [
-                                                            eventFull(userEvents[
-                                                                    key]!)
-                                                                ? Align(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .topLeft,
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Text(
-                                                                            '${userEvents[key]?['name']}',
-                                                                            style:
-                                                                                TextStyle(fontSize: 22)),
-                                                                        Text(
-                                                                            '(FULL)',
-                                                                            style:
-                                                                                TextStyle(fontSize: 15))
-                                                                      ],
-                                                                    ))
-                                                                : Align(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .topLeft,
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Text(
-                                                                            '${userEvents[key]?['name']}',
-                                                                            style:
-                                                                                TextStyle(fontSize: 22)),
-                                                                        oneSpotLeft(
-                                                                                userEvents,
-                                                                                key)
-                                                                            ? Text(
-                                                                                ' (1 spot left)',
-                                                                                style: TextStyle(fontSize: 15))
-                                                                            : Text(' (${getEventLimit(userEvents[key]!) - getEventSpotsFilled(userEvents[key]!)} spots left)', style: TextStyle(fontSize: 15))
-                                                                      ],
-                                                                    )),
-                                                            Align(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              child: Text(
-                                                                  '${userEvents[key]?['time']}' +
-                                                                      "  |  " +
-                                                                      getDateWordForm(
-                                                                          '${userEvents[key]?['date']}'),
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          13)),
-                                                            ),
-                                                          ],
-                                                        ),
+                                      child: ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: ScrollPhysics(),
+                                        padding: const EdgeInsets.all(20),
+                                        itemCount: userEvents.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          String key =
+                                              userEvents.keys.elementAt(index);
+                                          return InkWell(
+                                              child: Container(
+                                                height: 50,
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 7,
+                                                      child: Column(
+                                                        children: [
+                                                          eventFull(userEvents[
+                                                                  key]!)
+                                                              ? Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .topLeft,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Text(
+                                                                          '${userEvents[key]?['name']}',
+                                                                          style:
+                                                                              TextStyle(fontSize: 22)),
+                                                                      Text(
+                                                                          '(FULL)',
+                                                                          style:
+                                                                              TextStyle(fontSize: 15))
+                                                                    ],
+                                                                  ))
+                                                              : Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .topLeft,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Text(
+                                                                          '${userEvents[key]?['name']}',
+                                                                          style:
+                                                                              TextStyle(fontSize: 22)),
+                                                                      oneSpotLeft(
+                                                                              userEvents,
+                                                                              key)
+                                                                          ? Text(
+                                                                              ' (1 spot left)',
+                                                                              style: TextStyle(fontSize: 15))
+                                                                          : Text(' (${getEventLimit(userEvents[key]!) - getEventSpotsFilled(userEvents[key]!)} spots left)', style: TextStyle(fontSize: 15))
+                                                                    ],
+                                                                  )),
+                                                          Align(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            child: Text(
+                                                                '${userEvents[key]?['time']}' +
+                                                                    "  |  " +
+                                                                    getDateWordForm(
+                                                                        '${userEvents[key]?['date']}'),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        13)),
+                                                          ),
+                                                        ],
                                                       ),
-                                                      // Expanded(
-                                                      //   flex: 1,
-                                                      //   child: IconButton(
-                                                      //       icon: Icon(Icons
-                                                      //           .more_vert),
-                                                      //       onPressed: () {
-                                                      //         Navigator.push(
-                                                      //           context,
-                                                      //           MaterialPageRoute(
-                                                      //               builder:
-                                                      //                   (context) =>
-                                                      //                       DetailsPage(
-                                                      //                         title: "Event Info",
-                                                      //                         event: userEvents[key],
-                                                      //                         eventKey: key,
-                                                      //                       )),
-                                                      //         ).then((value) {
-                                                      //           getAllEvents();
-                                                      //         });
-                                                      //       }),
-                                                      // ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                    // Expanded(
+                                                    //   flex: 1,
+                                                    //   child: IconButton(
+                                                    //       icon: Icon(Icons
+                                                    //           .more_vert),
+                                                    //       onPressed: () {
+                                                    //         Navigator.push(
+                                                    //           context,
+                                                    //           MaterialPageRoute(
+                                                    //               builder:
+                                                    //                   (context) =>
+                                                    //                       DetailsPage(
+                                                    //                         title: "Event Info",
+                                                    //                         event: userEvents[key],
+                                                    //                         eventKey: key,
+                                                    //                       )),
+                                                    //         ).then((value) {
+                                                    //           getAllEvents();
+                                                    //         });
+                                                    //       }),
+                                                    // ),
+                                                  ],
                                                 ),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            DetailsPage(
-                                                              title: "Event Info",
-                                                              event:
-                                                                  userEvents[key],
-                                                              eventKey: key,
-                                                            )),
-                                                  ).then((value) {
-                                                    getAllEvents();
-                                                  });
+                                              ),
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DetailsPage(
+                                                            title: "Event Info",
+                                                            event:
+                                                                userEvents[key],
+                                                            eventKey: key,
+                                                          )),
+                                                ).then((value) {
+                                                  getAllEvents();
                                                 });
-                                          },
-                                          separatorBuilder:
-                                              (BuildContext context, int index) =>
-                                                  const Divider(
-                                                      color: Colors.black26),
-                                        ),
-                                      )
+                                              });
+                                        },
+                                        separatorBuilder:
+                                            (BuildContext context, int index) =>
+                                                const Divider(
+                                                    color: Colors.black26),
+                                      ),
+                                    )
                                   : //IF EVENT COUNT IS LESS THAN 3 -- CONTAINER SIZE IS FLEXIBLE
                                   Container(
 

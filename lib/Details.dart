@@ -241,7 +241,7 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   String titleCase(String s) {
-    if(s == ''){
+    if (s == '') {
       return s;
     }
     return s
@@ -261,65 +261,57 @@ class _DetailsPageState extends State<DetailsPage> {
       if (value != null) {
         setState(() {
           value.forEach((key, info) {
-
             //Current user is a volunteer
             if (user.info!['name'] == info['name']) {
               joinedEvent = true;
             }
 
             //Volunteer is not an event officer
-            if(info['eventOfficer'] == null){
+            if (info['eventOfficer'] == null) {
               volunteerList.add(info['name']);
             }
             //Volunteer IS an event officer
-            else if(info['eventOfficer'] != null) {
-
+            else if (info['eventOfficer'] != null) {
               //Current user is that volunteer
-              if (user.info!['name'] == info['name']){
+              if (user.info!['name'] == info['name']) {
                 isEventOfficer = true;
               }
               eventOfficer = info['name'];
               hasEventOfficer = true;
             }
-
-
           });
         });
       }
     });
 
-    if(widget.event!['hasEventOfficer'] != null){
+    if (widget.event!['hasEventOfficer'] != null) {
       String username = widget.event!['hasEventOfficer']['true'];
-      database.get<Map<String, dynamic>>("Users/" + username + '/').then((userInfo) {
+      database
+          .get<Map<String, dynamic>>("Users/" + username + '/')
+          .then((userInfo) {
         setState(() {
-          if(userInfo != null){
+          if (userInfo != null) {
             eventOfficerPhone = formatPhoneNumber(userInfo['phoneNumber']);
           }
         });
-
       });
     }
-
   }
 
-  SizedBox getEventOfficerInfo(){
-
+  SizedBox getEventOfficerInfo() {
     return SizedBox(
-      height: 45,
-      child:
-      Column(
-        children: [
+        height: 45,
+        child: Column(
+          children: [
             SelectableText(titleCase(eventOfficer)),
             SizedBox(height: 4),
             SelectableText(eventOfficerPhone),
           ],
-      )
-    );
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-
     void _showDialog(String message, String title, List<Widget> actions) {
       showDialog(
           context: context,
@@ -433,64 +425,62 @@ class _DetailsPageState extends State<DetailsPage> {
       ];
     }
 
-    List<Widget> returnEventOfficerJoinActions(){
+    List<Widget> returnEventOfficerJoinActions() {
       return [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                }),
-            ElevatedButton(
-                child: Text('Confirm Sign Up'),
-                onPressed: () {
-                  joinedEvent = true;
-                  //add your name as the eventOfficer
-                  eventOfficer = user.info!['name'];
-                  isEventOfficer = true;
-                  hasEventOfficer = true;
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          ElevatedButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+          ElevatedButton(
+              child: Text('Confirm Sign Up'),
+              onPressed: () {
+                joinedEvent = true;
+                //add your name as the eventOfficer
+                eventOfficer = user.info!['name'];
+                isEventOfficer = true;
+                hasEventOfficer = true;
 
+                //add your name into the Event volunteer list database
+                database.update(
+                    "/Events/" +
+                        widget.eventKey +
+                        "/volunteers/" +
+                        user.info!['username'],
+                    {"name": user.info!['name'], 'eventOfficer': "true"});
 
-                  //add your name into the Event volunteer list database
-                  database.update(
-                      "/Events/" +
-                          widget.eventKey +
-                          "/volunteers/" +
-                          user.info!['username'],
-                      {"name": user.info!['name'], 'eventOfficer': "true"});
+                database.update(
+                    "/Events/" + widget.eventKey + "/hasEventOfficer/",
+                    {"true": user.info!['username']});
 
-                  database.update("/Events/" + widget.eventKey + "/hasEventOfficer/", {"true": user.info!['username']});
+                //Adding event to your events in database
+                database.update(
+                    "Users/" +
+                        user.info!['username'] +
+                        "/events/" +
+                        widget.eventKey +
+                        '/',
+                    {"eventID": widget.eventKey, "eventOfficer": "true"});
 
-                  //Adding event to your events in database
-                  database.update(
-                      "Users/" +
-                          user.info!['username'] +
-                          "/events/" +
-                          widget.eventKey +
-                          '/',
-                      {"eventID": widget.eventKey, "eventOfficer": "true"});
+                //Delete the event from your pending events list
+                database.delete("Users/" +
+                    user.info!['username'] +
+                    "/pending/" +
+                    widget.eventKey +
+                    "/");
 
-                  //Delete the event from your pending events list
-                  database.delete("Users/" +
-                      user.info!['username'] +
-                      "/pending/" +
-                      widget.eventKey +
-                      "/");
+                //Delete your name off the event database pending list
+                database.delete("Events/" +
+                    widget.eventKey +
+                    "/pending/" +
+                    user.info!['username']);
 
-                  //Delete your name off the event database pending list
-                  database.delete("Events/" +
-                      widget.eventKey +
-                      "/pending/" +
-                      user.info!['username']);
+                setState(() {});
 
-                  setState(() {});
-
-                  Navigator.of(context).pop();
-                }),
-          ]
-        )
+                Navigator.of(context).pop();
+              }),
+        ])
       ];
     }
 
@@ -503,10 +493,8 @@ class _DetailsPageState extends State<DetailsPage> {
                 child: Text('Volunteer'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _showDialog(
-                      "Confirm your sign up as a volunteer?",
-                      "Volunteer Sign Up Confirmation",
-                      returnJoinActions());
+                  _showDialog("Confirm your sign up as a volunteer?",
+                      "Volunteer Sign Up Confirmation", returnJoinActions());
                 }),
             ElevatedButton(
                 child: Text('Event Officer'),
@@ -547,9 +535,8 @@ class _DetailsPageState extends State<DetailsPage> {
                       user.info!['username'] +
                       "/");
 
-                  database.delete("/Events/" +
-                      widget.eventKey +
-                      "/hasEventOfficer/" );
+                  database.delete(
+                      "/Events/" + widget.eventKey + "/hasEventOfficer/");
 
                   database.delete("/Users/" +
                       user.info!['username'] +
@@ -638,46 +625,49 @@ class _DetailsPageState extends State<DetailsPage> {
                                   onTap: () => launch(widget.event?['link'])),
                             ))
                         : SizedBox(),
-
                     Padding(
                       padding: const EdgeInsets.only(left: 18.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Row(
                           children: [
-                            Text(
-                                "Event Officer: ",
-                                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                            Text("Event Officer: ",
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.bold)),
 
-                            Text("${titleCase(eventOfficer)}", style: TextStyle(fontSize: 17)),
+                            Text("${titleCase(eventOfficer)}",
+                                style: TextStyle(fontSize: 17)),
 
-                            widget.event!['hasEventOfficer'] != null?
-                            Padding(
-                              padding: const EdgeInsets.only(top: 2),
-                              child: TextButton(onPressed: (){
-                                _showDiffDialog(getEventOfficerInfo());
-                              }, child: Text("[Contact Info]", style: TextStyle())),
-                            ):
-                                SizedBox(),
+                            widget.event!['hasEventOfficer'] != null
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 2),
+                                    child: TextButton(
+                                        onPressed: () {
+                                          _showDiffDialog(
+                                              getEventOfficerInfo());
+                                        },
+                                        child: Text("[Contact Info]",
+                                            style: TextStyle())),
+                                  )
+                                : SizedBox(),
                             // IconButton(onPressed: (){
                             // }, icon: Icon(Icons.info_outlined, size: 18))
                           ],
                         ),
                       ),
                     ),
-
                     SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.only(left: 18),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Volunteers (${volunteerList.length}/${int.parse(widget.event!['volunteerLimit'])-1})",
-                          style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                          "Volunteers (${volunteerList.length}/${int.parse(widget.event!['volunteerLimit']) - 1})",
+                          style: TextStyle(
+                              fontSize: 23, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
-
                     SizedBox(height: 5),
                     Padding(
                       padding: const EdgeInsets.only(left: 22),
@@ -687,32 +677,57 @@ class _DetailsPageState extends State<DetailsPage> {
                             shrinkWrap: true,
                             physics: ScrollPhysics(),
                             itemBuilder: (BuildContext context, int index) {
-                              return Text(titleCase('- ${volunteerList[index]}'),
+                              return Text(
+                                  titleCase('- ${volunteerList[index]}'),
                                   style: TextStyle(fontSize: 16));
                             }),
                       ),
                     ),
                     SizedBox(height: 20),
                     joinedEvent == false
-                        ? eventFull()
+                        ?
+
+                        //situation where its for sure full
+                        eventFull() && hasEventOfficer == true
                             ? disableButton("Event Full")
-                            : ElevatedButton(
-                                child: Text('Join Event'),
-                                onPressed: () {
-                                  setState(() {
-                                    if(user.info!['role'] == 'admin' && hasEventOfficer == false){
-                                      _showDialog("Would you like to sign up as the event's designated officer or as just a volunteer?", "Volunteer or Event Officer?", returnAdminJoinActions());
-                                    }
-                                    else{
-                                      _showDialog(
-                                          "Confirm your sign up?",
-                                          "Sign Up Confirmation",
-                                          returnJoinActions());
-                                    }
-                                  });
-                                  //Add name to event
-                                },
-                              )
+                            :
+                            //Full but NO EVENT OFFICER --> admin can still sign up
+                            eventFull() &&
+                                    hasEventOfficer == false &&
+                                    user.info!['role'] == "admin"
+                                ? ElevatedButton(
+                                    child: Text('Join Event'),
+                                    onPressed: () {
+                                      setState(() {
+                                        _showDialog(
+                                            "Sign up as event officer?",
+                                            "Event Officer Sign Up",
+                                            returnEventOfficerJoinActions());
+                                      });
+                                    },
+                                  )
+                                : eventFull() && user.info!['role'] != 'admin'
+                                    ? disableButton("Event Full")
+                                    : ElevatedButton(
+                                        child: Text('Join Event'),
+                                        onPressed: () {
+                                          setState(() {
+                                            if (user.info!['role'] == 'admin' &&
+                                                hasEventOfficer == false) {
+                                              _showDialog(
+                                                  "Would you like to sign up as the event's designated officer or as just a volunteer?",
+                                                  "Volunteer or Event Officer?",
+                                                  returnAdminJoinActions());
+                                            } else {
+                                              _showDialog(
+                                                  "Confirm your sign up?",
+                                                  "Sign Up Confirmation",
+                                                  returnJoinActions());
+                                            }
+                                          });
+                                          //Add name to event
+                                        },
+                                      )
                         : Padding(
                             padding: const EdgeInsets.only(left: 10.0),
                             child: Row(
@@ -739,13 +754,12 @@ class _DetailsPageState extends State<DetailsPage> {
                                   child: Text('Cancel Sign Up'),
                                   onPressed: () {
                                     setState(() {
-                                      if(eventOfficer == user.info!['name']){
+                                      if (eventOfficer == user.info!['name']) {
                                         _showDialog(
                                             "Are you sure you want to cancel your sign up? You are this event's designated officer.",
                                             "Cancellation Confirmation",
                                             returnEventOfficerCancelActions());
-                                      }
-                                      else{
+                                      } else {
                                         _showDialog(
                                             "Are you sure you want to cancel your sign up?",
                                             "Cancellation Confirmation",
