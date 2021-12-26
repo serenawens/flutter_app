@@ -215,6 +215,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   removeUserPrefKey().then((value) {
                     user.info = {};
                     Navigator.pop(context);
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -411,6 +412,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     //   textStyle: TextStyle(fontSize: 14),
                     // ),
                     onPressed: () {
+                      // removeUserPrefKey().then((value) {
+                      //   user.info = {};
+                      //   Navigator.pop(context);
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => LoginPage(title: "Login")),
+                      //   );
+                      // });
                       _showDialog("Are you sure you want to sign out?", "Sign Out Confirmation", returnSignOutActions());
                     },
                     child: Text('Sign Out',

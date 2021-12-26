@@ -625,6 +625,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   onTap: () => launch(widget.event?['link'])),
                             ))
                         : SizedBox(),
+                    SizedBox(height: 8),
                     Padding(
                       padding: const EdgeInsets.only(left: 18.0),
                       child: Align(
@@ -633,7 +634,7 @@ class _DetailsPageState extends State<DetailsPage> {
                           children: [
                             Text("Event Officer: ",
                                 style: TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.bold)),
+                                    fontSize: 19, fontWeight: FontWeight.bold)),
 
                             Text("${titleCase(eventOfficer)}",
                                 style: TextStyle(fontSize: 17)),
