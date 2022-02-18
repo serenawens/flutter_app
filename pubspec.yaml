@@ -39,8 +39,6 @@ dependencies:
   linkify: ^4.1.0
   crypt: ^4.0.1
 
-  firebase_messaging: ^6.0.9
-
 
 dev_dependencies:
   flutter_test:

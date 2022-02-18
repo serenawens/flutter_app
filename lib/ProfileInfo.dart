@@ -370,6 +370,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       style:
                           TextStyle(fontSize: 27, fontWeight: FontWeight.bold)),
                   ListTile(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PastEventsPage(title: "Past Events")),
+                        );
+                      },
                       leading: Icon(Icons.access_time_sharp,
                           size: 45, color: Colors.orange),
                       title: Text("${userStats[0]}",

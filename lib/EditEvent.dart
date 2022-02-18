@@ -252,9 +252,9 @@ class _EditEventPageState extends State<EditEventPage> {
                             onSubmitted: (TimeRangeValue value) {
                               setState(() {
                                 eventTime.text =
-                                    formatTimeOfDay(value.startTime) +
+                                    formatTimeOfDay(value.startTime!) +
                                         " - " +
-                                        formatTimeOfDay(value.endTime);
+                                        formatTimeOfDay(value.endTime!);
                               });
                             },
                           ),
@@ -325,14 +325,7 @@ class _EditEventPageState extends State<EditEventPage> {
                       child:
                           Text('Save Changes', style: TextStyle(fontSize: 20)),
                       onPressed: () {
-                        // if (eventName.text == null ||
-                        //     eventDate.text == null ||
-                        //     eventTime.text == null ||
-                        //     eventLocation.text == null ||
-                        //     eventLimit.text == null ||
-                        //     eventDetails.text == null) {
-                        //   Navigator.pop(context);
-                        // }
+
                         if (eventName.text.isEmpty ||
                             eventDate.text.isEmpty ||
                             eventTime.text.isEmpty ||

@@ -56,7 +56,7 @@ class _AddEventPageState extends State<AddEventPage> {
   TextEditingController signUpLink = TextEditingController();
 
   Map<String, dynamic> addEvent() {
-    if (signUpLink.text.isEmpty){
+    if (signUpLink.text.isEmpty) {
       Map<String, dynamic> events = {
         "name": eventName.text.trim(),
         'date': eventDate.text.trim(),
@@ -64,29 +64,53 @@ class _AddEventPageState extends State<AddEventPage> {
         'location': eventLocation.text.trim(),
         'volunteerLimit': eventLimit.text.trim(),
         'details': eventDetails.text.trim(),
+        'eventHours': calculateEventHours(),
       };
       return events;
-    }
-    else{
+    } else {
       Map<String, dynamic> events = {
-        "name": eventName.text,
-        'date': eventDate.text,
-        'time': eventTime.text,
-        'location': eventLocation.text,
-        'volunteerLimit': eventLimit.text,
-        'details': eventDetails.text,
-        'link': signUpLink.text
+        "name": eventName.text.trim(),
+        'date': eventDate.text.trim(),
+        'time': eventTime.text.trim(),
+        'location': eventLocation.text.trim(),
+        'volunteerLimit': eventLimit.text.trim(),
+        'details': eventDetails.text.trim(),
+        'link': signUpLink.text.trim(),
+        'eventHours': calculateEventHours(),
       };
       return events;
     }
-    }
-
+  }
 
   String formatTimeOfDay(TimeOfDay tod) {
     final now = new DateTime.now();
     final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
     final format = DateFormat.jm(); //"6:00 AM"
     return format.format(dt);
+  }
+
+  TimeOfDay stringToTimeOfDay(String tod) {
+    final format = DateFormat.jm(); //"6:00 AM"
+    return TimeOfDay.fromDateTime(format.parse(tod));
+  }
+
+  String timeOfDayToString(TimeOfDay tod) {
+    String time = tod.toString();
+    return time.substring(10, 15);
+  }
+
+  String calculateEventHours() {
+    String eventTimeRange = eventTime.text;
+
+    TimeOfDay st = stringToTimeOfDay(eventTimeRange.split(' - ')[0]);
+    TimeOfDay et = stringToTimeOfDay(eventTimeRange.split(' - ')[1]);
+
+    var format = DateFormat("HH:mm");
+    var start = format.parse(timeOfDayToString(st));
+    var end = format.parse(timeOfDayToString(et));
+
+    return end.difference(start).inHours.toString();
+
   }
 
   @override
@@ -201,9 +225,9 @@ class _AddEventPageState extends State<AddEventPage> {
                             onSubmitted: (TimeRangeValue value) {
                               setState(() {
                                 eventTime.text =
-                                    formatTimeOfDay(value.startTime) +
+                                    formatTimeOfDay(value.startTime!) +
                                         " - " +
-                                        formatTimeOfDay(value.endTime);
+                                        formatTimeOfDay(value.endTime!);
                               });
                             },
                           ),
@@ -264,7 +288,7 @@ class _AddEventPageState extends State<AddEventPage> {
                           eventDate.text.isEmpty ||
                           eventTime.text.isEmpty ||
                           eventLocation.text.isEmpty ||
-                          eventLimit.text.isEmpty||
+                          eventLimit.text.isEmpty ||
                           eventDetails.text.isEmpty) {
                         _showDialog("All fields must be filled out",
                             "Missing Information", returnCreateError());

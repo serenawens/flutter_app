@@ -479,7 +479,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 20, left: 20, right: 20),
+                        const EdgeInsets.only(top: 20, left: 10, right: 10),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(
@@ -783,9 +783,16 @@ class _HomePageState extends State<HomePage> {
 
                   // ALL EVENTS CONTAINER
                   Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.only(top: 20, bottom: 20, right: 10, left: 10),
                     child: Container(
                       decoration: BoxDecoration(
+                        // color: Colors.white.withOpacity(.7),
+                        //   boxShadow: [BoxShadow(
+                        //       color: Colors.grey.withOpacity(.95),
+                        //       spreadRadius: -4,
+                        //       blurRadius: 7,
+                        //       offset: Offset(0, 3)
+                        //   ),],
                         borderRadius: BorderRadius.all(
                           Radius.circular(10),
                         ),
@@ -798,7 +805,7 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         children: [
                           ListTile(
-                              title: Text("All Events",
+                              title: Text("Upcoming Events",
                                   style: TextStyle(fontSize: 28)),
                               trailing: IconButton(
                                 icon: collapseAll,

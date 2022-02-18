@@ -67,6 +67,7 @@ class _DetailsPageState extends State<DetailsPage> {
           style: ElevatedButton.styleFrom(primary: Colors.black87));
     }
   }
+  final ScrollController _controllerOne = ScrollController(initialScrollOffset: 50.0);
 
   String formatPhoneNumber(String number) {
     String temp = number.trim();
@@ -559,7 +560,7 @@ class _DetailsPageState extends State<DetailsPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(top: 50),
+          padding: const EdgeInsets.only(top: 20),
           child: flag
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -597,7 +598,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       padding: const EdgeInsets.only(left: 18),
                       child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("Details:",
+                          child: SelectableText("Details:",
                               style: TextStyle(
                                   fontSize: 19, fontWeight: FontWeight.bold))),
                     ),
@@ -625,7 +626,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   onTap: () => launch(widget.event?['link'])),
                             ))
                         : SizedBox(),
-                    SizedBox(height: 8),
+                    SizedBox(height: 1),
                     Padding(
                       padding: const EdgeInsets.only(left: 18.0),
                       child: Align(
@@ -657,7 +658,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 1),
                     Padding(
                       padding: const EdgeInsets.only(left: 18),
                       child: Align(
@@ -670,6 +671,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       ),
                     ),
                     SizedBox(height: 5),
+                    volunteerList.length < 7?
                     Padding(
                       padding: const EdgeInsets.only(left: 22),
                       child: SizedBox(
@@ -683,8 +685,42 @@ class _DetailsPageState extends State<DetailsPage> {
                                   style: TextStyle(fontSize: 16));
                             }),
                       ),
+                    ):
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8, right:8),
+                      child: Container(
+                        height: 130,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                            ),
+                            const BoxShadow(
+                                color: Colors.white,
+                                spreadRadius: -2,
+                                blurRadius: 1,
+                                offset: Offset(0,-1)
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 22-8, top: 8),
+                          child: SizedBox(
+                            child: ListView.builder(
+                                itemCount: volunteerList.length,
+                                shrinkWrap: true,
+                                physics: ScrollPhysics(),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Text(
+                                      titleCase('- ${volunteerList[index]}'),
+                                      style: TextStyle(fontSize: 16));
+                                }),
+                          ),
+                        ),
+                      ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 4),
                     joinedEvent == false
                         ?
 
@@ -772,6 +808,7 @@ class _DetailsPageState extends State<DetailsPage> {
                               ],
                             ),
                           ),
+
                   ],
                 )
               : Center(child: CircularProgressIndicator()),
