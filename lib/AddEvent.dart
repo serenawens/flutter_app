@@ -109,7 +109,14 @@ class _AddEventPageState extends State<AddEventPage> {
     var start = format.parse(timeOfDayToString(st));
     var end = format.parse(timeOfDayToString(et));
 
-    return end.difference(start).inHours.toString();
+    double time = (end.difference(start).inMinutes)/60;
+
+    if(time.truncate() == time){
+      return time.truncate().toString();
+    }
+    else{
+      return time.toStringAsFixed(1);
+    }
 
   }
 

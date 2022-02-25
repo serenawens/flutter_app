@@ -101,54 +101,63 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void calculateStatistics(String username) {
-    // String username = user.info!['username'];
-    List<int> hoursList = [];
-    database
-        .get<Map<String, dynamic>>("Users/" + username + "/pastEvents")
-        .then((pastEvents) {
-      if (pastEvents != null) {
-        Iterable eventKeys = pastEvents.keys;
+  double calculateEventHours(String eventTimeRange) {
 
-        eventKeys.forEach((eventKey) {
-          database
-              .get<Map<String, dynamic>>("PastEvents/" + eventKey + "/")
-              .then((eventInfo) {
-            String eventTimeRange = eventInfo!["time"];
+    TimeOfDay st = stringToTimeOfDay(eventTimeRange.split(' - ')[0]);
+    TimeOfDay et = stringToTimeOfDay(eventTimeRange.split(' - ')[1]);
 
-            TimeOfDay st = stringToTimeOfDay(eventTimeRange.split(' - ')[0]);
-            TimeOfDay et = stringToTimeOfDay(eventTimeRange.split(' - ')[1]);
+    var format = DateFormat("HH:mm");
+    var start = format.parse(timeOfDayToString(st));
+    var end = format.parse(timeOfDayToString(et));
 
-            var format = DateFormat("HH:mm");
-            var start = format.parse(timeOfDayToString(st));
-            var end = format.parse(timeOfDayToString(et));
+    return (end.difference(start).inMinutes)/60;
+  }
 
-            int eventHours = end.difference(start).inHours;
+  void calcAllStats(String username) {
+
+    List<double> hoursList = [];
+
+    database.get<Map<String, dynamic>>("Users/" + username + "/pastEvents").then((pastEvents) {
+      if (pastEvents != null){
+
+        Iterable pastEventKeys = pastEvents.keys;
+
+        pastEventKeys.forEach((eventKey) {
+
+          database.get<Map<String, dynamic>>("PastEvents/" + eventKey).then((eventInfo) {
+            double eventHours = double.parse(eventInfo!['eventHours']);
             hoursList.add(eventHours);
 
-            if (hoursList.length == eventKeys.length) {
+            if (hoursList.length == pastEventKeys.length) {
               print(hoursList);
-              int totalHours = 0;
+
+              double totalHours = 0;
+
               for (int i = 0; i < hoursList.length; i++) {
                 totalHours += hoursList[i];
               }
               print(totalHours);
 
-              database.update("Users/" + username + "/statistics", {
-                "totalHours": totalHours.toString(),
-                'eventCount': eventKeys.length.toString()
-              });
+              if(totalHours.truncate() == totalHours){
+                database.update("Users/" + username + "/statistics", {
+                  "totalHours": totalHours.truncate().toString(),
+                  'eventCount': pastEventKeys.length.toString()
+                });
+              }
+              else{
+                database.update("Users/" + username + "/statistics", {
+                  "totalHours": totalHours.toStringAsFixed(1),
+                  'eventCount': pastEventKeys.length.toString()
+                });
+              }
+
             }
           });
-        });
-      }
-      else{
-        database.update("Users/" + username + "/statistics", {
-          "totalHours": "0",
-          'eventCount': "0"
+
         });
       }
     });
+
   }
 
   String titleCase(String s) {
@@ -444,10 +453,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         fillColor: Colors.orangeAccent,
                       child: Icon(Icons.calculate_rounded, size: 40, color: Colors.white),
                         onPressed: (){
+
                           database.get<Map<String,dynamic>>("Users").then((value) {
                             if(value!= null){
                               value.keys.forEach((username) {
-                                calculateStatistics(username);
+
+                                calcAllStats(username);
+
                               });
                               print("Done calcualted");
                             }
@@ -455,7 +467,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               print("something went wrong");
                             }
                           });
-                    }
+                        }
                     ),
                   ):
                       SizedBox(),

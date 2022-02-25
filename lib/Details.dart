@@ -612,19 +612,24 @@ class _DetailsPageState extends State<DetailsPage> {
                                     fontSize: 17, color: Colors.black87)))),
                     SizedBox(height: 10),
                     widget.event?['link'] != null && widget.event?['link'] != ''
-                        ? Padding(
-                            padding: const EdgeInsets.only(left: 18, right: 18),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: InkWell(
-                                  child: new Text(
-                                    "Website Sign Up Link",
-                                    style: new TextStyle(
-                                        color: Colors.blue,
-                                        decoration: TextDecoration.underline),
-                                  ),
-                                  onTap: () => launch(widget.event?['link'])),
-                            ))
+                        ? Column(
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.only(left: 18, right: 18),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: InkWell(
+                                      child: new Text(
+                                        "Website Sign Up Link",
+                                        style: new TextStyle(
+                                            color: Colors.blue,
+                                            decoration: TextDecoration.underline),
+                                      ),
+                                      onTap: () => launch(widget.event?['link'])),
+                                )),
+                            SizedBox(height: 5)
+                          ],
+                        )
                         : SizedBox(),
                     SizedBox(height: 1),
                     Padding(

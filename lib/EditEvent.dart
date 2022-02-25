@@ -59,6 +59,7 @@ class _EditEventPageState extends State<EditEventPage> {
     widget.events[widget.eventKey]?["volunteerLimit"] = eventLimit.text.trim();
     widget.events[widget.eventKey]?["details"] = eventDetails.text.trim();
     widget.events[widget.eventKey]?["link"] = signUpLink.text.trim();
+    widget.events[widget.eventKey]?['eventHours'] = calculateEventHours();
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -66,6 +67,37 @@ class _EditEventPageState extends State<EditEventPage> {
     final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
     final format = DateFormat.jm(); //"6:00 AM"
     return format.format(dt);
+  }
+
+  TimeOfDay stringToTimeOfDay(String tod) {
+    final format = DateFormat.jm(); //"6:00 AM"
+    return TimeOfDay.fromDateTime(format.parse(tod));
+  }
+
+  String timeOfDayToString(TimeOfDay tod) {
+    String time = tod.toString();
+    return time.substring(10, 15);
+  }
+
+  String calculateEventHours() {
+    String eventTimeRange = eventTime.text;
+
+    TimeOfDay st = stringToTimeOfDay(eventTimeRange.split(' - ')[0]);
+    TimeOfDay et = stringToTimeOfDay(eventTimeRange.split(' - ')[1]);
+
+    var format = DateFormat("HH:mm");
+    var start = format.parse(timeOfDayToString(st));
+    var end = format.parse(timeOfDayToString(et));
+
+    double time = (end.difference(start).inMinutes)/60;
+
+    if(time.truncate() == time){
+      return time.truncate().toString();
+    }
+    else{
+      return time.toStringAsFixed(1);
+    }
+
   }
 
   CMDB database = CMDB();

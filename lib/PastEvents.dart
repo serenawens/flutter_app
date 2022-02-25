@@ -99,7 +99,6 @@ class _PastEventsPageState extends State<PastEventsPage> {
       date = date.substring(5) + "-" + date.substring(0,4);
 
       // date = date.substring(3,6) + date.substring(0,3) + date.substring(6);
-      print(date);
 
       events[eventKey]!['date'] = date;
     });
@@ -356,6 +355,7 @@ class _PastEventsPageState extends State<PastEventsPage> {
   }
 
   String calculateEventHours(String eventTimeRange) {
+
     TimeOfDay st = stringToTimeOfDay(eventTimeRange.split(' - ')[0]);
     TimeOfDay et = stringToTimeOfDay(eventTimeRange.split(' - ')[1]);
 
@@ -363,9 +363,16 @@ class _PastEventsPageState extends State<PastEventsPage> {
     var start = format.parse(timeOfDayToString(st));
     var end = format.parse(timeOfDayToString(et));
 
-    int eventHours = end.difference(start).inHours;
+    double eventHours = (end.difference(start).inMinutes)/60;
+    print(eventHours);
 
-    return eventHours.toString();
+    if(eventHours.truncate() == eventHours){
+      return eventHours.truncate().toString();
+    }
+    else{
+      return eventHours.toStringAsFixed(1);
+    }
+
   }
 
   @override
@@ -375,14 +382,18 @@ class _PastEventsPageState extends State<PastEventsPage> {
         title: Text(widget.title),
       ),
       // floatingActionButton: FloatingActionButton(onPressed: () {
+      //
       //   database.get<Map<String, dynamic>>("Events/").then((pastList) {
       //     if (pastList != null) {
+      //       print('doing something');
       //       pastList.keys.forEach((eventKey) {
       //         doStuff(eventKey);
       //       });
       //     }
       //   });
+      //
       // }),
+
       backgroundColor: Colors.white,
       body: isDone
           ? pastEvents.isNotEmpty
@@ -399,10 +410,13 @@ class _PastEventsPageState extends State<PastEventsPage> {
                           child: ListTile(
                               leading: Container(
                                   height: 50,
+                                  // width: MediaQuery.of(context).size.width /
+                                  //     7.3,
                                   child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       Text("${eventsAndHours[key]}",
-                                          style: TextStyle(fontSize: 30, color: Colors.orange, fontWeight: FontWeight.bold)),
+                                          style: TextStyle(fontSize: 25, color: Colors.orange, fontWeight: FontWeight.bold)),
                                       Text("hours",
                                           style: TextStyle(fontSize: 11, color: Colors.orange,)),
                                     ],
