@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/InvitationView.dart';
 import 'package:intl/intl.dart';
+import 'ManageVolunteers.dart';
 import 'User.dart';
 import 'cmdb.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -36,6 +37,7 @@ class _DetailsPageState extends State<DetailsPage> {
   bool hasEventOfficer = false;
   bool isEventOfficer = false;
   String eventOfficerPhone = "";
+  bool flag = false;
 
   @override
   void initState() {
@@ -67,18 +69,22 @@ class _DetailsPageState extends State<DetailsPage> {
           style: ElevatedButton.styleFrom(primary: Colors.black87));
     }
   }
-  final ScrollController _controllerOne = ScrollController(initialScrollOffset: 50.0);
+
+  bool showManageVolunteersButton() {
+    return 'admin' == user.info!['role'];
+  }
 
   String formatPhoneNumber(String number) {
     String temp = number.trim();
     String prettify = '';
 
-    if (temp.startsWith("+1")) {
+    if (temp.startsWith("+1") || temp.startsWith("*1")) {
       temp = temp.trim().substring(2);
     }
 
     for (int i = 0; i < temp.length; i++) {
       if (!(temp[i] == '+' ||
+          temp[i] == '*' ||
           temp[i] == ' ' ||
           temp[i] == '-' ||
           temp[i] == '(' ||
@@ -251,9 +257,10 @@ class _DetailsPageState extends State<DetailsPage> {
         .join(' ');
   }
 
-  bool flag = false;
-
   void getVolunteers() {
+
+    volunteerList = [];
+
     database
         .get<Map<String, dynamic>>("Events/" + widget.eventKey + "/volunteers/")
         .then((value) {
@@ -309,6 +316,14 @@ class _DetailsPageState extends State<DetailsPage> {
             SelectableText(eventOfficerPhone),
           ],
         ));
+  }
+
+  String getVolunteerCount(){
+
+    if(widget.event!['volunteers'] != null)
+      return widget.event!['volunteers'].length.toString();
+
+    return "0";
   }
 
   @override
@@ -613,23 +628,26 @@ class _DetailsPageState extends State<DetailsPage> {
                     SizedBox(height: 10),
                     widget.event?['link'] != null && widget.event?['link'] != ''
                         ? Column(
-                          children: [
-                            Padding(
-                                padding: const EdgeInsets.only(left: 18, right: 18),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: InkWell(
-                                      child: new Text(
-                                        "Website Sign Up Link",
-                                        style: new TextStyle(
-                                            color: Colors.blue,
-                                            decoration: TextDecoration.underline),
-                                      ),
-                                      onTap: () => launch(widget.event?['link'])),
-                                )),
-                            SizedBox(height: 5)
-                          ],
-                        )
+                            children: [
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 18, right: 18),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: InkWell(
+                                        child: new Text(
+                                          "Website Sign Up Link",
+                                          style: new TextStyle(
+                                              color: Colors.blue,
+                                              decoration:
+                                                  TextDecoration.underline),
+                                        ),
+                                        onTap: () =>
+                                            launch(widget.event?['link'])),
+                                  )),
+                              SizedBox(height: 5)
+                            ],
+                          )
                         : SizedBox(),
                     SizedBox(height: 1),
                     Padding(
@@ -646,16 +664,13 @@ class _DetailsPageState extends State<DetailsPage> {
                                 style: TextStyle(fontSize: 17)),
 
                             widget.event!['hasEventOfficer'] != null
-                                ? Padding(
-                                    padding: const EdgeInsets.only(top: 2),
-                                    child: TextButton(
-                                        onPressed: () {
-                                          _showDiffDialog(
-                                              getEventOfficerInfo());
-                                        },
-                                        child: Text("[Contact Info]",
-                                            style: TextStyle())),
-                                  )
+                                ? TextButton(
+                                    onPressed: () {
+                                      _showDiffDialog(
+                                          getEventOfficerInfo());
+                                    },
+                                    child: Text("[Contact Info]",
+                                        style: TextStyle()))
                                 : SizedBox(),
                             // IconButton(onPressed: (){
                             // }, icon: Icon(Icons.info_outlined, size: 18))
@@ -663,69 +678,107 @@ class _DetailsPageState extends State<DetailsPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 1),
+                    SizedBox(height: 0),
                     Padding(
                       padding: const EdgeInsets.only(left: 18),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Volunteers (${volunteerList.length}/${int.parse(widget.event!['volunteerLimit']) - 1})",
-                          style: TextStyle(
-                              fontSize: 23, fontWeight: FontWeight.bold),
-                        ),
+                        child: showManageVolunteersButton()
+                            ? Row(
+                                children: [
+                                  Text(
+                                    "Volunteers (${volunteerList.length}/${int.parse(widget.event!['volunteerLimit']) - 1})",
+                                    style: TextStyle(
+                                        fontSize: 23,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                VolunteerManagePage(
+                                                    title: "Manage Volunteers",
+                                                    eventKey: widget.eventKey,
+                                                    volunteerLimit:
+                                                        widget.event!['volunteerLimit'],
+                                                    eventOfficerName: eventOfficer)),
+                                      ).then((value) {
+                                        getVolunteers();
+                                      });
+                                    },
+                                    child: Transform.translate(
+                                        offset: Offset(0, 4),
+                                        child: Text("[Manage]",
+                                            style: TextStyle(fontSize: 15))),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                "Volunteers (${volunteerList.length}/${int.parse(widget.event!['volunteerLimit']) - 1})",
+                                style: TextStyle(
+                                    fontSize: 23, fontWeight: FontWeight.bold),
+                              ),
                       ),
                     ),
-                    SizedBox(height: 5),
-                    volunteerList.length < 7?
-                    Padding(
-                      padding: const EdgeInsets.only(left: 22),
-                      child: SizedBox(
-                        child: ListView.builder(
-                            itemCount: volunteerList.length,
-                            shrinkWrap: true,
-                            physics: ScrollPhysics(),
-                            itemBuilder: (BuildContext context, int index) {
-                              return Text(
-                                  titleCase('- ${volunteerList[index]}'),
-                                  style: TextStyle(fontSize: 16));
-                            }),
-                      ),
-                    ):
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8, right:8),
-                      child: Container(
-                        height: 130,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
+                    !showManageVolunteersButton()?
+                    SizedBox(height: 5):
+                        SizedBox(),
+                    volunteerList.length < 7
+                        ? Padding(
+                            padding: const EdgeInsets.only(left: 22),
+                            child: SizedBox(
+                              child: ListView.builder(
+                                  itemCount: volunteerList.length,
+                                  shrinkWrap: true,
+                                  physics: ScrollPhysics(),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Text(
+                                        titleCase('- ${volunteerList[index]}'),
+                                        style: TextStyle(fontSize: 16));
+                                  }),
                             ),
-                            const BoxShadow(
-                                color: Colors.white,
-                                spreadRadius: -2,
-                                blurRadius: 1,
-                                offset: Offset(0,-1)
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 8, right: 8),
+                            child: Container(
+                              height: 130,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.1),
+                                  ),
+                                  const BoxShadow(
+                                      color: Colors.white,
+                                      spreadRadius: -2,
+                                      blurRadius: 1,
+                                      offset: Offset(0, -1)),
+                                ],
+                              ),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 22 - 8, top: 8),
+                                child: SizedBox(
+                                  child: ListView.builder(
+                                      itemCount: volunteerList.length,
+                                      shrinkWrap: true,
+                                      physics: ScrollPhysics(),
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Text(
+                                            titleCase(
+                                                '- ${volunteerList[index]}'),
+                                            style: TextStyle(fontSize: 16));
+                                      }),
+                                ),
+                              ),
                             ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 22-8, top: 8),
-                          child: SizedBox(
-                            child: ListView.builder(
-                                itemCount: volunteerList.length,
-                                shrinkWrap: true,
-                                physics: ScrollPhysics(),
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Text(
-                                      titleCase('- ${volunteerList[index]}'),
-                                      style: TextStyle(fontSize: 16));
-                                }),
                           ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 4),
+                    SizedBox(height: 15),
                     joinedEvent == false
                         ?
 
@@ -813,7 +866,6 @@ class _DetailsPageState extends State<DetailsPage> {
                               ],
                             ),
                           ),
-
                   ],
                 )
               : Center(child: CircularProgressIndicator()),

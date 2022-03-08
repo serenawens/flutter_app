@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/AdminViewUsers.dart';
 import 'package:flutter_app/ChangePassword.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -102,7 +103,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   double calculateEventHours(String eventTimeRange) {
-
     TimeOfDay st = stringToTimeOfDay(eventTimeRange.split(' - ')[0]);
     TimeOfDay et = stringToTimeOfDay(eventTimeRange.split(' - ')[1]);
 
@@ -110,21 +110,22 @@ class _ProfilePageState extends State<ProfilePage> {
     var start = format.parse(timeOfDayToString(st));
     var end = format.parse(timeOfDayToString(et));
 
-    return (end.difference(start).inMinutes)/60;
+    return (end.difference(start).inMinutes) / 60;
   }
 
   void calcAllStats(String username) {
-
     List<double> hoursList = [];
 
-    database.get<Map<String, dynamic>>("Users/" + username + "/pastEvents").then((pastEvents) {
-      if (pastEvents != null){
-
+    database
+        .get<Map<String, dynamic>>("Users/" + username + "/pastEvents")
+        .then((pastEvents) {
+      if (pastEvents != null) {
         Iterable pastEventKeys = pastEvents.keys;
 
         pastEventKeys.forEach((eventKey) {
-
-          database.get<Map<String, dynamic>>("PastEvents/" + eventKey).then((eventInfo) {
+          database
+              .get<Map<String, dynamic>>("PastEvents/" + eventKey)
+              .then((eventInfo) {
             double eventHours = double.parse(eventInfo!['eventHours']);
             hoursList.add(eventHours);
 
@@ -138,26 +139,28 @@ class _ProfilePageState extends State<ProfilePage> {
               }
               print(totalHours);
 
-              if(totalHours.truncate() == totalHours){
+              if (totalHours.truncate() == totalHours) {
                 database.update("Users/" + username + "/statistics", {
                   "totalHours": totalHours.truncate().toString(),
                   'eventCount': pastEventKeys.length.toString()
                 });
-              }
-              else{
+              } else {
                 database.update("Users/" + username + "/statistics", {
                   "totalHours": totalHours.toStringAsFixed(1),
                   'eventCount': pastEventKeys.length.toString()
                 });
               }
-
             }
           });
-
+        });
+      }
+      else{
+        database.update("Users/" + username + "/statistics", {
+          "totalHours": "0",
+          'eventCount': "0"
         });
       }
     });
-
   }
 
   String titleCase(String s) {
@@ -171,12 +174,13 @@ class _ProfilePageState extends State<ProfilePage> {
     String temp = number.trim();
     String prettify = '';
 
-    if (temp.startsWith("+1")) {
+    if (temp.startsWith("+1") || temp.startsWith("*1")) {
       temp = temp.trim().substring(2);
     }
 
     for (int i = 0; i < temp.length; i++) {
       if (!(temp[i] == '+' ||
+          temp[i] == '*'||
           temp[i] == ' ' ||
           temp[i] == '-' ||
           temp[i] == '(' ||
@@ -208,6 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           });
     }
+
     List<Widget> returnSignOutActions() {
       return [
         Row(
@@ -237,7 +242,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ];
     }
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -260,12 +264,11 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.white,
       body: isDone
           ? Padding(
-              padding: const EdgeInsets.only(top: 30, left: 20),
+              padding: const EdgeInsets.only(top: 20, left: 20),
               child: Align(
                 alignment: Alignment.topLeft,
                 child: ListView(children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("Account Information",
                           style: TextStyle(
@@ -279,7 +282,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       //               EditProfilePage(title: "Edit Profile")),
                       //     );
                       //   },
-                      //   child: Text("Edit", style: TextStyle(fontSize: 18)),
+                      //   child: Transform.translate(
+                      //     offset: Offset(0,3),
+                      //       child: Text("[Edit Info]", style: TextStyle(fontSize: 15))),
                       // ),
                     ],
                   ),
@@ -327,7 +332,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(
-                          Radius.circular(10),
+                          Radius.circular(20),
                         ),
                         border: Border.all(
                           width: 1,
@@ -342,11 +347,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     padding: const EdgeInsets.only(right: 20.0),
                     child: ListTile(
                       dense: true,
-                      title: Text('Change Password',
-                          style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400)),
+                      leading: Transform.translate(
+                          offset: Offset(-10, 0), child: Icon(Icons.lock_open)),
+                      title: Transform.translate(
+                        offset: Offset(-35, 0),
+                        child: Text('Change Password',
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400)),
+                      ),
                       trailing: Icon(Icons.arrow_forward_ios_rounded),
                       onTap: () {
                         Navigator.push(
@@ -358,6 +368,35 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                     ),
                   ),
+
+
+                  user.info!['role'] == 'admin'?
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20.0),
+                    child: ListTile(
+                      dense: true,
+                      leading: Transform.translate(
+                          offset: Offset(-10, 0), child: Icon(Icons.settings)),
+                      title: Transform.translate(
+                        offset: Offset(-35, 0),
+                        child: Text('Management',
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400)),
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  AdminViewUsersPage(title: "Key Club Members")),
+                        );
+                      },
+                    ),
+                  ):
+                      SizedBox(),
                   Padding(
                     padding: const EdgeInsets.only(right: 20.0),
                     child: Container(
@@ -379,7 +418,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       style:
                           TextStyle(fontSize: 27, fontWeight: FontWeight.bold)),
                   ListTile(
-                      onTap: (){
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -394,14 +433,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       subtitle: Text("hours volunteered",
                           style: TextStyle(color: Colors.black))),
                   ListTile(
-                      onTap: (){
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
                                   PastEventsPage(title: "Past Events")),
                         );
-                        },
+                      },
                       leading:
                           Icon(Icons.equalizer, size: 45, color: Colors.orange),
                       title: Text("${userStats[1]}",
@@ -425,52 +464,41 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   TextButton(
-                    // style: TextButton.styleFrom(
-                    //   textStyle: TextStyle(fontSize: 14),
-                    // ),
+
                     onPressed: () {
-                      // removeUserPrefKey().then((value) {
-                      //   user.info = {};
-                      //   Navigator.pop(context);
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => LoginPage(title: "Login")),
-                      //   );
-                      // });
-                      _showDialog("Are you sure you want to sign out?", "Sign Out Confirmation", returnSignOutActions());
+
+                      _showDialog("Are you sure you want to sign out?",
+                          "Sign Out Confirmation", returnSignOutActions());
                     },
                     child: Text('Sign Out',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w600)),
                   ),
-                  user.info!['username'] == "serenaw"?
-                  Padding(
-                    padding: const EdgeInsets.only(left:270, top: 40),
-                    child: RawMaterialButton(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(15.0),
-                        fillColor: Colors.orangeAccent,
-                      child: Icon(Icons.calculate_rounded, size: 40, color: Colors.white),
-                        onPressed: (){
-
-                          database.get<Map<String,dynamic>>("Users").then((value) {
-                            if(value!= null){
-                              value.keys.forEach((username) {
-
-                                calcAllStats(username);
-
-                              });
-                              print("Done calcualted");
-                            }
-                            else{
-                              print("something went wrong");
-                            }
-                          });
-                        }
-                    ),
-                  ):
-                      SizedBox(),
+                  user.info!['username'] == "serenaw"
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: 270, top: 40),
+                          child: RawMaterialButton(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(15.0),
+                              fillColor: Colors.orangeAccent,
+                              child: Icon(Icons.calculate_rounded,
+                                  size: 40, color: Colors.white),
+                              onPressed: () {
+                                database
+                                    .get<Map<String, dynamic>>("Users")
+                                    .then((value) {
+                                  if (value != null) {
+                                    value.keys.forEach((username) {
+                                      calcAllStats(username);
+                                    });
+                                    print("Done calcualted");
+                                  } else {
+                                    print("something went wrong");
+                                  }
+                                });
+                              }),
+                        )
+                      : SizedBox(),
                 ]),
               ),
             )

@@ -50,12 +50,13 @@ class _PastDetailsPageState extends State<PastDetailsPage> {
     String temp = number.trim();
     String prettify = '';
 
-    if (temp.startsWith("+1")) {
+    if (temp.startsWith("+1") || temp.startsWith("*1")) {
       temp = temp.trim().substring(2);
     }
 
     for (int i = 0; i < temp.length; i++) {
       if (!(temp[i] == '+' ||
+          temp[i] == '*'||
           temp[i] == ' ' ||
           temp[i] == '-' ||
           temp[i] == '(' ||

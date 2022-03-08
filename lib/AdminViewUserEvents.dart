@@ -10,18 +10,20 @@ import 'cmdb.dart';
 
 import 'package:crypt/crypt.dart';
 
-class PastEventsPage extends StatefulWidget {
+class AdminViewUserEventsPage extends StatefulWidget {
   //Class Constructor
-  PastEventsPage({Key? key, required this.title}) : super(key: key);
+  AdminViewUserEventsPage({Key? key, required this.title, required this.username}) : super(key: key);
 
   //Class instance variable
   final String title;
 
+  final String username;
+
   @override
-  _PastEventsPageState createState() => _PastEventsPageState();
+  _AdminViewUserEventsPageState createState() => _AdminViewUserEventsPageState();
 }
 
-class _PastEventsPageState extends State<PastEventsPage> {
+class _AdminViewUserEventsPageState extends State<AdminViewUserEventsPage> {
   User user = new User();
   CMDB database = new CMDB();
 
@@ -87,10 +89,10 @@ class _PastEventsPageState extends State<PastEventsPage> {
       ..sort((k1, k2) => events[k1]!['date']!.compareTo(events[k2]!['date']!));
 
     LinkedHashMap<String, Map<String, dynamic>?> sortedMap =
-        new LinkedHashMap<String, Map<String, dynamic>?>.fromIterable(
-            sortedKeys,
-            key: (k) => k,
-            value: (k) => events[k]);
+    new LinkedHashMap<String, Map<String, dynamic>?>.fromIterable(
+        sortedKeys,
+        key: (k) => k,
+        value: (k) => events[k]);
 
 
     events.keys.forEach((eventKey) {
@@ -143,7 +145,7 @@ class _PastEventsPageState extends State<PastEventsPage> {
     isDone = false;
     database
         .get<Map<String, dynamic>>(
-            'Users/' + user.info!['username'] + "/pastEvents/")
+        'Users/' + widget.username + "/pastEvents/")
         .then((invites) {
       if (invites != null) {
         setState(() {
@@ -398,62 +400,56 @@ class _PastEventsPageState extends State<PastEventsPage> {
 
       backgroundColor: Colors.white,
       body: isDone
-          ? pastEvents.isNotEmpty
-              ? ListView.separated(
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  padding: const EdgeInsets.all(10),
-                  itemCount: pastEvents.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    String key = pastEvents.keys.elementAt(index);
-                    return InkWell(
-                        child: Container(
-                          height: 60,
-                          child: ListTile(
-                              leading: Container(
-                                  height: 50,
-                                  // width: MediaQuery.of(context).size.width /
-                                  //     7.3,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text("${eventsAndHours[key]}",
-                                          style: TextStyle(fontSize: 25, color: Colors.orange, fontWeight: FontWeight.bold)),
-                                      Text("hours",
-                                          style: TextStyle(fontSize: 11, color: Colors.orange,)),
-                                    ],
-                                  )),
-                              title: Text('${pastEvents[key]?['name']}',
-                                  style: TextStyle(fontSize: 22)),
-                              subtitle: Text(
-                                  getDateWordForm(
-                                      '${pastEvents[key]?['date']}'),
-                                  style: TextStyle(fontSize: 14)),
-                          trailing: Icon(Icons.more_vert)),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PastDetailsPage(
-                                      title: "Event Info",
-                                      event: pastEvents[key],
-                                      eventKey: key,
-                                    )),
-                          ).then((value) {
-                            getAllPastEvents();
-                          });
-                        });
-                  },
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const Divider(color: Colors.black26),
-                )
-              : Center(
-                  child: Padding(
-                  padding: const EdgeInsets.only(bottom: 0),
-                  child: Text("No Past Events",
-                      style: TextStyle(fontSize: 20, color: Colors.grey)),
-                ))
+          ? ListView.separated(
+        shrinkWrap: true,
+        physics: ScrollPhysics(),
+        padding: const EdgeInsets.all(10),
+        itemCount: pastEvents.length,
+        itemBuilder: (BuildContext context, int index) {
+          String key = pastEvents.keys.elementAt(index);
+          return InkWell(
+              child: Container(
+                height: 60,
+                child: ListTile(
+                    leading: Container(
+                        height: 50,
+                        // width: MediaQuery.of(context).size.width /
+                        //     7.3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text("${eventsAndHours[key]}",
+                                style: TextStyle(fontSize: 25, color: Colors.orange, fontWeight: FontWeight.bold)),
+                            Text("hours",
+                                style: TextStyle(fontSize: 11, color: Colors.orange,)),
+                          ],
+                        )),
+                    title: Text('${pastEvents[key]?['name']}',
+                        style: TextStyle(fontSize: 22)),
+                    subtitle: Text(
+                        getDateWordForm(
+                            '${pastEvents[key]?['date']}'),
+                        style: TextStyle(fontSize: 14)),
+                    trailing: Icon(Icons.more_vert)),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PastDetailsPage(
+                        title: "Event Info",
+                        event: pastEvents[key],
+                        eventKey: key,
+                      )),
+                ).then((value) {
+                  getAllPastEvents();
+                });
+              });
+        },
+        separatorBuilder: (BuildContext context, int index) =>
+        const Divider(color: Colors.black26),
+      )
+
           : Center(child: CircularProgressIndicator()),
     );
   }

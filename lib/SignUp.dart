@@ -236,6 +236,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               " " +
                               lastName.text.toLowerCase().trim(),
                           'role': 'member',
+                          'statistics': {"eventCount": "0", "totalHours": '0'},
                         };
 
                         database.update(

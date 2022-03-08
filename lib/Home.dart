@@ -305,26 +305,26 @@ class _HomePageState extends State<HomePage> {
 
           database.delete("Users/" + user + "/events/" + eventKey);
 
-          // database.get<Map<String,dynamic>>("Users/" + user + "statistics/").then((userStats) {
-          //
-          //   if(userStats != null){
-          //
-          //     print('yes user stats');
-          //
-          //     int newUserHours = int.parse(userStats['totalHours']) + eventHours;
-          //     int newEventCount = int.parse(userStats['eventCount']) + 1;
-          //
-          //     database.update("Users/" + user + "/statistics", {
-          //       "totalHours": newUserHours.toString(),
-          //       'eventCount': newEventCount.toString()
-          //     });
-          //   }
-          //
-          //   else{
-          //     print('no userstats? ERROR');
-          //   }
-          //
-          // });
+          database.get<Map<String,dynamic>>("Users/" + user + "statistics/").then((userStats) {
+
+            if(userStats != null){
+
+              print('yes user stats');
+
+              int newUserHours = int.parse(userStats['totalHours']) + eventHours;
+              int newEventCount = int.parse(userStats['eventCount']) + 1;
+
+              database.update("Users/" + user + "/statistics", {
+                "totalHours": newUserHours.toString(),
+                'eventCount': newEventCount.toString()
+              });
+            }
+
+            else{
+              print('no userstats? ERROR');
+            }
+
+          });
         });
       } else {
         value!.forEach((user, name) {
@@ -359,7 +359,9 @@ class _HomePageState extends State<HomePage> {
                 !(dt1.day == now.day &&
                     dt1.year == now.year &&
                     dt1.month == now.month)) {
+
               moveVolunteerEventToPast(eventKey, value);
+
             } else {
               allEvents[eventKey] = value as Map<String, dynamic>;
             }
@@ -472,6 +474,14 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      // floatingActionButton: FloatingActionButton(onPressed: () {
+      //
+      //   String eventKey = '-MurhY2gIwiiQrrzQNsz';
+      //   database.get<Map<String,dynamic>>("Events/" + eventKey).then((value) {
+      //     moveVolunteerEventToPast(eventKey, value);
+      //   });
+      //
+      // }),
       backgroundColor: Colors.white,
       body: isDone
           ? SingleChildScrollView(
@@ -601,27 +611,6 @@ class _HomePageState extends State<HomePage> {
                                                         ],
                                                       ),
                                                     ),
-                                                    // Expanded(
-                                                    //   flex: 1,
-                                                    //   child: IconButton(
-                                                    //       icon: Icon(Icons
-                                                    //           .more_vert),
-                                                    //       onPressed: () {
-                                                    //         Navigator.push(
-                                                    //           context,
-                                                    //           MaterialPageRoute(
-                                                    //               builder:
-                                                    //                   (context) =>
-                                                    //                       DetailsPage(
-                                                    //                         title: "Event Info",
-                                                    //                         event: userEvents[key],
-                                                    //                         eventKey: key,
-                                                    //                       )),
-                                                    //         ).then((value) {
-                                                    //           getAllEvents();
-                                                    //         });
-                                                    //       }),
-                                                    // ),
                                                   ],
                                                 ),
                                               ),
